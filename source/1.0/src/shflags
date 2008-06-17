@@ -4,8 +4,8 @@
 #
 # shFlags -- Advanced command-line flag library for Unix shell scripts
 #
-# This module implements something like the gflags library available from
-# http://code.google.com/
+# This module implements something like the google-gflags library available
+# from http://code.google.com/
 #
 # FLAG TYPES: This is a list of the DEFINE_*'s that you can do.  All flags take
 # a name, default value, help-string, and optional 'short' name (one-letter
@@ -41,7 +41,7 @@
 #   echo "Hello, ${FLAGS_name}."
 
 #==============================================================================
-# gFlags
+# shFlags
 #
 # Shared attributes:
 #   flags_error: last error message
@@ -63,7 +63,7 @@
 
 # return if FLAGS already loaded
 [ -n "${__FLAGS_VERSION:-}" ] && return 0
-__FLAGS_VERSION='0.9.0'
+__FLAGS_VERSION='1.0.0'
 
 _flags_debug() { echo "flags:DEBUG $@" >&2; }
 _flags_error() { echo "flags:ERROR $@" >&2; }
@@ -81,7 +81,7 @@ if [ -n "${ZSH_VERSION:-}" ]; then
   fi
   if [ -z "${FLAGS_PARENT:-}" ]; then
     _flags_fatal "zsh does not pass \$0 through properly. please declare' \
-\"FLAGS_PARENT=\$0\" before calling gFlags"
+\"FLAGS_PARENT=\$0\" before calling shFlags"
     exit ${FLAGS_ERROR}
   fi
 fi
@@ -838,3 +838,4 @@ done
 unset _flags_oldShellFlags _flags_shellFlag
 
 # vim:et:ft=sh:sts=2:sw=2
+# $Id$
