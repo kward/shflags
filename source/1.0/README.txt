@@ -1,28 +1,28 @@
 ====================
-shUnit2 2.1.x README
+shFlags 1.0.x README
 ====================
 
-SourceForge
-===========
+code.google.com
+===============
 
-This project is stored on SourceForge as http://sf.net/projects/shunit2. The
-source code is stored in Subversion and can be accessed using the following
+This project is stored on code.google.com as http://code.google.com/p/shflags/.
+The source code is stored in Subversion and can be accessed using the following
 information.
 
 Check out the code locally ::
 
-  $ svn co https://shunit2.svn.sourceforge.net/svnroot/shunit2/trunk/source/2.1 shunit2
+  $ svn checkout http://shflags.googlecode.com/svn/trunk/ shflags-read-only
 
 Browse the code in a web browser:
 
-- http://shunit2.svn.sourceforge.net/viewvc/shunit2/trunk/source/2.1/
-- http://shunit2.svn.sourceforge.net/svnroot/shunit2/trunk/source/2.1/
+- http://code.google.com/p/shflags/source/browse
+- svn > trunk > source > 1.0
 
 
 Making a release
 ================
 
-For these steps, it is assumed we are working with release 2.0.0.
+For these steps, it is assumed we are working with release 1.0.0.
 
 Steps:
 
@@ -35,7 +35,7 @@ Steps:
 - create tarball
 - md5sum the tarball and sign with gpg
 - update website
-- post to SourceForge and Freshmeat
+- post to code.google.com and Freshmeat
 
 Write Release Notes
 -------------------
@@ -43,39 +43,24 @@ Write Release Notes
 This should be pretty self explainatory. Use one of the release notes from a
 previous release as an example.
 
-To get the versions of the various shells, do the following:
+To get the versions of the various shells, run the bin/version_info.sh command.
+::
 
-+-------+---------+-----------------------------------------------------------+
-| Shell | OS      | Notes                                                     |
-+=======+=========+===========================================================+
-| bash  |         | ``$ bash --version``                                      |
-+-------+---------+-----------------------------------------------------------+
-| dash  | Linux   | ``$ dpkg -l |grep dash``                                  |
-+-------+---------+-----------------------------------------------------------+
-| ksh   |         | ``$ ksh --version``                                       |
-|       |         | -or-                                                      |
-|       |         | ``$ echo 'echo $KSH_VERSION' |ksh``                       |
-|       +---------+-----------------------------------------------------------+
-|       | Cygwin  | see pdksh                                                 |
-|       +---------+-----------------------------------------------------------+
-|       | Solaris | ``$ strings /usr/bin/ksh |grep 'Version'``                |
-+-------+---------+-----------------------------------------------------------+
-| pdksh |         | ``$ strings /bin/pdksh |grep 'PD KSH'``                   |
-|       +---------+-----------------------------------------------------------+
-|       | Cygwin  | look in the downloaded Cygwin directory                   |
-+-------+---------+-----------------------------------------------------------+
-| sh    | Solaris | not possible                                              |
-+-------+---------+-----------------------------------------------------------+
-| zsh   |         | ``$ zsh --version``                                       |
-+-------+---------+-----------------------------------------------------------+
+  $ bin/version_info.sh
+  os:Mac OS X version:10.5.3
+  shell:/bin/bash version:3.2.17(1)-release
+  shell:/bin/dash version:not_installed
+  shell:/bin/ksh version:M-1993-12-28
+  shell:/bin/pdksh version:not_installed
+  shell:/bin/zsh version:4.3.4
 
 Update Version
 --------------
 
-Edit ``src/shell/shunit2`` and change the version number in the comment, as well
-as in the ``__SHUNIT_VERSION`` variable. Next, edit the
-``src/docbook/shunit2.xml`` file, edit the version in the ``<title>`` element,
-and make sure there is a revision section for this release.
+Edit ``src/shflags`` and change the version number in the ``__FLAGS_VERSION``
+variable. Next, edit the ``src/docbook/shflags.xml`` file, edit the version in
+the ``<title>`` element, and make sure there is a revision section for this
+release.
 
 Finish Documentation
 --------------------
@@ -92,7 +77,7 @@ We want to have an up-to-date version of the documentation in the release, so
 we'd better build it. ::
 
   $ pwd
-  .../shunit2/source/2.0
+  .../shflags/source/1.0
   $ make docs
   ...
   $ cp -p build/shunit2.html doc
@@ -185,4 +170,4 @@ Related Documentation
 .. http://docutils.sourceforge.net/
 ..
 .. vim:syntax=rst:textwidth=80
-.. $Revision: 132 $
+.. $Revision$
