@@ -1,5 +1,4 @@
 #! /bin/sh
-# vim:et:ft=sh:sts=2:sw=2
 #
 # Copyright 2008 Kate Ward. All Rights Reserved.
 # Released under the LGPL (GNU Lesser General Public License)
@@ -128,3 +127,5 @@ EOF
     ( exec ${shell} ${shell_opts} ./${suite}; )
   done
 done
+
+# vim:et:ft=sh:sts=2:sw=2

@@ -16,8 +16,8 @@ General info
 ------------
 
 This is the first official release of shFlags. The project is modeled after the
-gflags code released by Google on http://code.google.com/. Many thanks for the
-code they have provided.
+gflags code released by Google on http://code.google.com/p/google-gflags/. Many
+thanks for the code they have provided.
 
 As this is the first release, there are bound to be issues. Feel free
 
@@ -27,19 +27,19 @@ Disclamer
 The unit tests
 --------------
 
-gflags is designed to work on as many environments as possible, but not all
+shFlags is designed to work on as many environments as possible, but not all
 environments are created equal. As such, not all of the unit tests will succeed
 on every platform. The unit tests are therefore designed to fail, indicating to
 the tester that the supported functionality is not present, but an additional
-test is present to verify that gflags properly caught the limitation and
+test is present to verify that shFlags properly caught the limitation and
 presented the user with an appropriate error message.
 
-gflags tries to support both the standard and enhanced versions of getopt. As
-each responds differently, and not everything is supported on the standard
+shFlags tries to support both the standard and enhanced versions of ``getopt``.
+As each responds differently, and not everything is supported on the standard
 version, some unit tests will be skipped (i.e. ASSERTS will not be thrown) when
-the standard version of getopt is detected. The reason being that there is no
-point testing for functionality that is positively known not to exist. A tally
-of skipped tests will be kept for later reference.
+the standard version of ``getopt`` is detected. The reason being that there is
+no point testing for functionality that is positively known not to exist. A
+tally of skipped tests will be kept for later reference.
 
 Standard vs Enhanced getopt
 ---------------------------

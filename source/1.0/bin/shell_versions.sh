@@ -1,13 +1,10 @@
 #! /bin/sh
-# $Id: version_info.sh 165 2008-05-13 09:40:15Z sfsetse $
-# vim:et:ft=sh:sts=2:sw=2
+# $Id$
 #
-# Copyright (c) 2008 Forest Enterprises
-# All Rights Reserved
+# Copyright 2008 Kate Ward. All Rights Reserved.
+# Released under the LGPL (GNU Lesser General Public License)
 #
 # Author: Kate Ward (kate.ward@forestent.com)
-#
-# Released under the LGPL (GNU Lesser General Public License)
 
 # treat unset variables as an error
 set -u
@@ -145,3 +142,5 @@ for shell in ${SHELLS}; do
   [ -z "${version}" ] && version='unknown'
   reportVersion ${shell} "${version}"
 done
+
+# vim:et:ft=sh:sts=2:sw=2

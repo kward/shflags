@@ -10,14 +10,17 @@ Documentation is available there, as are all releases and source code. The
 source code is stored in Subversion and can be accessed using the following
 information.
 
-Check out the code locally ::
-
-  $ svn checkout http://shflags.googlecode.com/svn/trunk/ shflags-read-only
-
 Browse the code in a web browser:
 
 - http://code.google.com/p/shflags/source/browse
 - svn > trunk > source > 1.0
+
+Check out the code locally ::
+
+  $ svn checkout http://shflags.googlecode.com/svn/trunk/ shflags-read-only
+
+Documentation is available on the web at
+http://code.google.com/p/shflags/wiki/Documentation10x.
 
 
 Making a release
@@ -47,7 +50,7 @@ previous release as an example.
 To get the versions of the various shells, run the `bin/version_info.sh`
 command. ::
 
-  $ bin/version_info.sh
+  $ bin/shell_versions.sh
   os:Mac OS X version:10.5.3
   shell:/bin/bash version:3.2.17(1)-release
   shell:/bin/dash version:not_installed
@@ -59,9 +62,7 @@ Update Version
 --------------
 
 Edit ``src/shflags`` and change the version number in the ``__FLAGS_VERSION``
-variable. Next, edit the ``src/docbook/shflags.xml`` file, edit the version in
-the ``<title>`` element, and make sure there is a revision section for this
-release.
+variable.
 
 Finish Documentation
 --------------------
@@ -69,7 +70,8 @@ Finish Documentation
 Make sure that any remaning changes get put into the ``CHANGES-X.X.txt`` file.
 
 Finish writing the ``RELEASE_NOTES-X.X.X.txt``. Once it is finished, run it
-through the **fmt** command to make it pretty. ::
+through the **fmt** command to make it pretty. (This assumes the lines weren't
+already wrapped at 80 chars when the file was edited.) ::
 
   $ fmt -w 80 RELEASE_NOTES-2.0.0.txt >RELEASE_NOTES-2.0.0.txt.new
   $ mv RELEASE_NOTES-2.0.0.txt.new RELEASE_NOTES-2.0.0.txt
@@ -79,10 +81,7 @@ we'd better build it. ::
 
   $ pwd
   .../shflags/source/1.0
-  $ make docs
-  ...
-  $ cp -p build/shunit2.html doc
-  $ rst2html --stylesheet-path=share/css/rst2html.css doc/README.txt >doc/README.html
+  $ rst2html --stylesheet-path=doc/rst2html.css README.txt >README.html
 
 Check In All the Code
 ---------------------
@@ -90,83 +89,62 @@ Check In All the Code
 This step is pretty self-explainatory ::
 
   $ pwd
-  .../shunit2/source/2.0
-  $ svn ci -m "finalizing release"
+  .../shflags/source/1.0
+  $ svn ci -m "finalizing 1.0.0 release"
 
 Tag the Release
 ---------------
 ::
 
+  $ cd ..
   $ pwd
-  .../shunit2/source
+  .../shflags/source
   $ ls
-  2.0  2.1
-  $ svn cp -m "Release 2.0.0" 2.0 https://shunit2.svn.sourceforge.net/svnroot/shunit2/tags/source/2.0.0
+  1.0
+  $ svn cp -m "Release 1.0.0" 1.0 https://shflags.googlecode.com/svn/tags/1.0.0
 
 Export the Release
 ------------------
 ::
 
+  $ cd ../builds
   $ pwd
-  .../shunit2/builds
-  $ svn export https://shunit2.svn.sourceforge.net/svnroot/shunit2/tags/source/2.0.0 shunit2-2.0.0
+  .../shflags/builds
+  $ svn export https://shflags.googlecode.com/svn/tags/1.0.0 shflags-1.0.0
 
 Create Tarball
 --------------
 ::
 
-  $ tar cfz ../releases/shunit2-2.0.0.tgz shunit2-2.0.0
+  $ tar cfz ../releases/shflags-1.0.0.tgz shflags-1.0.0
 
 md5sum the Tarball and Sign With gpg
 ------------------------------------
 ::
 
   $ cd ../releases
-  $ md5sum shunit2-2.0.0.tgz >shunit2-2.0.0.tgz.md5
-  $ gpg --default-key kate.ward@forestent.com --detach-sign shunit2-2.0.0.tgz
+  $ md5sum shflags-1.0.0.tgz >shflags-1.0.0.tgz.md5
+  $ gpg --default-key kate.ward@forestent.com --detach-sign shflags-1.0.0.tgz
 
-Update Website
---------------
+Post the release
+----------------
 
-Again, pretty self-explainatory. Make sure to copy the MD5 and GPG signature
-files. Once that is done, make sure to tag the website so we can go back in
-time if needed. ::
+To post the release, the ProjectInfo page needs to be updated with the release
+info (release, date, and MD5), and the release with GPG signature needs to
+uploaded.
 
-  $ pwd
-  .../shunit2
-  $ ls
-  source  website
-  $ svn cp -m "Release 2.0.0" \
-  website https://shunit2.svn.sourceforge.net/svnroot/shunit2/tags/website/20060916
+Post to Freshmeat
+-----------------
 
-Now, update the website. It too is held in Subversion, so **ssh** into
-SourceForge and use ``svn up`` to grab the latest version.
-
-Post to SourceForge and Freshmeat
----------------------------------
-
-- http://sourceforge.net/projects/shunit2/
 - http://freshmeat.net/
 
 
 Related Documentation
 =====================
 
-:Docbook: http://www.docbook.org/
-:Docbook XML:
-  :docbook-xml-4.4.zip:
-    http://www.docbook.org/xml/4.4/docbook-xml-4.4.zip
-    http://www.oasis-open.org/docbook/xml/4.4/docbook-xml-4.4.zip
-  :docbook-xml-4.5.zip:
-    http://www.docbook.org/xml/4.5/docbook-xml-4.5.zip
-:Docbook XSL:
-  :docbook-xsl-1.71.0.tar.bz2:
-    http://prdownloads.sourceforge.net/docbook/docbook-xsl-1.71.0.tar.bz2?download
-  :docbook-xsl-1.71.1.tar.bz2:
-    http://downloads.sourceforge.net/docbook/docbook-xsl-1.71.1.tar.bz2?use_mirror=puzzle
-:JUnit: http://www.junit.org/
+:google-gflags: http://code.google.com/p/google-gflags/
 
-..
+
 .. generate HTML using rst2html from Docutils of
 .. http://docutils.sourceforge.net/
 ..
