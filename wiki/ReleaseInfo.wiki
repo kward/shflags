@@ -1,0 +1,12 @@
+#summary Release information.
+#labels Featured
+
+= Current releases =
+
+== 1.0.x – Stable releases ==
+
+|| *Release* || *Date* || *MD5* ||
+|| 1.0.0 || n/a || n/a ||
+
+== 1.1.x – Development releases ==
+_This release series hasn't been started yet._
