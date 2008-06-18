@@ -46,20 +46,24 @@ Standard vs Enhanced getopt
 
 Here is a matrix of the supported features of the various getopt variants.
 
-Feature                   std enh
--------------------------+---+---
-short option names         Y   Y
-long option names          N   Y
-spaces in string options   N   Y
++-------------------------+---+---+
+|Feature                  |std|enh|
++=========================+===+===+
+|short option names       | Y | Y |
+|long option names        | N | Y |
+|spaces in string options | N | Y |
++-------------------------+---+---+
 
 Known Issues
 ------------
 
 The getopt version provided by default with all versions of Solaris (up to and
-including Solaris 10) is the standard version.
+including Solaris 10) is the standard version. As such, only short flags are
+supported.
 
 The getopt version provided by default with all versions of Mac OS X (up to and
-including 10.5) is the standard version.
+including 10.5) is the standard version. As such, only short flags are
+supported.
 
 Workarounds
 -----------
