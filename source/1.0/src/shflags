@@ -1,11 +1,12 @@
 # Copyright 2008 Kate Ward. All Rights Reserved.
-#
-# Author: kate.ward@forestent.com (Kate Ward)
+# Released under the LGPL (GNU Lesser General Public License)
 #
 # shFlags -- Advanced command-line flag library for Unix shell scripts
 #
+# Author: kate.ward@forestent.com (Kate Ward)
+#
 # This module implements something like the google-gflags library available
-# from http://code.google.com/
+# from http://code.google.com/p/google-gflags/.
 #
 # FLAG TYPES: This is a list of the DEFINE_*'s that you can do.  All flags take
 # a name, default value, help-string, and optional 'short' name (one-letter
@@ -39,6 +40,9 @@
 #   DEFINE_string name 'world' "somebody's name"
 #   FLAGS "$@" || exit $?; shift ${FLAGS_ARGC}
 #   echo "Hello, ${FLAGS_name}."
+#
+# NOTE: Not all systems include a getopt version that supports long flags. On
+# these systems, only short flags are recognized.
 
 #==============================================================================
 # shFlags
