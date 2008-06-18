@@ -1,0 +1,7 @@
+Changes in shFlags 1.0.x
+========================
+
+Changes with 1.0.0
+------------------
+
+This is the first official release, so everything is new.
