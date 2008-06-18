@@ -6,7 +6,8 @@ code.google.com
 ===============
 
 This project is stored on code.google.com as http://code.google.com/p/shflags/.
-The source code is stored in Subversion and can be accessed using the following
+Documentation is available there, as are all releases and source code. The
+source code is stored in Subversion and can be accessed using the following
 information.
 
 Check out the code locally ::
@@ -43,8 +44,8 @@ Write Release Notes
 This should be pretty self explainatory. Use one of the release notes from a
 previous release as an example.
 
-To get the versions of the various shells, run the bin/version_info.sh command.
-::
+To get the versions of the various shells, run the `bin/version_info.sh`
+command. ::
 
   $ bin/version_info.sh
   os:Mac OS X version:10.5.3
