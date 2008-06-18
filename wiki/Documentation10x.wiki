@@ -1,0 +1,91 @@
+#summary Documentation for the 1.0.x release series.
+#labels Featured
+
+= Introduction =
+This is the documentation for the shFlags 1.0.x release series.
+
+At its core, shFlags is simply a library that you include into an existing shell script that gives you some additional functions that can be called. The power behind those functions though is somewhat amazing though, and you will hopefully be amazed with the simplicity with which you can handle command-line arguments in shell.
+
+= Quick Start =
+Getting started with shFlags is quite easy. We'll start with the proverbial "Hello, world" application.
+
+Just a quick note before we start. All examples assume that the `shflags` library has been copied the current directory, and that the scripts listed here are also in the current directory. You are free to move the `shflags` library wherever you want as long as you remember to update the line that sources the library.
+
+Example: `hello_world.sh`
+{{{
+#!/bin/sh
+
+# source shflags
+. ./shflags
+
+# define a 'name' command-line string flag
+DEFINE_string 'name' 'world' 'name to say hello to' 'n'
+
+# parse the command-line
+FLAGS "$@" || exit 1; shift ${FLAGS_ARGC}
+
+# say Hello!
+echo "Hello, ${FLAGS_name}!"
+}}}
+_Don't forget to make the script executable with `chmod +x`._
+
+Go ahead and give the script a run.
+{{{
+$ ./hello_world.sh 
+Hello, world!
+}}}
+
+So what just happened? Let's go through the script line-by-line.
+
+{{{
+# source shflags
+`. ./shflags`
+}}}
+This line sources the `shflags` library into the current shell environment. It brings in several functions and sets several variables, but you won't actually see output from this line.
+
+{{{
+# define a 'name' command-line string flag
+DEFINE_string 'name' 'world' 'name to say hello to' 'n'
+}}} 
+Here we have defined a 'string' flag called `name`, we gave it a default value of 'world', we described the variable with 'name to say hello to', and we defined a short flag called `n`. This function has just told shFlags everything it needs to know about the `name` flag. It now knows:
+  * how to handle the short command-line option `-n`
+  * how to handle the long command-line option `--name Kate` (not supported on all systems)
+  * how to describe the flag if `-h` (or `--help`) is given as an option
+  * to accept and validate any input as a string value
+  * to store any input (or the default value) in the `FLAGS_name` variable
+Wow. That's a lot. Let's keep going.
+
+{{{
+# parse the command-line
+FLAGS "$@" || exit 1; shift ${FLAGS_ARGC}
+}}}
+Here is where all the magic happens. The call to `FLAGS` with the passing of `"$@"` sends all command-line arguments into the shFlags library for processing. If everything is successful, a return value of 0 (`${FLAGS_TRUE}`) is returned an things continue. If a false value of 1 (`${FLAGS_FALSE}`) or an error value of 2 (`${FLAGS_ERROR}`) is returned, the processing is halted with the `exit 1`. If there are any command-line arguments left over that shFlags didn't know how to process, they get shifted off the stack with the '`shift ${FLAGS_ARGC}`' so the script can handle them itself.
+
+There is actually a lot that happened with this `FLAGS` call, but the basic action you will be interested in right now is that a `FLAGS_name` variable was defined. As we didn't pass the `-n` flag (or `--name`) on the command-line, the value placed in the variable is 'world', the default value specified when we defined the flag.
+
+{{{
+# say Hello!
+echo "Hello, ${FLAGS_name}!"
+}}}
+Now that we have accepted parsed all our flags, we can make use of the results. This snippet prints out Hello to the screen ('Hello, world!' in this case) as the `FLAGS_name` variable contained 'world'.
+
+Let's give the script another go, this time passing '`-n Kate`' on the command-line.
+{{{
+$ ./hello_world.sh -n Kate
+Hello, Kate!
+}}}
+This time around, the `FLAGS_name` variable was defined with the value 'Kate' as we passed the `-n` flag, and 'Hello, Kate!' was output. I bet you never thought accepting command-line arguments could be so easy!
+
+What happens if you can't remember the command-line flags you have defined, and what to find that out? Try passing the `-h` flag (or `--help`).
+{{{
+$ ./hello_world.sh -h
+USAGE: ./hello_world.sh [flags] args
+flags:
+  -h  show this help
+  -n  name to say hello to
+}}}
+There you have it. A list of all the command line options supported in a nice clean format. What could be easier?
+
+= Usage =
+
+= Examples =
