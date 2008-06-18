@@ -1,4 +1,4 @@
-#summary Release information.
+﻿#summary shFlags product information.
 #labels Featured
 
 = Current releases =
