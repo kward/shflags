@@ -88,4 +88,6 @@ There you have it. A list of all the command line options supported in a nice cl
 
 = Usage =
 
+Until this section gets written, see the source code in `src/shflags` and the various unit tests.
+
 = Examples =
