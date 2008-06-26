@@ -31,7 +31,7 @@ _This release series hasn't been started yet._
 = Miscellaneous =
 
 == Licensing ==
-shFlags is licensed under the GNU [http://www.gnu.org/licenses/lgpl.html Lesser General Public License] (LGPL). The contents and copyright of this site and all provided source code are owned by [http://www.linkedin.com/profile?viewProfile=&key=2483293&trk=tab_pro Kate Ward].
+shFlags is licensed under the GNU [http://www.gnu.org/licenses/lgpl.html Lesser General Public License] (LGPL). The contents and copyright of this site and all provided source code are owned by [http://www.linkedin.com/pub/0/9b9/111 Kate Ward].
 
 == Full Disclosure ==
 Although I am currently an employee of Google Ireland, Ltd., the shFlags port of gFlags is not meant to reflect in any way on the work I do for Google. This product is not supported or endorsed by Google, and they should not be contacted for any problems you encounter with this product.
