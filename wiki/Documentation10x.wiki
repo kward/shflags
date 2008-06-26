@@ -9,7 +9,13 @@ At its core, shFlags is simply a library that you include into an existing shell
 = Table of Contents =
   * [#Quick_Start Quick Start]
   * [#Usage Usage]
+    * [#Understanding_flag_parsing Understanding flag parsing]
+    * [#Supported_flag_types Supported flag types]
+    * [#Automated_help Automated help]
   * [#Examples Examples]
+    * [#Debug_mode_output Debug mode output]
+    * [#Accept_flags_and_options Accept flags and options]
+  * [#Known_Issues Known Issues]
 
 = Quick Start =
 Getting started with shFlags is quite easy. We'll start with the proverbial "Hello, world" application.
@@ -92,20 +98,64 @@ flags:
 There you have it. A list of all the command line options supported in a nice clean format. What could be easier?
 
 = Usage =
-
 Until this section gets written, see the source code in `src/shflags` and the various unit tests.
 
+== Understanding flag parsing ==
+The actual flag parsing step looks deceptively simple, but at the same time confusing.
+
+{{{
+FLAGS "$@" || exit 1; shift ${FLAGS_ARGC}
+}}}
+
+The above line is technically two lines. They are separated by a semicolon ';'.
+
+The `FLAGS "$@" || exit 1` takes the command-line arguments `$@` in their unparsed form and passes them to the `FLAGS` function for processing. If `$*` had been used, any spaces in string arguments that were passed would be lost. The double-quotes surrounding the `$@` are also required to maintain the spaces in string arguments. If `FLAGS` returns with a failure (represented by ${FLAGS_ERROR}) the script is exited with an exit code of 1.
+
+The `shift ${FLAGS_ARGC}` shifts any command-line arguments off the stack so that your script can process them itself. This is typically useful when you want to pass some flags to your script to alter processing, but you still want to allow non-flag type options to be passed as well.
+
 == Supported flag types ==
+shFlags supports the following flag types. As you may already know, shell does not natively support some of these types (e.g. float) so their actual implementation and usage will be a string.
 
+=== boolean ===
+Boolean values are true/false values or conditions. A typical use might be to have support for some special functionality to be disabled, but a boolean flag could enable that functionality (e.g. enabling debug mode output).
 
+Boolean flags do not take any arguments, and their value is either 1 (false) or 0 (true). For long flags, the false value is specified on the command line by prepending the word 'no'. With short flags, the presense of the flag toggles the current value between true and false. Specifying a short boolean flag twice on the command results in returning the value back to the default value.
+
+In your script, you can use the `${FLAGS_TRUE}` or `${FLAGS_FALSE}` constants to compare the value of your flag variable against the "official" true/false values. Don't forget that in shell, true is 0 and false is 1 (quite the opposite of normal programming languages where true is 1 and false is 0).
+
+A default value is required for boolean flags.
+
+For example, lets say a Boolean flag was created whose long name was 'update' and whose short name was 'x', and the default value was 'false'. This flag could be explicitly set to 'true' with '--update' or by '-x', and it could be explicitly set to 'false' with '--noupdate'.
+
+=== float ===
+Float values are signed numbers that may or not contain a decimal point.
+
+As shell does not support float values natively, they are represented internally as strings. As such, any comparisons must be done as string comparisons using the = and != operators – `eq`, `ge`, `gt`, `le`, `lt`, and `ne` will not work.
+
+=== integer ===
+Float values are signed numbers that do not contain a decimal point.
+
+Shell supports integer values natively, so standard integer operators (`eq`, `ge`, `gt`, ...) may be used for comparisons.
+
+=== string ===
+Strings are, well, strings. Treat them like you would any other string.
+
+== Automated help ==
+Unlike `getopt`, shFlags provides an automated means of generating help for the user. It has its limitations, but it is definitely better than nothing.
+
+To get access to help, simply add the `-h` (or `--help`) flag to the command line, and you will get help for all of the defined flags.
+
+If you want to make your usage line a bit more informative, perhaps even with a multiline string of text, simply define the `FLAGS_HELP` variable and shFlags will make use of it.
 
 = Examples =
+Most scripts in this section are also provided in the `examples` directory. If you cannot find the script in the released version, please check the checked in source.
 
 *NOTE:* All scripts in this section expect that `shflags` exists in the current directory. If it doesn't, the line sourcing the `shflags` library must be modified.
 
 == Debug mode output ==
 This script sets up a `debug` flag that when specified will enable debug output to `STDERR`. If the flag is not specified (the default behavior), debug output is not enabled. 
 
+`examples/debug_output.sh`
 {{{
 #!/bin/sh
 
@@ -123,3 +173,81 @@ FLAGS "$@" || exit 1; shift ${FLAGS_ARGC}
 debug 'debug mode enabled'
 echo 'something interesting'
 }}}
+
+== Accept flags and options ==
+This script will try to write the current date to a filename given on the command-line. If the file already exists, the script will fail, but if a `-f` (or `--force`) flag is given, the existing file will be overwritten.
+
+`examples/write_date.sh`
+{{{
+#!/bin/sh
+
+# source shflags
+. ./shflags
+
+write_date() { date >"$1"; }
+
+# configure shflags
+DEFINE_boolean 'force' false 'force overwriting' 'f'
+FLAGS_HELP="USAGE: $0 [flags] filename"
+
+# parse the command-line
+FLAGS "$@" || exit 1; shift ${FLAGS_ARGC}
+
+# check for filename
+if [ $# -eq 0 ]; then
+  echo 'error: filename missing' >&2
+  flags_help
+  exit 1
+fi
+filename=$1
+
+if [ ! -f "${filename}" ]; then
+  write_date "${filename}"
+else
+  if [ ${FLAGS_force} -eq ${FLAGS_TRUE} ]; then
+    write_date "${filename}"
+  else
+    echo 'warning: filename exists; not overwriting' >&2
+    exit 2
+  fi
+fi
+}}}
+
+A test without a filename should fail (notice the custom usage definition line).
+{{{
+$ ./write_date.sh
+error: filename missing
+USAGE: ./write_date.sh [flags] filename
+flags:
+  -h  show this help
+  -f  force overwriting
+$ echo $?
+1
+}}}
+
+The first run should create the file just fine.
+{{{
+$ ./write_date.sh junk.dat
+$ cat junk.dat 
+Thu Jun 26 23:06:34 IST 2008
+}}}
+
+The second run should fail with an error.
+{{{
+$ ./write_date.sh junk.dat
+warning: filename exists; not overwriting
+$ echo $?
+2
+}}}
+
+The third run succeeds because we pass the `-f` flag.
+{{{
+$ ./write_date.sh -f junk.dat
+$ cat junk.dat 
+Thu Jun 26 23:10:02 IST 2008
+}}}
+
+= Known Issues =
+See the `RELEASE_NOTES` for the most up-to-date list of known issues.
+
+The `getopt` of Mac OS X (including 10.5) supports only short options. All flags require a short option if they are to function properly.
