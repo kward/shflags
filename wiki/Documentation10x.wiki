@@ -90,4 +90,31 @@ There you have it. A list of all the command line options supported in a nice cl
 
 Until this section gets written, see the source code in `src/shflags` and the various unit tests.
 
+== Supported flag types ==
+
+
+
 = Examples =
+
+*NOTE:* All scripts in this section expect that `shflags` exists in the current directory. If it doesn't, the line sourcing the `shflags` library must be modified.
+
+== Debug mode output ==
+This script sets up a `debug` flag that when specified will enable debug output to `STDERR`. If the flag is not specified (the default behavior), debug output is not enabled. 
+
+{{{
+#!/bin/sh
+
+# source shflags
+. ./shflags
+
+debug() { [ ${FLAGS_debug} -eq ${FLAGS_TRUE} ] && echo "DEBUG: $@" >&2; }
+
+# define flags
+DEFINE_boolean 'debug' false 'enable debug mode' 'd'
+
+# parse the command-line
+FLAGS "$@" || exit 1; shift ${FLAGS_ARGC}
+
+debug 'debug mode enabled'
+echo 'something interesting'
+}}}
