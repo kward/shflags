@@ -19,7 +19,7 @@ Tested Shells
 Development and testing of shFlags was done by Kate Ward. More products for Unix shell scripts can be found at http://forestent.com/wiki/Main_Page.
 
 = Downloading =
-If you would like to verify the GPG signatures of the releases, they are signed with the kate.ward@forestent.com public GPG key. More information can be found on our [http://forestent.com/wiki/Info:GnuPG GnuPG Info] page. 
+If you would like to verify the GPG signatures of the releases, please take a look at my [http://forestent.com/wiki/Info:GnuPG GnuPG Info] page.
 
 == 1.0.0 – Stable release ==
 || *Release* || *Date* ||
@@ -31,10 +31,10 @@ _This release series hasn't been started yet._
 = Miscellaneous =
 
 == Licensing ==
-shFlags is licensed under the GNU [http://www.gnu.org/licenses/lgpl.html Lesser General Public License] (LGPL). The contents and copyright of this site and all provided source code are owned by [mailto:kate.ward@forestent.com Kate Ward].
+shFlags is licensed under the GNU [http://www.gnu.org/licenses/lgpl.html Lesser General Public License] (LGPL). The contents and copyright of this site and all provided source code are owned by [http://www.linkedin.com/profile?viewProfile=&key=2483293&trk=tab_pro Kate Ward].
 
 == Full Disclosure ==
-Although I am currently an employee of Google Ireland, Ltd. ([mailto:kward@google.com Kate Ward]), the shFlags port of gFlags is not meant to reflect in any way on the work I do for Google. This product is not supported or endorsed by Google, and they should not be contacted for any problems you encounter with this product.
+Although I am currently an employee of Google Ireland, Ltd., the shFlags port of gFlags is not meant to reflect in any way on the work I do for Google. This product is not supported or endorsed by Google, and they should not be contacted for any problems you encounter with this product.
 
 == Thanks ==
 A list of contributors is provided with each release (found as `doc/contributors.txt`). Many thanks go out to each of these individuals for finding bugs and/or providing support or patches. 
