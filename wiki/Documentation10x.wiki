@@ -6,6 +6,11 @@ This is the documentation for the shFlags 1.0.x release series.
 
 At its core, shFlags is simply a library that you include into an existing shell script that gives you some additional functions that can be called. The power behind those functions though is somewhat amazing though, and you will hopefully be amazed with the simplicity with which you can handle command-line arguments in shell.
 
+= Table of Contents =
+  * [#Quick_Start Quick Start]
+  * [#Usage Usage]
+  * [#Examples Examples]
+
 = Quick Start =
 Getting started with shFlags is quite easy. We'll start with the proverbial "Hello, world" application.
 
