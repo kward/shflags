@@ -1,12 +1,40 @@
 ﻿#summary shFlags product information.
 #labels Featured
 
-= Current releases =
+= Overview =
+shFlags is a Unix shell library to simplify the handling of command-line flags.
 
-== 1.0.x – Stable releases ==
+_Tested Operating Systems_
+  * Linux ([http://ubuntu.com/ Ubuntu])
+  * [http://www.apple.com/macosx/ Mac OS X] 10.5
+  * [http://www.sun.com/software/solaris/ Solaris] 9, 10 
 
-|| *Release* || *Date* || *MD5* ||
-|| 1.0.0 || Wed Jun 18 2008 || `8026fefb8d2493353fe2563bf3feb2ae` ||
+Tested Shells
+  * Bourne Shell (`sh`)
+  * [http://www.gnu.org/software/bash/ BASH] - GNU Bourne Again SHell (`bash`)
+  * [http://gondor.apana.org.au/~herbert/dash/ DASH] (`dash`)
+  * [http://www.kornshell.com/ Korn Shell] (`ksh`)
+  * [http://web.cs.mun.ca/~michael/pdksh/ pdksh] - the Public Domain Korn Shell (`pdksh`) 
+
+Development and testing of shFlags was done by Kate Ward. More products for Unix shell scripts can be found at http://forestent.com/wiki/Main_Page.
+
+= Downloading =
+If you would like to verify the GPG signatures of the releases, they are signed with the kate.ward@forestent.com public GPG key. More information can be found on our [http://forestent.com/wiki/Info:GnuPG GnuPG Info] page. 
+
+== 1.0.0 – Stable release ==
+|| *Release* || *Date* ||
+|| [http://shflags.googlecode.com/files/shflags-1.0.0.tgz 1.0.0] || Wed Jun 18 2008 ||
 
 == 1.1.x – Development releases ==
 _This release series hasn't been started yet._
+
+= Miscellaneous =
+
+== Licensing ==
+shFlags is licensed under the GNU [http://www.gnu.org/licenses/lgpl.html Lesser General Public License] (LGPL). The contents and copyright of this site and all provided source code are owned by [mailto:kate.ward@forestent.com Kate Ward].
+
+== Full Disclosure ==
+Although I am currently an employee of Google Ireland, Ltd. ([mailto:kward@google.com Kate Ward]), the shFlags port of gFlags is not meant to reflect in any way on the work I do for Google. This product is not supported or endorsed by Google, and they should not be contacted for any problems you encounter with this product.
+
+== Thanks ==
+A list of contributors is provided with each release (found as `doc/contributors.txt`). Many thanks go out to each of these individuals for finding bugs and/or providing support or patches. 
