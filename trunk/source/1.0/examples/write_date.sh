@@ -1,4 +1,19 @@
 #!/bin/sh
+#
+# Copyright 2008 Kate Ward. All Rights Reserved.
+# Released under the LGPL (GNU Lesser General Public License)
+#
+# Author: kate.ward@forestent.com (Kate Ward)
+#
+# This script takes a filename as input and writes the current date to the
+# file. If the file already exists, it will not be overwritten unless the '-f'
+# (or '--force') flag is given.
+#
+# This script demonstrates several types of shFlags functionality.
+# - declaration of the FLAGS_HELP variable to customize the help output
+# - direct calling of the flags_help() function for script controlled usage
+#   output
+# - handling of non-flag type command-line arguments that follow the flags
 
 # source shflags
 . ../src/shflags

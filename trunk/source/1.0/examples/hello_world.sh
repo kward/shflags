@@ -1,4 +1,16 @@
 #!/bin/sh
+#
+# Copyright 2008 Kate Ward. All Rights Reserved.
+# Released under the LGPL (GNU Lesser General Public License)
+#
+# Author: kate.ward@forestent.com (Kate Ward)
+#
+# This is the proverbial 'Hello, world!' script to demonstrate the most basic
+# functionality of shFlags.
+#
+# This script demonstrates accepts a single command-line flag of '-n' (or
+# '--name'). If a name is given, it is output, otherwise the default of 'world'
+# is output.
 
 # source shflags
 . ../src/shflags
