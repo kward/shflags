@@ -21,7 +21,7 @@ Development and testing of shFlags was done by Kate Ward. More products for Unix
 == Downloading ==
 If you would like to verify the GPG signatures of the releases, please take a look at my [http://forestent.com/wiki/Info:GnuPG GnuPG Info] page.
 
-=== 1.0.x – Stable release ===
+=== 1.0.x – Stable releases ===
 || *Release* || *Date* ||
 || [http://shflags.googlecode.com/files/shflags-1.0.0.tgz 1.0.0] || Wed Jun 18 2008 ||
 
