@@ -1,7 +1,7 @@
 ﻿#summary shFlags product information.
 #labels Featured
 
-= Overview =
+== Overview ==
 shFlags is a Unix shell library to simplify the handling of command-line flags.
 
 _Tested Operating Systems_
@@ -18,23 +18,23 @@ Tested Shells
 
 Development and testing of shFlags was done by Kate Ward. More products for Unix shell scripts can be found at http://forestent.com/wiki/Main_Page.
 
-= Downloading =
+== Downloading ==
 If you would like to verify the GPG signatures of the releases, please take a look at my [http://forestent.com/wiki/Info:GnuPG GnuPG Info] page.
 
-== 1.0.0 – Stable release ==
+=== 1.0.x – Stable release ===
 || *Release* || *Date* ||
 || [http://shflags.googlecode.com/files/shflags-1.0.0.tgz 1.0.0] || Wed Jun 18 2008 ||
 
-== 1.1.x – Development releases ==
+=== 1.1.x – Development releases ===
 _This release series hasn't been started yet._
 
-= Miscellaneous =
+== Miscellaneous ==
 
-== Licensing ==
+=== Licensing ===
 shFlags is licensed under the GNU [http://www.gnu.org/licenses/lgpl.html Lesser General Public License] (LGPL). The contents and copyright of this site and all provided source code are owned by [http://www.linkedin.com/pub/0/9b9/111 Kate Ward].
 
-== Full Disclosure ==
+=== Full Disclosure ===
 Although I am currently an employee of Google Ireland, Ltd., the shFlags port of gFlags is not meant to reflect in any way on the work I do for Google. This product is not supported or endorsed by Google, and they should not be contacted for any problems you encounter with this product.
 
-== Thanks ==
+=== Thanks ===
 A list of contributors is provided with each release (found as `doc/contributors.txt`). Many thanks go out to each of these individuals for finding bugs and/or providing support or patches. 
