@@ -17,60 +17,6 @@
 # suite tests
 #
 
-testHelp()
-{
-  #
-  # test short -h option
-  #
-
-  rslt=`FLAGS -h 2>&1`
-  rtrn=$?
-  assertFalse \
-      'short request for help should have returned non-zero exit code.' \
-      ${rtrn}
-  echo "${rslt}" |grep -- 'show this help' >/dev/null
-  rtrn=$?
-  assertTrue \
-      'short request for help should have produced some help output.' \
-      ${rtrn}
-  [ ${rtrn} -ne ${FLAGS_TRUE} ] && echo "${rslt}" >&2
-
-  # test proper output when FLAGS_HELP set
-  rslt=`FLAGS_HELP='this is a test'; FLAGS -h 2>&1`
-  echo "${rslt}" |grep -- 'this is a test' >/dev/null
-  rtrn=$?
-  assertTrue \
-      'setting FLAGS_HELP did not produce expected result' \
-      ${rtrn}
-  [ ${rtrn} -ne ${FLAGS_TRUE} ] && echo "${rslt}" >&2
-
-  # test that "'" chars work in help string
-  DEFINE_boolean b false "help string containing a ' char" b
-  rslt=`FLAGS -h 2>&1`
-  echo "${rslt}" |grep -- "help string containing a ' char" >/dev/null
-  rtrn=$?
-  assertTrue \
-      "help strings containing apostrophes don't work" \
-      ${rtrn}
-  [ ${rtrn} -ne ${FLAGS_TRUE} ] && echo "${rslt}" >&2
-
-  #
-  # test long --help option
-  #
-
-  flags_getoptIsStd && startSkipping
-
-  rslt=`FLAGS --help 2>&1`
-  rtrn=$?
-  assertFalse \
-      'long request for help should have returned non-zero exit code.' \
-      ${rtrn}
-  echo "${rslt}" |grep -- 'show this help' >/dev/null
-  assertTrue \
-      'long request for help should have produced some help output.' \
-      $?
-}
-
 testValidBooleanShort()
 {
   DEFINE_boolean bool false 'boolean value' b
