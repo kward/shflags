@@ -10,9 +10,10 @@
 MY_NAME=`basename $0`
 MY_PATH=`dirname $0`
 
+PREFIX='shflags_test_'
 SHELLS='/bin/sh /bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/zsh'
 TESTS=''
-for test in shflags_test_[a-z]*.sh; do
+for test in ${PREFIX}[a-z]*.sh; do
   TESTS="${TESTS} ${test}"
 done
 
@@ -121,7 +122,7 @@ EOF
 
   # execute the tests
   for suite in ${tests}; do
-    suiteName=`expr "${suite}" : 'gflags_test_\(.*\).sh'`
+    suiteName=`expr "${suite}" : "${PREFIX}\(.*\).sh"`
     echo
     echo "--- Executing the '${suiteName}' test suite ---" >&2
     ( exec ${shell} ${shell_opts} ./${suite}; )

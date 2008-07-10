@@ -9,6 +9,9 @@
 
 __th_skipping=0
 
+# my name
+TH_MY_NAME=`basename "$0"`
+
 # path to shFlags library. can be overridden by setting SHFLAGS_INC
 TH_SHFLAGS=${SHFLAGS_INC:-./shflags}
 
