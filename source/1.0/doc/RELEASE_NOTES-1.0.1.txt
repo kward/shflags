@@ -1,0 +1,72 @@
+------------------------------
+shFlags.sh 1.0.1 Release Notes
+------------------------------
+
+Preface
+-------
+Copyright 2008 Kate Ward. All Rights Reserved.
+Released under the LGPL (GNU Lesser General Public License)
+
+Author: Kate Ward (kate.ward@forestent.com)
+
+This document covers any known issues and workarounds for the stated release of
+shFlags.
+
+General info
+------------
+
+This is a minor bugfix release of shFlags. It mainly fixes poor output of the
+automated help system, but it also includes a couple more examples that are
+referenced by the documentation.
+
+Please see the CHANGES-1.0.txt file for a complete list of changes.
+
+Disclamer
+---------
+
+The unit tests
+--------------
+
+shFlags is designed to work on as many environments as possible, but not all
+environments are created equal. As such, not all of the unit tests will succeed
+on every platform. The unit tests are therefore designed to fail, indicating to
+the tester that the supported functionality is not present, but an additional
+test is present to verify that shFlags properly caught the limitation and
+presented the user with an appropriate error message.
+
+shFlags tries to support both the standard and enhanced versions of ``getopt``.
+As each responds differently, and not everything is supported on the standard
+version, some unit tests will be skipped (i.e. ASSERTS will not be thrown) when
+the standard version of ``getopt`` is detected. The reason being that there is
+no point testing for functionality that is positively known not to exist. A
+tally of skipped tests will be kept for later reference.
+
+Standard vs Enhanced getopt
+---------------------------
+
+Here is a matrix of the supported features of the various getopt variants.
+
++-------------------------+---+---+
+|Feature                  |std|enh|
++=========================+===+===+
+|short option names       | Y | Y |
+|long option names        | N | Y |
+|spaces in string options | N | Y |
++-------------------------+---+---+
+
+Known Issues
+------------
+
+The getopt version provided by default with all versions of Mac OS X (up to and
+including 10.5) is the standard version. As such, only short flags are
+supported.
+
+The getopt version provided by default with all versions of Solaris (up to and
+including Solaris 10) is the standard version. As such, only short flags are
+supported.
+
+Workarounds
+-----------
+
+The zsh shell requires the 'shwordsplit' option to be set, and the special
+FLAGS_PARENT variable must be defined.

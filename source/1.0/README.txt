@@ -61,7 +61,7 @@ command. ::
 Update Version
 --------------
 
-Edit ``src/shflags`` and change the version number in the ``__FLAGS_VERSION``
+Edit ``src/shflags`` and change the version number in the ``FLAGS_VERSION``
 variable.
 
 Finish Documentation
@@ -139,10 +139,19 @@ Post to Freshmeat
 - http://freshmeat.net/
 
 
+Appendix
+========
+
 Related Documentation
-=====================
+---------------------
 
 :google-gflags: http://code.google.com/p/google-gflags/
+
+Miscellaneous
+-------------
+
+This document is written using the Restructured Text format to make it easily
+parsable into an HTML file.
 
 
 .. generate HTML using rst2html from Docutils of
