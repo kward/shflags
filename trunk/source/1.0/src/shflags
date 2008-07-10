@@ -66,8 +66,8 @@
 # - lists of strings are space separated, and a null value is the '~' char.
 
 # return if FLAGS already loaded
-[ -n "${__FLAGS_VERSION:-}" ] && return 0
-__FLAGS_VERSION='1.0.0'
+[ -n "${FLAGS_VERSION:-}" ] && return 0
+FLAGS_VERSION='1.0.1'
 
 _flags_debug() { echo "flags:DEBUG $@" >&2; }
 _flags_error() { echo "flags:ERROR $@" >&2; }

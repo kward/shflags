@@ -6,6 +6,8 @@ Changes with 1.0.1
 
 Fixed bug where the help output added [no] to all flag names
 
+Added additional example files that are referenced by the documentation.
+
 
 Changes with 1.0.0
 ------------------
