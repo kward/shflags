@@ -778,7 +778,11 @@ flags_help()
             _flags_helpstr="${_flags_helpstr},"
         _flags_type=`_flags_getFlagInfo \
             "${_flags_name}" ${__FLAGS_INFO_TYPE_STR}`
-        [ ${_flags_type} -eq ${__FLAGS_TYPE_BOOLEAN} ] && _flags_boolstr='[no]'
+          if [ ${_flags_type} -eq ${__FLAGS_TYPE_BOOLEAN} ]; then
+            _flags_boolstr='[no]'
+          else
+            _flags_boolstr=''
+          fi
         _flags_helpstr="${_flags_helpstr}--${_flags_boolstr:-}${_flags_name}:"
       fi
 
