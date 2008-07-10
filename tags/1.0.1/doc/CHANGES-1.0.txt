@@ -1,0 +1,15 @@
+Changes in shFlags 1.0.x
+========================
+
+Changes with 1.0.1
+------------------
+
+Fixed bug where the help output added [no] to all flag names
+
+Added additional example files that are referenced by the documentation.
+
+
+Changes with 1.0.0
+------------------
+
+This is the first official release, so everything is new.
