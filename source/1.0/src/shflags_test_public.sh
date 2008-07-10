@@ -15,7 +15,7 @@
 # suite tests
 #
 
-testGeneralHelpOutput()
+testHelp()
 {
   #
   # test short -h option
@@ -69,17 +69,44 @@ testGeneralHelpOutput()
       $?
 }
 
-testSpecificHelpOutput()
+testStandardHelpOutput()
 {
-  DEFINE_string test '' 'test string' t
+  flags_getoptIsEnh && startSkipping
 
-  # short option testing
+  DEFINE_boolean test_bool false 'test boolean' b
+  DEFINE_string test_str '' 'test string' s
+  FLAGS_HELP='USAGE: standard [flags] args'
 
   cat >"${expectedF}" <<EOF
-USAGE: ./${shunitParent} [flags] args
+USAGE: standard [flags] args
 flags:
   -h  show this help
-  -t  test string
+  -b  test boolean
+  -s  test string
+EOF
+  ( FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
+  diff "${expectedF}" "${stderrF}" >/dev/null
+  rtrn=$?
+  assertTrue 'unexpected help output' ${rtrn}
+  [ ${__shunit_skip} -eq ${SHUNIT_FALSE} \
+    -a ${rtrn} -ne ${FLAGS_TRUE} ] \
+      && cat "${stderrF}"
+}
+
+testEnhancedHelpOutput()
+{
+  flags_getoptIsEnh || startSkipping
+
+  DEFINE_boolean test_bool false 'test boolean' b
+  DEFINE_string test_str '' 'test string' s
+  FLAGS_HELP='USAGE: enhanced [flags] args'
+
+  cat >"${expectedF}" <<EOF
+USAGE: enhanced [flags] args
+flags:
+  -h,--[no]help:  show this help
+  -b,--[no]test_bool:  test boolean
+  -s,--test_str:  test string
 EOF
   ( FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
   diff "${expectedF}" "${stderrF}" >/dev/null
@@ -93,10 +120,11 @@ EOF
   flags_getoptIsStd && startSkipping
 
   cat >"${expectedF}" <<EOF
-USAGE: ./${shunitParent} [flags] args
+USAGE: enhanced [flags] args
 flags:
-  -h  show this help
-  -t  test string
+  -h,--[no]help:  show this help
+  -b,--[no]test_bool:  test boolean
+  -s,--test_str:  test string
 EOF
   ( FLAGS --help >"${stdoutF}" 2>"${stderrF}" )
   diff "${expectedF}" "${stderrF}" >/dev/null
@@ -122,8 +150,6 @@ oneTimeSetUp()
   stdoutF="${tmpDir}/stdout"
   stderrF="${tmpDir}/stderr"
   expectedF="${tmpDir}/expected"
-
-  shunitParent=`basename "${__SHUNIT_PARENT}"`
 }
 
 setUp()
