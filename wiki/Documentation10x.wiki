@@ -87,6 +87,13 @@ Hello, Kate!
 }}}
 This time around, the `FLAGS_name` variable was defined with the value 'Kate' as we passed the `-n` flag, and 'Hello, Kate!' was output. I bet you never thought accepting command-line arguments could be so easy!
 
+What about spaces in the flag value? Give it a try! _(Note: this requires the enhanced version of *`getopt`* at this time)_
+{{{
+$ ./hello_world.sh --name 'Kate Ward'
+Hello, Kate Ward!
+}}}
+It works!
+
 What happens if you can't remember the command-line flags you have defined, and what to find that out? Try passing the `-h` flag (or `--help`).
 {{{
 $ ./hello_world.sh -h
