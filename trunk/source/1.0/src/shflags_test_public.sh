@@ -102,7 +102,7 @@ testEnhancedHelpOutput()
 
   DEFINE_boolean test_bool false 'test boolean' b
   DEFINE_string test_str '' 'test string' s
-  help='USAGE: standard [flags] args'
+  help='USAGE: enhanced [flags] args'
 
   cat >"${expectedF}" <<EOF
 USAGE: enhanced [flags] args
