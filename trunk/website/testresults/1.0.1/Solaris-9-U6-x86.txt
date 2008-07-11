@@ -8,9 +8,9 @@ tests=" shflags_test_defines.sh shflags_test_parsing.sh shflags_test_private.sh 
 
 # system info
 $ date
-Fri Jul 11 20:41:28 GMT 2008
+Fri Jul 11 20:26:24 GMT 2008
 $ uname -mprsv
-Linux 2.6.24-19-server #1 SMP Wed Jun 18 15:18:00 UTC 2008 i686 unknown
+SunOS 5.9 Generic_117172-08 i86pc i386
 
 
 #------------------------------------------------------------------------------
@@ -37,6 +37,7 @@ tests skipped:    0   0%
 tests total:     65 100%
 
 --- Executing the 'parsing' test suite ---
+test:WARN Standard version of getopt found. Some tests will be skipped.
 #
 # Performing tests
 #
@@ -47,6 +48,9 @@ testInvalidFloats
 testValidIntegers
 testInvalidIntegers
 testValidStrings
+ASSERT:FLAGS (string with spaces) returned a non-zero result
+ASSERT:string (string with spaces) test failed.string (string with spaces) test failed. expected:<string with spaces> but was:<>
+flags:ERROR the available getopt does not support spaces in options
 testMultipleFlags
 testSingleNonFlagArg
 testMultipleNonFlagArgs
@@ -55,9 +59,9 @@ testMultipleNonFlagStringArgsWithSpaces
 #
 # Test report
 #
-tests passed:   179 100%
-tests failed:     0   0%
-tests skipped:    0   0%
+tests passed:    89  50%
+tests failed:     2   1%
+tests skipped:   88  49%
 tests total:    179 100%
 
 --- Executing the 'private' test suite ---
@@ -89,9 +93,9 @@ testEnhancedHelpOutput
 #
 # Test report
 #
-tests passed:     8  89%
+tests passed:     5  56%
 tests failed:     0   0%
-tests skipped:    1  11%
+tests skipped:    4  44%
 tests total:      9 100%
 
 
@@ -99,8 +103,8 @@ tests total:      9 100%
 # Running the test suite with /bin/bash
 #
 
-GNU bash, version 3.2.39(1)-release (i486-pc-linux-gnu)
-Copyright (C) 2007 Free Software Foundation, Inc.
+GNU bash, version 2.05.0(1)-release (i386-pc-solaris2.9)
+Copyright 2000 Free Software Foundation, Inc.
 
 --- Executing the 'defines' test suite ---
 #
@@ -122,6 +126,7 @@ tests skipped:    0   0%
 tests total:     65 100%
 
 --- Executing the 'parsing' test suite ---
+test:WARN Standard version of getopt found. Some tests will be skipped.
 #
 # Performing tests
 #
@@ -132,6 +137,9 @@ testInvalidFloats
 testValidIntegers
 testInvalidIntegers
 testValidStrings
+ASSERT:FLAGS (string with spaces) returned a non-zero result
+ASSERT:string (string with spaces) test failed.string (string with spaces) test failed. expected:<string with spaces> but was:<>
+flags:ERROR the available getopt does not support spaces in options
 testMultipleFlags
 testSingleNonFlagArg
 testMultipleNonFlagArgs
@@ -140,9 +148,9 @@ testMultipleNonFlagStringArgsWithSpaces
 #
 # Test report
 #
-tests passed:   179 100%
-tests failed:     0   0%
-tests skipped:    0   0%
+tests passed:    89  50%
+tests failed:     2   1%
+tests skipped:   88  49%
 tests total:    179 100%
 
 --- Executing the 'private' test suite ---
@@ -174,100 +182,18 @@ testEnhancedHelpOutput
 #
 # Test report
 #
-tests passed:     8  89%
+tests passed:     5  56%
 tests failed:     0   0%
-tests skipped:    1  11%
+tests skipped:    4  44%
 tests total:      9 100%
 
-
-#------------------------------------------------------------------------------
-# Running the test suite with /bin/dash
-#
-
---- Executing the 'defines' test suite ---
-#
-# Performing tests
-#
-testFlagsDefine
-testBoolean
-testFloat
-testInteger
-testString
-testShortNameLength
-
-#
-# Test report
-#
-tests passed:    65 100%
-tests failed:     0   0%
-tests skipped:    0   0%
-tests total:     65 100%
-
---- Executing the 'parsing' test suite ---
-#
-# Performing tests
-#
-testValidBooleanShort
-testValidBooleanLong
-testValidFloats
-testInvalidFloats
-testValidIntegers
-testInvalidIntegers
-testValidStrings
-testMultipleFlags
-testSingleNonFlagArg
-testMultipleNonFlagArgs
-testMultipleNonFlagStringArgsWithSpaces
-
-#
-# Test report
-#
-tests passed:   179 100%
-tests failed:     0   0%
-tests skipped:    0   0%
-tests total:    179 100%
-
---- Executing the 'private' test suite ---
-#
-# Performing tests
-#
-testGetFlagInfo
-testItemInList
-testValidateBoolean
-testValidateFloat
-testValidateInteger
-
-#
-# Test report
-#
-tests passed:    50 100%
-tests failed:     0   0%
-tests skipped:    0   0%
-tests total:     50 100%
-
---- Executing the 'public' test suite ---
-#
-# Performing tests
-#
-testHelp
-testStandardHelpOutput
-testEnhancedHelpOutput
-
-#
-# Test report
-#
-tests passed:     8  89%
-tests failed:     0   0%
-tests skipped:    1  11%
-tests total:      9 100%
+test:WARN unable to run tests with the /bin/dash shell
 
 
 #------------------------------------------------------------------------------
 # Running the test suite with /bin/ksh
 #
 
-  version         sh (AT&T Research) 1993-12-28 s+
-
 --- Executing the 'defines' test suite ---
 #
 # Performing tests
@@ -288,6 +214,7 @@ tests skipped:    0   0%
 tests total:     65 100%
 
 --- Executing the 'parsing' test suite ---
+test:WARN Standard version of getopt found. Some tests will be skipped.
 #
 # Performing tests
 #
@@ -298,6 +225,9 @@ testInvalidFloats
 testValidIntegers
 testInvalidIntegers
 testValidStrings
+ASSERT:FLAGS (string with spaces) returned a non-zero result
+ASSERT:string (string with spaces) test failed.string (string with spaces) test failed. expected:<string with spaces> but was:<>
+flags:ERROR the available getopt does not support spaces in options
 testMultipleFlags
 testSingleNonFlagArg
 testMultipleNonFlagArgs
@@ -306,9 +236,9 @@ testMultipleNonFlagStringArgsWithSpaces
 #
 # Test report
 #
-tests passed:   179 100%
-tests failed:     0   0%
-tests skipped:    0   0%
+tests passed:    89  50%
+tests failed:     2   1%
+tests skipped:   88  49%
 tests total:    179 100%
 
 --- Executing the 'private' test suite ---
@@ -340,99 +270,19 @@ testEnhancedHelpOutput
 #
 # Test report
 #
-tests passed:     8  89%
+tests passed:     5  56%
 tests failed:     0   0%
-tests skipped:    1  11%
+tests skipped:    4  44%
 tests total:      9 100%
 
-
-#------------------------------------------------------------------------------
-# Running the test suite with /bin/pdksh
-#
-
---- Executing the 'defines' test suite ---
-#
-# Performing tests
-#
-testFlagsDefine
-testBoolean
-testFloat
-testInteger
-testString
-testShortNameLength
-
-#
-# Test report
-#
-tests passed:    65 100%
-tests failed:     0   0%
-tests skipped:    0   0%
-tests total:     65 100%
-
---- Executing the 'parsing' test suite ---
-#
-# Performing tests
-#
-testValidBooleanShort
-testValidBooleanLong
-testValidFloats
-testInvalidFloats
-testValidIntegers
-testInvalidIntegers
-testValidStrings
-testMultipleFlags
-testSingleNonFlagArg
-testMultipleNonFlagArgs
-testMultipleNonFlagStringArgsWithSpaces
-
-#
-# Test report
-#
-tests passed:   179 100%
-tests failed:     0   0%
-tests skipped:    0   0%
-tests total:    179 100%
-
---- Executing the 'private' test suite ---
-#
-# Performing tests
-#
-testGetFlagInfo
-testItemInList
-testValidateBoolean
-testValidateFloat
-testValidateInteger
-
-#
-# Test report
-#
-tests passed:    50 100%
-tests failed:     0   0%
-tests skipped:    0   0%
-tests total:     50 100%
-
---- Executing the 'public' test suite ---
-#
-# Performing tests
-#
-testHelp
-testStandardHelpOutput
-testEnhancedHelpOutput
-
-#
-# Test report
-#
-tests passed:     8  89%
-tests failed:     0   0%
-tests skipped:    1  11%
-tests total:      9 100%
+test:WARN unable to run tests with the /bin/pdksh shell
 
 
 #------------------------------------------------------------------------------
 # Running the test suite with /bin/zsh
 #
 
-version: 4.3.4
+version: 3.0.8
 
 --- Executing the 'defines' test suite ---
 #
@@ -454,6 +304,7 @@ tests skipped:    0   0%
 tests total:     65 100%
 
 --- Executing the 'parsing' test suite ---
+test:WARN Standard version of getopt found. Some tests will be skipped.
 #
 # Performing tests
 #
@@ -464,6 +315,9 @@ testInvalidFloats
 testValidIntegers
 testInvalidIntegers
 testValidStrings
+ASSERT:FLAGS (string with spaces) returned a non-zero result
+ASSERT:string (string with spaces) test failed.string (string with spaces) test failed. expected:<string with spaces> but was:<>
+flags:ERROR the available getopt does not support spaces in options
 testMultipleFlags
 testSingleNonFlagArg
 testMultipleNonFlagArgs
@@ -472,9 +326,9 @@ testMultipleNonFlagStringArgsWithSpaces
 #
 # Test report
 #
-tests passed:   179 100%
-tests failed:     0   0%
-tests skipped:    0   0%
+tests passed:    89  50%
+tests failed:     2   1%
+tests skipped:   88  49%
 tests total:    179 100%
 
 --- Executing the 'private' test suite ---
@@ -506,7 +360,7 @@ testEnhancedHelpOutput
 #
 # Test report
 #
-tests passed:     8  89%
+tests passed:     5  56%
 tests failed:     0   0%
-tests skipped:    1  11%
+tests skipped:    4  44%
 tests total:      9 100%
