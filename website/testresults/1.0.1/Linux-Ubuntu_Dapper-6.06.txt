@@ -1,0 +1,430 @@
+#------------------------------------------------------------------------------
+# System data
+#
+
+# test run info
+shells="/bin/sh /bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/zsh"
+tests=" shflags_test_defines.sh shflags_test_parsing.sh shflags_test_private.sh shflags_test_public.sh"
+
+# system info
+$ date
+Fri Jul 11 16:40:56 IST 2008
+$ uname -mprsv
+Linux 2.6.18.5-gg34workstation-mixed64-32 #1 SMP Thu May 8 01:31:23 UTC 2008 x86_64 unknown
+
+
+#------------------------------------------------------------------------------
+# Running the test suite with /bin/sh
+#
+
+--- Executing the 'defines' test suite ---
+#
+# Performing tests
+#
+testFlagsDefine
+testBoolean
+testFloat
+testInteger
+testString
+testShortNameLength
+
+#
+# Test report
+#
+tests passed:    65 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:     65 100%
+
+--- Executing the 'parsing' test suite ---
+#
+# Performing tests
+#
+testValidBooleanShort
+testValidBooleanLong
+testValidFloats
+testInvalidFloats
+testValidIntegers
+testInvalidIntegers
+testValidStrings
+testMultipleFlags
+testSingleNonFlagArg
+testMultipleNonFlagArgs
+testMultipleNonFlagStringArgsWithSpaces
+
+#
+# Test report
+#
+tests passed:   179 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:    179 100%
+
+--- Executing the 'private' test suite ---
+#
+# Performing tests
+#
+testGetFlagInfo
+testItemInList
+testValidateBoolean
+testValidateFloat
+testValidateInteger
+
+#
+# Test report
+#
+tests passed:    50 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:     50 100%
+
+--- Executing the 'public' test suite ---
+#
+# Performing tests
+#
+testHelp
+testStandardHelpOutput
+testEnhancedHelpOutput
+
+#
+# Test report
+#
+tests passed:     8  89%
+tests failed:     0   0%
+tests skipped:    1  11%
+tests total:      9 100%
+
+
+#------------------------------------------------------------------------------
+# Running the test suite with /bin/bash
+#
+
+GNU bash, version 3.1.17(1)-release (i486-pc-linux-gnu)
+Copyright (C) 2005 Free Software Foundation, Inc.
+
+--- Executing the 'defines' test suite ---
+#
+# Performing tests
+#
+testFlagsDefine
+testBoolean
+testFloat
+testInteger
+testString
+testShortNameLength
+
+#
+# Test report
+#
+tests passed:    65 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:     65 100%
+
+--- Executing the 'parsing' test suite ---
+#
+# Performing tests
+#
+testValidBooleanShort
+testValidBooleanLong
+testValidFloats
+testInvalidFloats
+testValidIntegers
+testInvalidIntegers
+testValidStrings
+testMultipleFlags
+testSingleNonFlagArg
+testMultipleNonFlagArgs
+testMultipleNonFlagStringArgsWithSpaces
+
+#
+# Test report
+#
+tests passed:   179 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:    179 100%
+
+--- Executing the 'private' test suite ---
+#
+# Performing tests
+#
+testGetFlagInfo
+testItemInList
+testValidateBoolean
+testValidateFloat
+testValidateInteger
+
+#
+# Test report
+#
+tests passed:    50 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:     50 100%
+
+--- Executing the 'public' test suite ---
+#
+# Performing tests
+#
+testHelp
+testStandardHelpOutput
+testEnhancedHelpOutput
+
+#
+# Test report
+#
+tests passed:     8  89%
+tests failed:     0   0%
+tests skipped:    1  11%
+tests total:      9 100%
+
+test:WARN unable to run tests with the /bin/dash shell
+
+
+#------------------------------------------------------------------------------
+# Running the test suite with /bin/ksh
+#
+
+--- Executing the 'defines' test suite ---
+#
+# Performing tests
+#
+testFlagsDefine
+testBoolean
+testFloat
+testInteger
+testString
+testShortNameLength
+
+#
+# Test report
+#
+tests passed:    65 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:     65 100%
+
+--- Executing the 'parsing' test suite ---
+#
+# Performing tests
+#
+testValidBooleanShort
+testValidBooleanLong
+testValidFloats
+testInvalidFloats
+testValidIntegers
+testInvalidIntegers
+testValidStrings
+testMultipleFlags
+testSingleNonFlagArg
+testMultipleNonFlagArgs
+testMultipleNonFlagStringArgsWithSpaces
+
+#
+# Test report
+#
+tests passed:   179 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:    179 100%
+
+--- Executing the 'private' test suite ---
+#
+# Performing tests
+#
+testGetFlagInfo
+testItemInList
+testValidateBoolean
+testValidateFloat
+testValidateInteger
+
+#
+# Test report
+#
+tests passed:    50 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:     50 100%
+
+--- Executing the 'public' test suite ---
+#
+# Performing tests
+#
+testHelp
+testStandardHelpOutput
+testEnhancedHelpOutput
+
+#
+# Test report
+#
+tests passed:     8  89%
+tests failed:     0   0%
+tests skipped:    1  11%
+tests total:      9 100%
+
+
+#------------------------------------------------------------------------------
+# Running the test suite with /bin/pdksh
+#
+
+--- Executing the 'defines' test suite ---
+#
+# Performing tests
+#
+testFlagsDefine
+testBoolean
+testFloat
+testInteger
+testString
+testShortNameLength
+
+#
+# Test report
+#
+tests passed:    65 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:     65 100%
+
+--- Executing the 'parsing' test suite ---
+#
+# Performing tests
+#
+testValidBooleanShort
+testValidBooleanLong
+testValidFloats
+testInvalidFloats
+testValidIntegers
+testInvalidIntegers
+testValidStrings
+testMultipleFlags
+testSingleNonFlagArg
+testMultipleNonFlagArgs
+testMultipleNonFlagStringArgsWithSpaces
+
+#
+# Test report
+#
+tests passed:   179 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:    179 100%
+
+--- Executing the 'private' test suite ---
+#
+# Performing tests
+#
+testGetFlagInfo
+testItemInList
+testValidateBoolean
+testValidateFloat
+testValidateInteger
+
+#
+# Test report
+#
+tests passed:    50 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:     50 100%
+
+--- Executing the 'public' test suite ---
+#
+# Performing tests
+#
+testHelp
+testStandardHelpOutput
+testEnhancedHelpOutput
+
+#
+# Test report
+#
+tests passed:     8  89%
+tests failed:     0   0%
+tests skipped:    1  11%
+tests total:      9 100%
+
+
+#------------------------------------------------------------------------------
+# Running the test suite with /bin/zsh
+#
+
+version: 4.2.5
+
+--- Executing the 'defines' test suite ---
+#
+# Performing tests
+#
+testFlagsDefine
+testBoolean
+testFloat
+testInteger
+testString
+testShortNameLength
+
+#
+# Test report
+#
+tests passed:    65 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:     65 100%
+
+--- Executing the 'parsing' test suite ---
+#
+# Performing tests
+#
+testValidBooleanShort
+testValidBooleanLong
+testValidFloats
+testInvalidFloats
+testValidIntegers
+testInvalidIntegers
+testValidStrings
+testMultipleFlags
+testSingleNonFlagArg
+testMultipleNonFlagArgs
+testMultipleNonFlagStringArgsWithSpaces
+
+#
+# Test report
+#
+tests passed:   179 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:    179 100%
+
+--- Executing the 'private' test suite ---
+#
+# Performing tests
+#
+testGetFlagInfo
+testItemInList
+testValidateBoolean
+testValidateFloat
+testValidateInteger
+
+#
+# Test report
+#
+tests passed:    50 100%
+tests failed:     0   0%
+tests skipped:    0   0%
+tests total:     50 100%
+
+--- Executing the 'public' test suite ---
+#
+# Performing tests
+#
+testHelp
+testStandardHelpOutput
+testEnhancedHelpOutput
+
+#
+# Test report
+#
+tests passed:     8  89%
+tests failed:     0   0%
+tests skipped:    1  11%
+tests total:      9 100%
