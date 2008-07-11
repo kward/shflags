@@ -14,6 +14,11 @@ Upgraded shUnit2 to 2.1.4
 
 Added unit testing for the help output.
 
+When including a library (e.g. shflags) in a script, zsh 3.0.8 doesn't actually
+execute the code in-line, but later. As such, variables that are defined in the
+library cannot be used until functions are called from the main code. This
+required the 'help' flag definition to be moved inside the FLAGS command.
+
 
 Changes with 1.0.0
 ------------------

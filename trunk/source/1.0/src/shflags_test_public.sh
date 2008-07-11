@@ -78,16 +78,16 @@ testStandardHelpOutput()
 
   DEFINE_boolean test_bool false 'test boolean' b
   DEFINE_string test_str '' 'test string' s
-  FLAGS_HELP='USAGE: standard [flags] args'
+  help='USAGE: standard [flags] args'
 
   cat >"${expectedF}" <<EOF
 USAGE: standard [flags] args
 flags:
-  -h  show this help
   -b  test boolean
   -s  test string
+  -h  show this help
 EOF
-  ( FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
+  ( FLAGS_HELP=${help}; FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
   diff "${expectedF}" "${stderrF}" >/dev/null
   rtrn=$?
   assertTrue 'unexpected help output' ${rtrn}
@@ -102,16 +102,16 @@ testEnhancedHelpOutput()
 
   DEFINE_boolean test_bool false 'test boolean' b
   DEFINE_string test_str '' 'test string' s
-  FLAGS_HELP='USAGE: enhanced [flags] args'
+  help='USAGE: standard [flags] args'
 
   cat >"${expectedF}" <<EOF
 USAGE: enhanced [flags] args
 flags:
-  -h,--[no]help:  show this help
   -b,--[no]test_bool:  test boolean
   -s,--test_str:  test string
+  -h,--[no]help:  show this help
 EOF
-  ( FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
+  ( FLAGS_HELP=${help}; FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
   diff "${expectedF}" "${stderrF}" >/dev/null
   rtrn=$?
   assertTrue 'short flag help; unexpected help output' ${rtrn}
@@ -125,11 +125,11 @@ EOF
   cat >"${expectedF}" <<EOF
 USAGE: enhanced [flags] args
 flags:
-  -h,--[no]help:  show this help
   -b,--[no]test_bool:  test boolean
   -s,--test_str:  test string
+  -h,--[no]help:  show this help
 EOF
-  ( FLAGS --help >"${stdoutF}" 2>"${stderrF}" )
+  ( FLAGS_HELP=${help}; FLAGS --help >"${stdoutF}" 2>"${stderrF}" )
   diff "${expectedF}" "${stderrF}" >/dev/null
   rtrn=$?
   assertTrue 'long flag help; unexpected help output' ${rtrn}
