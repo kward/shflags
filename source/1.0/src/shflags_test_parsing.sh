@@ -13,6 +13,9 @@
 # load test helpers
 . ./shflags_test_helpers
 
+# set shwordsplit for zsh
+[ -n "${ZSH_VERSION:-}" ] && setopt shwordsplit
+
 #------------------------------------------------------------------------------
 # suite tests
 #

@@ -79,8 +79,9 @@ FLAGS_ERROR=2
 
 # specific shell checks
 if [ -n "${ZSH_VERSION:-}" ]; then
-  if [ "`set -o |grep "^shwordsplit" |awk '{print $2}'`" = 'off' ]; then
-    _flags_fatal 'shwordsplit is required for proper operation'
+  setopt |grep "^shwordsplit$" >/dev/null
+  if [ $? -ne ${FLAGS_TRUE} ]; then
+    _flags_fatal 'zsh shwordsplit option is required for proper zsh operation'
     exit ${FLAGS_ERROR}
   fi
   if [ -z "${FLAGS_PARENT:-}" ]; then
@@ -156,7 +157,10 @@ __FLAGS_TYPE_STRING=4
 _flags_constants=`set |awk -F= '/^FLAGS_/ || /^__FLAGS_/ {print $1}'`
 for _flags_const in ${_flags_constants}; do
   if [ -n "${ZSH_VERSION:-}" ]; then
-    readonly -g ${_flags_const}  # declare readonly constants globally
+    case ${ZSH_VERSION} in
+      [123].*) readonly ${_flags_const} ;;
+      *) readonly -g ${_flags_const} ;;  # declare readonly constants globally
+    esac
   else
     readonly ${_flags_const}
   fi

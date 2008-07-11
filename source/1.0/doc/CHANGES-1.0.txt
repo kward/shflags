@@ -8,6 +8,12 @@ Fixed bug where the help output added [no] to all flag names
 
 Added additional example files that are referenced by the documentation.
 
+Improved zsh version and option checking.
+
+Upgraded shUnit2 to 2.1.4
+
+Added unit testing for the help output.
+
 
 Changes with 1.0.0
 ------------------
