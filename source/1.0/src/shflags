@@ -520,6 +520,9 @@ FLAGS()
 {
   _flags_return=${FLAGS_TRUE}
 
+  # define standard 'help' flag
+  DEFINE_boolean 'help' false 'show this help' 'h'
+
   FLAGS_ARGC=0
   _flags_shortOpts=`_flags_genOptStr ${__FLAGS_OPTSTR_SHORT}`
   _flags_longOpts=''  # generated later only when needed
@@ -829,18 +832,12 @@ flags_reset()
   __flags_longNames=' '
   __flags_shortNames=' '
 
-  # define standard 'help' flag
-  DEFINE_boolean 'help' false 'show this help' 'h'
-
   unset _flags_name _flags_type _flags_strToEval
 }
 
 #==============================================================================
 # main
 #
-
-# define standard 'help' flag
-DEFINE_boolean 'help' false 'show this help' 'h'
 
 # restore the previous set of shell flags
 for _flags_shellFlag in ${__FLAGS_SHELL_FLAGS}; do
