@@ -100,7 +100,6 @@ for shell in ${shells}; do
 EOF
 
   shell_name=`basename ${shell}`
-  shell_opts=''
   case ${shell_name} in
     bash) echo; ${shell} --version; ;;
     dash) ;;
@@ -114,9 +113,9 @@ EOF
       ;;
     pdksh) ;;
     zsh)
-      shell_opts='-o shwordsplit --'
+      version=`echo 'echo ${ZSH_VERSION}' |${shell}`
       echo
-      ${shell} --version
+      echo "version: ${version}"
       ;;
   esac
 
@@ -125,7 +124,7 @@ EOF
     suiteName=`expr "${suite}" : "${PREFIX}\(.*\).sh"`
     echo
     echo "--- Executing the '${suiteName}' test suite ---" >&2
-    ( exec ${shell} ${shell_opts} ./${suite}; )
+    ( exec ${shell} ./${suite}; )
   done
 done
 

@@ -9,6 +9,9 @@
 
 __th_skipping=0
 
+# set shwordsplit for zsh
+[ -n "${ZSH_VERSION:-}" ] && setopt shwordsplit
+
 # my name
 TH_MY_NAME=`basename "$0"`
 
