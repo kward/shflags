@@ -15,6 +15,7 @@ Tested Shells
   * [http://gondor.apana.org.au/~herbert/dash/ DASH] (`dash`)
   * [http://www.kornshell.com/ Korn Shell] (`ksh`)
   * [http://web.cs.mun.ca/~michael/pdksh/ pdksh] - the Public Domain Korn Shell (`pdksh`) 
+  * [http://www.zsh.org/ Zsh] (`zsh`)
 
 Development and testing of shFlags was done by Kate Ward. More products for Unix shell scripts can be found at http://forestent.com/wiki/Main_Page.
 
