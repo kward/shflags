@@ -22,7 +22,7 @@ Getting started with shFlags is quite easy. We'll start with the proverbial "Hel
 
 Just a quick note before we start. All examples assume that the `shflags` library has been copied the current directory, and that the scripts listed here are also in the current directory. You are free to move the `shflags` library wherever you want as long as you remember to update the line that sources the library.
 
-Example: `hello_world.sh`
+Example: `examples/hello_world.sh`
 {{{
 #!/bin/sh
 
@@ -162,7 +162,7 @@ Most scripts in this section are also provided in the `examples` directory. If y
 == Debug mode output ==
 This script sets up a `debug` flag that when specified will enable debug output to `STDERR`. If the flag is not specified (the default behavior), debug output is not enabled. 
 
-`examples/debug_output.sh`
+Example: `examples/debug_output.sh`
 {{{
 #!/bin/sh
 
@@ -184,7 +184,7 @@ echo 'something interesting'
 == Accept flags and options ==
 This script will try to write the current date to a filename given on the command-line. If the file already exists, the script will fail, but if a `-f` (or `--force`) flag is given, the existing file will be overwritten.
 
-`examples/write_date.sh`
+Example: `examples/write_date.sh`
 {{{
 #!/bin/sh
 
