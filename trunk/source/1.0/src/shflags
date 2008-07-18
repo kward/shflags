@@ -67,7 +67,7 @@
 
 # return if FLAGS already loaded
 [ -n "${FLAGS_VERSION:-}" ] && return 0
-FLAGS_VERSION='1.0.1'
+FLAGS_VERSION='1.0.2pre'
 
 _flags_debug() { echo "flags:DEBUG $@" >&2; }
 _flags_error() { echo "flags:ERROR $@" >&2; }
@@ -106,8 +106,6 @@ unset _flags_shellFlag
 #
 # constants
 #
-
-__FLAGS_PARENT=${FLAGS_PARENT:-$0}
 
 # getopt version
 __FLAGS_GETOPT_VERS_STD=0
@@ -767,7 +765,7 @@ flags_help()
   if [ -n "${FLAGS_HELP:-}" ]; then
     echo "${FLAGS_HELP}" >&2
   else
-    echo "USAGE: ${__FLAGS_PARENT} [flags] args" >&2
+    echo "USAGE: ${FLAGS_PARENT:-$0} [flags] args" >&2
   fi
   if [ -n "${__flags_longNames}" ]; then
     echo 'flags:' >&2
