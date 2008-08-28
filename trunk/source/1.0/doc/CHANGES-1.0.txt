@@ -7,6 +7,9 @@ Changes with 1.0.2
 FLAGS_PARENT no longer transforms into a constant so that it can be defined at
 run time in scripts.
 
+Added warning about short flags being unsupported when there are problems
+parsing the options with getopt.
+
 
 Changes with 1.0.1
 ------------------
