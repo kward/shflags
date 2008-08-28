@@ -70,6 +70,7 @@
 FLAGS_VERSION='1.0.2pre'
 
 _flags_debug() { echo "flags:DEBUG $@" >&2; }
+_flags_warn() { echo "flags:WARN $@" >&2; }
 _flags_error() { echo "flags:ERROR $@" >&2; }
 _flags_fatal() { echo "flags:FATAL $@" >&2; }
 
@@ -552,6 +553,7 @@ FLAGS()
         -- "$@" 2>&1`
   fi
   if [ $? -ne 0 ]; then
+    _flags_warn 'getopt on this platform supports only short flags.'
     flags_error='unable to parse provided options with getopt.'
     _flags_return=${FLAGS_ERROR}
   fi
