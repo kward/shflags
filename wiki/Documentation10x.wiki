@@ -50,7 +50,7 @@ So what just happened? Let's go through the script line-by-line.
 
 {{{
 # source shflags
-`. ./shflags`
+. ./shflags
 }}}
 This line sources the `shflags` library into the current shell environment. It brings in several functions and sets several variables, but you won't actually see output from this line.
 
