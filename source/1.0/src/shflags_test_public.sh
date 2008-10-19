@@ -6,7 +6,7 @@
 #
 # Author: kate.ward@forestent.com (Kate Ward)
 #
-# shFlags unit test for the internal functions
+# shFlags unit test for the public functions
 
 # load test helpers
 . ./shflags_test_helpers
@@ -77,15 +77,21 @@ testStandardHelpOutput()
   flags_getoptIsEnh && startSkipping
 
   DEFINE_boolean test_bool false 'test boolean' b
+  DEFINE_integer test_int 0 'test integer' i
   DEFINE_string test_str '' 'test string' s
+  DEFINE_string long_desc 'blah' \
+      'testing of a long description to force wrap of default value' l
   help='USAGE: standard [flags] args'
 
   cat >"${expectedF}" <<EOF
 USAGE: standard [flags] args
 flags:
-  -b  test boolean
-  -s  test string
-  -h  show this help
+  -b  test boolean (default: false)
+  -i  test integer (default: 0)
+  -s  test string (default: '')
+  -l  testing of a long description to force wrap of default value
+      (default: 'blah')
+  -h  show this help (default: false)
 EOF
   ( FLAGS_HELP=${help}; FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
   diff "${expectedF}" "${stderrF}" >/dev/null
@@ -101,15 +107,21 @@ testEnhancedHelpOutput()
   flags_getoptIsEnh || startSkipping
 
   DEFINE_boolean test_bool false 'test boolean' b
+  DEFINE_integer test_int 0 'test integer' i
   DEFINE_string test_str '' 'test string' s
+  DEFINE_string long_desc 'blah' \
+      'testing of a long description to force wrap of default value' l
   help='USAGE: enhanced [flags] args'
 
   cat >"${expectedF}" <<EOF
 USAGE: enhanced [flags] args
 flags:
-  -b,--[no]test_bool:  test boolean
-  -s,--test_str:  test string
-  -h,--[no]help:  show this help
+  -b,--[no]test_bool:  test boolean (default: false)
+  -i,--test_int:  test integer (default: 0)
+  -s,--test_str:  test string (default: '')
+  -l,--long_desc:  testing of a long description to force wrap of default value
+                   (default: 'blah')
+  -h,--[no]help:  show this help (default: false)
 EOF
   ( FLAGS_HELP=${help}; FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
   diff "${expectedF}" "${stderrF}" >/dev/null

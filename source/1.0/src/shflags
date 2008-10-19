@@ -376,12 +376,18 @@ _flags_getFlagInfo()
   if [ -n "${_flags__value}" ]; then
     flags_return=${FLAGS_TRUE}
   else
-    flags_return=${FLAGS_ERROR}
-    flags_error="invalid variable name (${_flags__var})"
+    _flags__type=`_flags_getFlagInfo "${_flags__name}" ${__FLAGS_INFO_TYPE_STR}`
+    if [ ${_flags__type} -eq ${__FLAGS_TYPE_STRING} ]; then
+      flags_return=${FLAGS_TRUE}
+    else
+      flags_return=${FLAGS_ERROR}
+      flags_error="invalid variable name (${_flags__var})"
+    fi
   fi
 
   echo "${_flags__value}"
-  unset _flags__info _flags__name _flags__strToEval _flags__var _flags__value
+  unset _flags__info _flags__name _flags__strToEval _flags__type _flags__value \
+      _flags__var
   [ ${flags_return} -eq ${FLAGS_ERROR} ] && _flags_error "${flags_error}"
   return ${flags_return}
 }
@@ -410,7 +416,18 @@ _flags_itemInList() {
   return ${flags_return}
 }
 
-# validate a boolean
+# Returns the length of a string.
+#
+# Args:
+#   str: string: string to determine length of
+# Returns:
+#   integer: length of string
+_flags_strlen()
+{
+  echo "$1" |wc -c |awk '{print $1}'
+}
+
+# Validate a boolean.
 #
 # Args:
 #   _flags__bool: boolean: value to validate
@@ -723,7 +740,7 @@ flags_getoptInfo()
   unset _flags__getoptReturn
 }
 
-# returns whether the detected getopt version is the enhanced version
+# Returns whether the detected getopt version is the enhanced version.
 #
 # Args:
 #   none
@@ -738,7 +755,7 @@ flags_getoptIsEnh()
   fi
 }
 
-# returns whether the detected getopt version is the standard version
+# Returns whether the detected getopt version is the standard version.
 #
 # Args:
 #   none
@@ -771,42 +788,65 @@ flags_help()
   fi
   if [ -n "${__flags_longNames}" ]; then
     echo 'flags:' >&2
-    for _flags_name in `echo ${__flags_longNames} |sort`; do
-      _flags_helpstr='  '
+    for _flags_name in ${__flags_longNames}; do
+      _flags_flagStr=''
 
-      _flags_short=`_flags_getFlagInfo \
-          "${_flags_name}" ${__FLAGS_INFO_SHORT_STR}`
-      if [ "${_flags_short}" != "${__FLAGS_NULL}" ]; then
-          _flags_helpstr="${_flags_helpstr}-${_flags_short}"
-      fi
-
-      if [ ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_ENH} ]; then
-        [ "${_flags_short}" != "${__FLAGS_NULL}" ] && \
-            _flags_helpstr="${_flags_helpstr},"
-        _flags_type=`_flags_getFlagInfo \
-            "${_flags_name}" ${__FLAGS_INFO_TYPE_STR}`
-          if [ ${_flags_type} -eq ${__FLAGS_TYPE_BOOLEAN} ]; then
-            _flags_boolstr='[no]'
-          else
-            _flags_boolstr=''
-          fi
-        _flags_helpstr="${_flags_helpstr}--${_flags_boolstr:-}${_flags_name}:"
-      fi
-
+      _flags_default=`_flags_getFlagInfo \
+          "${_flags_name}" ${__FLAGS_INFO_DEFAULT_STR}`
       _flags_help=`_flags_getFlagInfo \
           "${_flags_name}" ${__FLAGS_INFO_HELP_STR}`
-      _flags_helpstr="${_flags_helpstr}  ${_flags_help}"
+      _flags_short=`_flags_getFlagInfo \
+          "${_flags_name}" ${__FLAGS_INFO_SHORT_STR}`
+      _flags_type=`_flags_getFlagInfo \
+          "${_flags_name}" ${__FLAGS_INFO_TYPE_STR}`
 
-      echo "${_flags_helpstr}" >&2
+      [ "${_flags_short}" != "${__FLAGS_NULL}" ] \
+        && _flags_flagStr="${_flags_flagStr}-${_flags_short}"
+
+      if [ ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_ENH} ]; then
+        [ "${_flags_short}" != "${__FLAGS_NULL}" ] \
+          && _flags_flagStr="${_flags_flagStr},"
+        if [ ${_flags_type} -eq ${__FLAGS_TYPE_BOOLEAN} ]; then
+          _flags_boolStr='[no]'
+        else
+          _flags_boolStr=''
+        fi
+        _flags_flagStr="${_flags_flagStr}--${_flags_boolStr}${_flags_name}:"
+      fi
+
+      case ${_flags_type} in
+        ${__FLAGS_TYPE_BOOLEAN})
+          if [ ${_flags_default} -eq ${FLAGS_TRUE} ]; then
+            _flags_defaultStr='true'
+          else
+            _flags_defaultStr='false'
+          fi
+          ;;
+        ${__FLAGS_TYPE_FLOAT}|${__FLAGS_TYPE_INTEGER})
+          _flags_defaultStr=${_flags_default} ;;
+        ${__FLAGS_TYPE_STRING}) _flags_defaultStr="'${_flags_default}'" ;;
+      esac
+      _flags_defaultStr="(default: ${_flags_defaultStr})"
+
+      _flags_helpStr="  ${_flags_flagStr}  ${_flags_help} ${_flags_defaultStr}"
+      _flags_helpStrLen=`_flags_strlen "${_flags_helpStr}"`
+      if [ ${_flags_helpStrLen} -lt 80 ]; then
+        echo "${_flags_helpStr}" >&2
+      else
+        _flags_emptyStr="`echo ${_flags_flagStr} |sed 's/./ /g'`"
+        echo "  ${_flags_flagStr}  ${_flags_help}" >&2
+        echo "  ${_flags_emptyStr}  ${_flags_defaultStr}" >&2
+      fi
     done
   fi
 
-  unset _flags_boolstr _flags_help _flags_helpstr _flags_name _flags_short \
-      _flags_type
+  unset _flags_boolStr _flags_default _flags_defaultStr _flags_emptyStr \
+      _flags_flagStr _flags_help _flags_helpStr _flags_helpStrLen _flags_name \
+      _flags_short _flags_type
   return ${FLAGS_TRUE}
 }
 
-# reset all flags back to their default values
+# Reset all flags back to their default values.
 #
 # Args:
 #   none
@@ -841,8 +881,8 @@ flags_reset()
 
 # restore the previous set of shell flags
 for _flags_shellFlag in ${__FLAGS_SHELL_FLAGS}; do
-  echo ${_flags_oldShellFlags} |grep ${_flags_shellFlag} >/dev/null || \
-      set +${_flags_shellFlag}
+  echo ${_flags_oldShellFlags} \
+  |grep ${_flags_shellFlag} >/dev/null || set +${_flags_shellFlag}
 done
 unset _flags_oldShellFlags _flags_shellFlag
 

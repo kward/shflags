@@ -10,6 +10,11 @@ run time in scripts.
 Added warning about short flags being unsupported when there are problems
 parsing the options with getopt.
 
+Add default values to end of description strings.
+
+Fixed bug that returned an error instead of success when recalling the default
+values for empty strings.
+
 
 Changes with 1.0.1
 ------------------
