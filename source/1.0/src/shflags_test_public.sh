@@ -126,27 +126,8 @@ EOF
   ( FLAGS_HELP=${help}; FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
   diff "${expectedF}" "${stderrF}" >/dev/null
   rtrn=$?
-  assertTrue 'short flag help; unexpected help output' ${rtrn}
-  [ ${__shunit_skip} -eq ${SHUNIT_FALSE} \
-    -a ${rtrn} -ne ${FLAGS_TRUE} ] \
-      && cat "${stderrF}"
-
-  # long option testing
-  flags_getoptIsStd && startSkipping
-
-  cat >"${expectedF}" <<EOF
-USAGE: enhanced [flags] args
-flags:
-  -b,--[no]test_bool:  test boolean
-  -s,--test_str:  test string
-  -h,--[no]help:  show this help
-EOF
-  ( FLAGS_HELP=${help}; FLAGS --help >"${stdoutF}" 2>"${stderrF}" )
-  diff "${expectedF}" "${stderrF}" >/dev/null
-  rtrn=$?
-  assertTrue 'long flag help; unexpected help output' ${rtrn}
-  [ ${__shunit_skip} -eq ${SHUNIT_FALSE} \
-    -a ${rtrn} -ne ${FLAGS_TRUE} ] \
+  assertTrue 'unexpected help output' ${rtrn}
+  [ ${__shunit_skip} -eq ${SHUNIT_FALSE} -a ${rtrn} -ne ${FLAGS_TRUE} ] \
       && cat "${stderrF}"
 }
 
