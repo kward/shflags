@@ -11,7 +11,7 @@
 # versions of installed shells and the OS. The library can also be run as a
 # script if set execuatable.
 
-VERSIONS_SHELLS='/bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/zsh'
+VERSIONS_SHELLS='/bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/sh /bin/zsh'
 
 #------------------------------------------------------------------------------
 # functions
@@ -72,12 +72,14 @@ versions_shellVersion()
 
   version_='unknown'
   case ${shell_} in
-    */sh)  # this could be one of any number of shells. try until one fits.
-      version_=`versions_shell_bash ${shell_}`
-      # dash cannot be self determined yet
-      [ -z "${version_}" ] && version_=`versions_shell_ksh ${shell_}`
-      # pdksh is covered in versions_shell_ksh()
-      [ -z "${version_}" ] && version_=`versions_shell_zsh ${shell_}`
+    */sh)
+      # TODO(kward): fix this
+      ## this could be one of any number of shells. try until one fits.
+      #version_=`versions_shell_bash ${shell_}`
+      ## dash cannot be self determined yet
+      #[ -z "${version_}" ] && version_=`versions_shell_ksh ${shell_}`
+      ## pdksh is covered in versions_shell_ksh()
+      #[ -z "${version_}" ] && version_=`versions_shell_zsh ${shell_}`
       ;;
     */bash) version_=`versions_shell_bash ${shell_}` ;;
     */dash)
@@ -91,6 +93,7 @@ versions_shellVersion()
     */zsh) version_=`versions_shell_zsh ${shell_}` ;;
     *) version_='invalid'
   esac
+
   echo ${version_}
   unset shell_ version_
 }
@@ -144,8 +147,6 @@ versions_main()
   os_version=`versions_osVersion`
   echo "os: ${os_name} version: ${os_version}"
 
-  # note: /bin/sh not included as it is nearly always a sym-link, and if it
-  # isn't it is too much trouble to figure out what it is.
   for shell in ${VERSIONS_SHELLS}; do
     shell_version=`versions_shellVersion ${shell}`
     echo "shell: ${shell} version: ${shell_version}"
