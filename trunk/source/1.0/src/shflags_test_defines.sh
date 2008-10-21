@@ -20,51 +20,44 @@
 
 testFlagsDefine()
 {
-  # TODO(kward): check for messages on STDERR
   # no arguments
-  _flags_define 2>/dev/null
-  assertFalse \
-      '_flags_define() with no arguments should have failed.' \
-      $?
+  _flags_define >"${stdoutF}" 2>"${stderrF}"
+  assertFalse '_flags_define() with no arguments should have failed.' $?
+  assertErrorMsg
 
   # one argument
-  _flags_define arg1 2>/dev/null
-  assertFalse \
-      '_flags_define() with only one argument should have failed.' \
-      $?
+  _flags_define arg1 >"${stdoutF}" 2>"${stderrF}"
+  assertFalse '_flags_define() call with one argument should fail' $?
+  assertErrorMsg
 
   # two arguments
-  _flags_define arg1 arg2 2>/dev/null
-  assertFalse \
-      '_flags_define() with only two arguments should have failed.' \
-      $?
+  _flags_define arg1 arg2 >"${stdoutF}" 2>"${stderrF}"
+  assertFalse '_flags_define() call with two arguments should fail' $?
+  assertErrorMsg
 
   # three arguments
-  _flags_define arg1 arg2 arg3 2>/dev/null
-  assertFalse \
-      '_flags_define() with only three arguments should have failed.' \
-      $?
+  _flags_define arg1 arg2 arg3 >"${stdoutF}" 2>"${stderrF}"
+  assertFalse '_flags_define() call with three arguments should fail' $?
+  assertErrorMsg
 
   # multiple definition -- assumes working boolean definition (tested elsewhere)
   _flags_define ${__FLAGS_TYPE_BOOLEAN} multiDefBool true 'multi def #1' m
-  _flags_define ${__FLAGS_TYPE_BOOLEAN} multiDefBool false 'multi def #2' m
-  rtrn=$?
+  _flags_define ${__FLAGS_TYPE_BOOLEAN} multiDefBool false 'multi def #2' m \
+      >"${stdoutF}" 2>"${stderrF}"
+  assertFalse '_flags_define() with existing flag name should fail' $?
   assertTrue \
       '_flags_define() should not overwrite previously defined default.' \
       "${FLAGS_multiDefBool:-}"
-  assertFalse \
-      '_flags_define() with existing flag name should fail' \
-      ${rtrn}
+  assertWarnMsg
 
   # TODO(kward): test requirement of enhanced getopt
 
   # invalid type
-  # TODO(kward): check for message on STDERR
-  _flags_define invalid arg2 arg3 arg4 >"${stdoutF}" 2>"${stderrF}"
-  assertFalse \
-      '_flags_define() with invalid "type" should have failed.' \
-      $?
-  assertNotNull 'expected output to STDERR' "`cat ${stderrF}`"
+  _flags_define invalid arg2 arg3 arg4 o >"${stdoutF}" 2>"${stderrF}"
+  assertFalse '_flags_define() with invalid "type" should have failed.' $?
+  assertErrorMsg 'unrecognized flag type'
+  grep '^flags:ERROR unrecognized flag type' "${stderrF}" >/dev/null
+  assertTrue 'expected unrecognized flag type error' $?
 }
 
 testBoolean()
@@ -75,10 +68,10 @@ testBoolean()
     DEFINE_boolean boolVal "${default}" 'my boolean' b
     rtrn=$?
     assertTrue \
-        "DEFINE_boolean() call with default of \"${default}\" failed." \
+        "DEFINE_boolean() call with default of '${default}' failed." \
         "${FLAGS_boolVal:-}"
     assertTrue \
-        "DEFINE_boolean() call with default of \"${default}\" returned faliure." \
+        "DEFINE_boolean() call with default of '${default}' returned faliure." \
         ${rtrn}
   done
 
@@ -88,20 +81,18 @@ testBoolean()
     DEFINE_boolean boolVal "${default}" 'my boolean' b
     rtrn=$?
     assertFalse \
-        "DEFINE_boolean() call with default of \"${default}\" failed." \
+        "DEFINE_boolean() call with default of '${default}' failed." \
         "${FLAGS_boolVal:-}"
     assertTrue \
-        "DEFINE_boolean() call with default of \"${default}\" returned faliure." \
+        "DEFINE_boolean() call with default of '${default}' returned faliure." \
         ${rtrn}
   done
 
   # test invalid default
   flags_reset
   DEFINE_boolean boolVal 'invalid' 'my boolean' b >"${stdoutF}" 2>"${stderrF}"
-  assertFalse \
-      'DEFINE_boolean() call with invalid default did not fail.' \
-      $?
-  assertNotNull 'expected output to STDERR' "`cat ${stderrF}`"
+  assertFalse 'DEFINE_boolean() call with invalid default did not fail.' $?
+  assertErrorMsg
 }
 
 testFloat()
@@ -111,11 +102,10 @@ testFloat()
     flags_reset
     DEFINE_float floatVal ${default} "float: ${default}" f
     rtrn=$?
-    assertSame \
-        "DEFINE_float() call with valid default failed." \
+    assertSame "DEFINE_float() call with valid default failed." \
         ${default} "${FLAGS_floatVal:-}"
     assertTrue \
-        "DEFINE_float() call with valid default of \"${default}\" returned faliure." \
+        "DEFINE_float() call with valid default of '${default}' returned faliure." \
         ${rtrn}
   done
 
@@ -123,9 +113,7 @@ testFloat()
   flags_reset
   DEFINE_float floatVal 'invalid' 'invalid float: string' f \
       >"${stdoutF}" 2>"${stderrF}"
-  assertFalse \
-      'DEFINE_float() call with string value default did not fail.' \
-      $?
+  assertFalse 'DEFINE_float() call with string value default did not fail.' $?
   assertErrorMsg
 }
 
@@ -140,7 +128,7 @@ testInteger()
         "DEFINE_integer() call with valid default failed." \
         ${default} "${FLAGS_intVal:-}"
     assertTrue \
-        "DEFINE_integer() call with valid default of \"${default}\" returned faliure." \
+        "DEFINE_integer() call with valid default of '${default}' returned failure." \
         ${rtrn}
   done
 
@@ -148,24 +136,22 @@ testInteger()
   flags_reset
   DEFINE_integer intVal 1.234 'invalid integer: float' i \
       >"${stdoutF}" 2>"${stderrF}"
-  assertFalse \
-      'DEFINE_integer() call with float value default did not fail.' \
-      $?
-  assertErrorMsg 'float default'
+  assertFalse 'DEFINE_integer() call with float value default did not fail.' $?
+  assertErrorMsg 'invalid default' 'float default'
 
   DEFINE_integer intVal -1.234 'invalid integer: negative float' i \
       >"${stdoutF}" 2>"${stderrF}"
   assertFalse \
       'DEFINE_integer() call with negative float value default did not fail.' \
       $?
-  assertErrorMsg 'negative float default'
+  assertErrorMsg 'invalid default' 'negative float default'
 
   DEFINE_integer intVal 'invalid' 'invalid integer: string' i \
       >"${stdoutF}" 2>"${stderrF}"
   assertFalse \
       'DEFINE_integer() call with string value default did not fail.' \
       $?
-  assertErrorMsg 'string default'
+  assertErrorMsg 'invalid default' 'string default'
 }
 
 testString()
@@ -179,7 +165,7 @@ testString()
         "DEFINE_string() call with valid default failed." \
         "${default}" "${FLAGS_strVal:-}"
     assertTrue \
-        "DEFINE_string() call with valid default of \"${default}\" returned faliure." \
+        "DEFINE_string() call with valid default of '${default}' returned faliure." \
         ${rtrn}
   done
 
@@ -189,7 +175,7 @@ testString()
   rtrn=$?
   assertSame \
       "DEFINE_string() call with valid default failed." \
-      "" "${FLAGS_str:-}"
+      '' "${FLAGS_str:-}"
 }
 
 testShortNameLength()
