@@ -15,6 +15,10 @@ Add default values to end of description strings.
 Fixed bug that returned an error instead of success when recalling the default
 values for empty strings.
 
+Added warning when a duplicate flag definition is attempted.
+
+Improved assert[Warn|Error]Msg() test helper grepping.
+
 
 Changes with 1.0.1
 ------------------

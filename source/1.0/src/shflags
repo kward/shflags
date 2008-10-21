@@ -231,6 +231,7 @@ declare one for the (${_flags__name}) flag."
         ${__flags_longNames} ${__flags_boolNames}
     then
       flags_error="flag name ([no]${_flags__name}) already defined"
+      _flags_warn "${flags_error}"
       _flags__return=${FLAGS_FALSE}
     fi
   fi
@@ -241,6 +242,7 @@ declare one for the (${_flags__name}) flag."
   then
     if _flags_itemInList "${_flags__short}" ${__flags_shortNames}; then
       flags_error="flag short name (${_flags__short}) already defined"
+      _flags_warn "${flags_error}"
       _flags__return=${FLAGS_FALSE}
     fi
   fi

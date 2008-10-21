@@ -54,8 +54,18 @@ th_showOutput()
   unset _th_rtrn _th_stdout _th_stderr
 }
 
-assertErrorMsg()
+_th_assertMsg()
 {
-  grep -- 'flags:ERROR' "${stderrF}" >/dev/null
-  assertTrue "FLAGS ${1:+\($1\) }failure did not result in an error message" $?
+  _th_alert_type_=$1
+  _th_alert_msg_=$2
+  _th_msg_=$3
+
+  [ -n "${_th_msg_}" ] && _th_msg_="(${_th_msg_}) "
+  grep -- "^flags:${_th_alert_type_} ${_th_alert_msg_}" "${stderrF}" >/dev/null
+  assertTrue "FLAGS ${_th_msg_}failure did not result in a warning message" $?
+
+  unset _th_alert_type_ _th_alert_msg_ _th_msg_
 }
+
+assertWarnMsg() { _th_assertMsg 'WARN' "${1:-}" "${2:-}"; }
+assertErrorMsg() { _th_assertMsg 'ERROR' "${1:-}" "${2:-}"; }
