@@ -19,6 +19,9 @@ Added warning when a duplicate flag definition is attempted.
 
 Improved assert[Warn|Error]Msg() test helper grepping.
 
+Replaced shell_versions.sh with a new versions library and created
+gen_test_results.sh to make releases easier.
+
 
 Changes with 1.0.1
 ------------------
