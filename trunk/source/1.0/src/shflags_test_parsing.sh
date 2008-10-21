@@ -173,13 +173,13 @@ _testValidStrings()
     rtrn=$?
     assertTrue "FLAGS (${value}) returned a non-zero result" ${rtrn}
     assertEquals "string (${value}) test failed." "${value}" "${FLAGS_str}"
-    th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
     if [ ${rtrn} -eq ${FLAGS_TRUE} ]; then
-      assertFalse 'expected no output to STDERR' "[ -s \"${stderrF}\" ]"
+      assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
     else
       # validate that an error is thrown for unsupported getopt uses
-      assertErrorMsg "${value}"
+      assertErrorMsg 'spaces in options'
     fi
+    th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
   done
 }
 

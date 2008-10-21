@@ -61,10 +61,17 @@ _th_assertMsg()
   _th_msg_=$3
 
   [ -n "${_th_msg_}" ] && _th_msg_="(${_th_msg_}) "
-  grep -- "^flags:${_th_alert_type_} ${_th_alert_msg_}" "${stderrF}" >/dev/null
-  assertTrue "FLAGS ${_th_msg_}failure did not result in a warning message" $?
+  case ${_th_alert_type_} in
+    WARN) _th_alert_str_='warning' ;;
+    ERROR) _th_alert_str_='error' ;;
+  esac
+  grep -- "^flags:${_th_alert_type_} .* ${_th_alert_msg_}" "${stderrF}" \
+      >/dev/null
+  assertTrue \
+      "FLAGS ${_th_msg_}failure did not generate a ${_th_alert_str_} message" \
+      $?
 
-  unset _th_alert_type_ _th_alert_msg_ _th_msg_
+  unset _th_alert_type_ _th_alert_msg_ _th_alert_str_ _th_msg_
 }
 
 assertWarnMsg() { _th_assertMsg 'WARN' "${1:-}" "${2:-}"; }
