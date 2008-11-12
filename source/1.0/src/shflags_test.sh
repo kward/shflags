@@ -31,6 +31,8 @@ usage()
   echo "usage: ${MY_NAME} [-e key=val ...] [-s shell(s)] [-t test(s)]"
 }
 
+env=''
+
 # process command line flags
 while getopts 'e:hs:t:' opt; do
   case ${opt} in
