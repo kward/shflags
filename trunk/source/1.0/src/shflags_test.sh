@@ -115,7 +115,7 @@ EOF
   for suite in ${tests}; do
     suiteName=`expr "${suite}" : "${PREFIX}\(.*\).sh"`
     echo
-    echo "--- Executing the '${suiteName}' test suite ---" >&2
-    ( exec ${shell} ./${suite}; )
+    echo "--- Executing the '${suiteName}' test suite ---"
+    ( exec ${shell} ./${suite} 2>&1; )
   done
 done
