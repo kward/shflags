@@ -24,9 +24,9 @@ testGetFlagInfo()
   assertTrue 'request for valid flag info failed' $?
   assertEquals 'invalid flag info returned' "${__flags_blah_foobar}" "${rslt}"
 
-  rslt=`_flags_getFlagInfo 'blah' 'hubbabubba' >${stdoutF} 2>${stderrF}`
+  rslt=`_flags_getFlagInfo 'blah' 'hubbabubba' >"${stdoutF}" 2>"${stderrF}"`
   assertEquals 'invalid flag did not result in an error' ${FLAGS_ERROR} $?
-  assertErrorMsg 'invalid flag'
+  assertErrorMsg 'invalid flag name'
 }
 
 testItemInList()
@@ -100,14 +100,7 @@ testValidateInteger() {
 
 oneTimeSetUp()
 {
-  # load flags
-  [ -n "${ZSH_VERSION:-}" ] && FLAGS_PARENT=$0
-  . ${TH_SHFLAGS}
-
-  tmpDir="${__shunit_tmpDir}/output"
-  mkdir "${tmpDir}"
-  stdoutF="${tmpDir}/stdout"
-  stderrF="${tmpDir}/stderr"
+  th_oneTimeSetUp
 }
 
 setUp()

@@ -44,6 +44,19 @@ th_warn() { echo "test:WARN $@" >&2; }
 th_error() { echo "test:ERROR $@" >&2; }
 th_fatal() { echo "test:FATAL $@" >&2; }
 
+th_oneTimeSetUp()
+{
+  # load shFlags
+  [ -n "${ZSH_VERSION:-}" ] && FLAGS_PARENT=$0
+  . ${TH_SHFLAGS}
+
+  # these files will be cleaned up automatically by shUnit2
+  tmpDir=${shunit_tmpDir}
+  stdoutF="${tmpDir}/stdout"
+  stderrF="${tmpDir}/stderr"
+  expectedF="${tmpDir}/expected"
+}
+
 th_showOutput()
 {
   _th_rtrn=$1

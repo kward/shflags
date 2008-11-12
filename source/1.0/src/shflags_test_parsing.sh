@@ -259,14 +259,7 @@ testMultipleNonFlagStringArgsWithSpaces()
 
 oneTimeSetUp()
 {
-  # load flags
-  [ -n "${ZSH_VERSION:-}" ] && FLAGS_PARENT=$0
-  . ${TH_SHFLAGS}
-
-  tmpDir="${__shunit_tmpDir}/output"
-  mkdir "${tmpDir}"
-  stdoutF="${tmpDir}/stdout"
-  stderrF="${tmpDir}/stderr"
+  th_oneTimeSetUp
 
   if [ ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_STD} ]; then
     th_warn 'Standard version of getopt found. Some tests will be skipped.'
