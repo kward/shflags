@@ -22,6 +22,9 @@ Improved assert[Warn|Error]Msg() test helper grepping.
 Replaced shell_versions.sh with a new versions library and created
 gen_test_results.sh to make releases easier.
 
+Copied the coding standards from shUnit2, but haven't fully implemented them
+in shFlags yet.
+
 
 Changes with 1.0.1
 ------------------
