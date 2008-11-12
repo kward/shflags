@@ -1,4 +1,5 @@
 #! /bin/sh
+# $Id$
 # vim:et:ft=sh:sts=2:sw=2
 #
 # Copyright 2008 Kate Ward. All Rights Reserved.
@@ -13,31 +14,50 @@
 # load test helpers
 . ./shflags_test_helpers
 
-# set shwordsplit for zsh
-[ -n "${ZSH_VERSION:-}" ] && setopt shwordsplit
-
 #------------------------------------------------------------------------------
 # suite tests
 #
 
+testStandardGetopt()
+{
+  _flags_standardGetopt '-b' >"${stdoutF}" 2>"${stderrF}"
+  assertTrue "didn't parse valid flag 'b'" $?
+
+  _flags_standardGetopt '-x' >"${stdoutF}" 2>"${stderrF}"
+  assertFalse "parsed invalid flag 'x'" $?
+}
+
+testEnhancedGetopt()
+{
+  _flags_enhancedGetopt '-b' >"${stdoutF}" 2>"${stderrF}"
+  assertTrue "didn't parse valid flag 'b'" $?
+  _flags_enhancedGetopt '--bool' >"${stdoutF}" 2>"${stderrF}"
+  assertTrue "didn't parse valid flag 'bool'" $?
+
+  _flags_enhancedGetopt '-x' >"${stdoutF}" 2>"${stderrF}"
+  assertFalse "parsed invalid flag 'x'" $?
+  _flags_enhancedGetopt '--xyz' >"${stdoutF}" 2>"${stderrF}"
+  assertFalse "parsed invalid flag 'xyz'" $?
+}
+
 testValidBooleanShort()
 {
-  DEFINE_boolean bool false 'boolean value' b
-
   # flip flag to true
   FLAGS -b >"${stdoutF}" 2>"${stderrF}"
   rtrn=$?
-  assertTrue 'FLAGS returned a non-zero result' ${rtrn}
-  assertTrue 'boolean was false.' ${FLAGS_bool:-}
-  assertFalse 'expected no output to STDERR' "[ -s \"${stderrF}\" ]"
+  assertTrue "FLAGS returned a non-zero result (${rtrn})" ${rtrn}
+  value=${FLAGS_bool:-}
+  assertTrue "boolean was not true (${value})." "${value}"
+  assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
   th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 
   # verify that passing the option a second time leaves the flag true
   FLAGS -b >"${stdoutF}" 2>"${stderrF}"
   rtrn=$?
-  assertTrue 'FLAGS returned a non-zero result' ${rtrn}
-  assertTrue 'boolean was false.' ${FLAGS_bool:-}
-  assertFalse 'expected no output to STDERR' "[ -s \"${stderrF}\" ]"
+  assertTrue "repeat: FLAGS returned a non-zero result (${rtrn})" ${rtrn}
+  value=${FLAGS_bool:-}
+  assertTrue "repeat: boolean was not true (${value})" ${value}
+  assertFalse 'repeat: expected no output to STDERR' "[ -s '${stderrF}' ]"
   th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 }
 
@@ -45,7 +65,7 @@ testValidBooleanLong()
 {
   flags_getoptIsStd && startSkipping
 
-  DEFINE_boolean bool false 'boolean test' 'b'
+  #DEFINE_boolean bool false 'boolean test' 'b'
 
   # leave flag false
   FLAGS --nobool >"${stdoutF}" 2>"${stderrF}"
@@ -83,8 +103,6 @@ _testValidFloats()
 {
   flag=$1
   for value in ${TH_FLOAT_VALID}; do
-    flags_reset
-    DEFINE_float float 0 'float test' 'f'
     FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
     rtrn=$?
     assertTrue "FLAGS (${value}) returned a non-zero result" ${rtrn}
@@ -105,8 +123,6 @@ _testInvalidFloats()
 {
   flag=$1
   for value in ${TH_FLOAT_INVALID}; do
-    flags_reset
-    DEFINE_float float 0 'float test' 'f'
     FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
     rtrn=$?
     assertFalse "FLAGS (${value}) returned a zero result" ${rtrn}
@@ -125,8 +141,6 @@ _testValidIntegers()
 {
   flag=$1
   for value in ${TH_INT_VALID}; do
-    flags_reset
-    DEFINE_integer int 0 'integer test' 'i'
     FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
     rtrn=$?
     assertTrue "FLAGS (${value}) returned a non-zero result" ${rtrn}
@@ -147,8 +161,6 @@ _testInvalidIntegers()
 {
   flag=$1
   for value in ${TH_INT_INVALID}; do
-    flags_reset
-    DEFINE_integer int 0 'integer test' 'i'
     FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
     rtrn=$?
     assertFalse "invalid integer (${value}) test returned success." ${rtrn}
@@ -167,8 +179,6 @@ _testValidStrings()
 {
   flag=$1
   for value in single_word 'string with spaces'; do
-    flags_reset
-    DEFINE_string str '' 'string test' 's'
     FLAGS ${flag} "${value}" >"${stdoutF}" 2>"${stderrF}"
     rtrn=$?
     assertTrue "FLAGS (${value}) returned a non-zero result" ${rtrn}
@@ -197,11 +207,6 @@ _testMultipleFlags()
   floatFlag=$3
   strFlag=$4
 
-  flags_reset
-  DEFINE_boolean bool false 'a boolean' 'b'
-  DEFINE_integer int 0 'a integer' 'i'
-  DEFINE_float float 0 'a float' 'f'
-  DEFINE_string str '' 'a string' 's'
   FLAGS \
       ${boolFlag} \
       ${intFlag} 567 \
@@ -271,6 +276,10 @@ oneTimeSetUp()
 setUp()
 {
   flags_reset
+  DEFINE_boolean bool false 'boolean value' b
+  DEFINE_float float 0.0 'float test' 'f'
+  DEFINE_integer int 0 'integer test' 'i'
+  DEFINE_string str '' 'string test' 's'
 }
 
 # load and run shUnit2
