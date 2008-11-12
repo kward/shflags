@@ -376,27 +376,36 @@ _flags_genOptStr()
 #   integer: one of FLAGS_{TRUE|FALSE|ERROR}
 _flags_getFlagInfo()
 {
-  _flags__name=$1
-  _flags__info=$2
+  _flags_name_=$1
+  _flags_info_=$2
 
-  _flags__var="__flags_${_flags__name}_${_flags__info}"
-  _flags__strToEval="_flags__value=\"\${${_flags__var}:-}\""
-  eval "${_flags__strToEval}"
-  if [ -n "${_flags__value}" ]; then
+  _flags_nameVar_="__flags_${_flags_name_}_${_flags_info_}"
+  _flags_strToEval_="_flags_value_=\"\${${_flags_nameVar_}:-}\""
+  eval "${_flags_strToEval_}"
+  if [ -n "${_flags_value_}" ]; then
     flags_return=${FLAGS_TRUE}
   else
-    _flags__type=`_flags_getFlagInfo "${_flags__name}" ${__FLAGS_INFO_TYPE_STR}`
-    if [ ${_flags__type} -eq ${__FLAGS_TYPE_STRING} ]; then
+    # see if the _flags_name_ variable is a string as strings can be empty...
+    # note: the DRY principle would say to have this function call itself for
+    # the next three lines, but doing so results in an infinite loop as an
+    # invalid _flags_name_ will also not have the associated _type variable.
+    # Because it doesn't (it will evaluate to an empty string) the logic will
+    # try to find the _type variable of the _type variable, and so on. Not so
+    # good ;-)
+    _flags_typeVar_="__flags_${_flags_name_}_${__FLAGS_INFO_TYPE_STR}"
+    _flags_strToEval_="_flags_type_=\"\${${_flags_typeVar_}:-}\""
+    eval "${_flags_strToEval_}"
+    if [ "${_flags_type_}" = "${__FLAGS_TYPE_STRING}" ]; then
       flags_return=${FLAGS_TRUE}
     else
       flags_return=${FLAGS_ERROR}
-      flags_error="invalid variable name (${_flags__var})"
+      flags_error="invalid flag name (${_flags_nameVar_})"
     fi
   fi
 
-  echo "${_flags__value}"
-  unset _flags__info _flags__name _flags__strToEval _flags__type _flags__value \
-      _flags__var
+  echo "${_flags_value_}"
+  unset _flags_info_ _flags_name_ _flags_strToEval_ _flags_type_ _flags_value_ \
+      _flags_nameVar_ _flags_typeVar_
   [ ${flags_return} -eq ${FLAGS_ERROR} ] && _flags_error "${flags_error}"
   return ${flags_return}
 }

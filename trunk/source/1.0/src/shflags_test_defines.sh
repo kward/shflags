@@ -186,14 +186,7 @@ testShortNameLength()
 
 oneTimeSetUp()
 {
-  # load flags
-  [ -n "${ZSH_VERSION:-}" ] && FLAGS_PARENT=$0
-  . ${TH_SHFLAGS}
-
-  tmpDir="${__shunit_tmpDir}/output"
-  mkdir "${tmpDir}"
-  stdoutF="${tmpDir}/stdout"
-  stderrF="${tmpDir}/stderr"
+  th_oneTimeSetUp
 }
 
 setUp()
