@@ -49,7 +49,8 @@ testValidBooleanShort()
   value=${FLAGS_bool:-}
   assertTrue "boolean was not true (${value})." "${value}"
   assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
-  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+  test ${rtrn} -eq ${FLAGS_TRUE} -a ! -s "${stderrF}"
+  th_showOutput $? "${stdoutF}" "${stderrF}"
 
   # verify that passing the option a second time leaves the flag true
   FLAGS -b >"${stdoutF}" 2>"${stderrF}"
@@ -58,7 +59,8 @@ testValidBooleanShort()
   value=${FLAGS_bool:-}
   assertTrue "repeat: boolean was not true (${value})" ${value}
   assertFalse 'repeat: expected no output to STDERR' "[ -s '${stderrF}' ]"
-  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+  test ${rtrn} -eq ${FLAGS_TRUE} -a ! -s "${stderrF}"
+  th_showOutput $? "${stdoutF}" "${stderrF}"
 }
 
 testValidBooleanLong()

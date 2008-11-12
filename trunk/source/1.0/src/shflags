@@ -735,8 +735,9 @@ DEFINE_string()  { _flags_define ${__FLAGS_TYPE_STRING} "$@"; }
 #   integer: success of operation, or error
 FLAGS()
 {
-  # define standard 'help' flag
-  DEFINE_boolean 'help' false 'show this help' 'h'
+  # define a standard 'help' flag if one isn't already defined
+  [ -z "${__flags_help_type:-}" ] && \
+      DEFINE_boolean 'help' false 'show this help' 'h'
 
   # parse options
   # TODO(kward): look into '-T' option to test the internal getopt() version
