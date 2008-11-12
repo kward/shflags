@@ -25,6 +25,9 @@ gen_test_results.sh to make releases easier.
 Copied the coding standards from shUnit2, but haven't fully implemented them
 in shFlags yet.
 
+When a user defines their own --help flag, no more warning is thrown when
+FLAGS() is called stating that the help flag already defined.
+
 
 Changes with 1.0.1
 ------------------
@@ -49,3 +52,7 @@ Changes with 1.0.0
 ------------------
 
 This is the first official release, so everything is new.
+
+
+.. vim:spell
+.. $Id$
