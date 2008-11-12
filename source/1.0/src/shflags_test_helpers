@@ -1,3 +1,4 @@
+# $Id$
 # vim:et:ft=sh:sts=2:sw=2
 #
 # Copyright 2008 Kate Ward. All Rights Reserved.
@@ -8,6 +9,9 @@
 # shFlags unit test common functions
 
 __th_skipping=0
+
+# treat unset variables as an error
+set -u
 
 # set shwordsplit for zsh
 [ -n "${ZSH_VERSION:-}" ] && setopt shwordsplit
@@ -48,7 +52,14 @@ th_showOutput()
 
   isSkipping
   if [ $? -eq ${SHUNIT_FALSE} -a ${_th_rtrn} != ${FLAGS_TRUE} ]; then
-    cat "${_th_stdout}" "${_th_stderr}" >&2
+    if [ -n "${_th_stdout}" ]; then
+      echo '--- stdout ---' >&2
+      cat "${_th_stdout}" >&2
+    fi
+    if [ -n "${_th_stderr}" ]; then
+      echo '--- stderr ---' >&2
+      cat "${_th_stderr}" >&2
+    fi
   fi
 
   unset _th_rtrn _th_stdout _th_stderr
@@ -60,16 +71,17 @@ _th_assertMsg()
   _th_alert_msg_=$2
   _th_msg_=$3
 
-  [ -n "${_th_msg_}" ] && _th_msg_="(${_th_msg_}) "
   case ${_th_alert_type_} in
-    WARN) _th_alert_str_='warning' ;;
-    ERROR) _th_alert_str_='error' ;;
+    WARN) _th_alert_str_='a warning' ;;
+    ERROR) _th_alert_str_='an error' ;;
   esac
-  grep -- "^flags:${_th_alert_type_} .* ${_th_alert_msg_}" "${stderrF}" \
+  [ -z "${_th_alert_msg_}" ] && _th_alert_msg_='.*'
+  [ -n "${_th_msg_}" ] && _th_msg_="(${_th_msg_}) "
+
+  grep -- "^flags:${_th_alert_type_} ${_th_alert_msg_}" "${stderrF}" \
       >/dev/null
   assertTrue \
-      "FLAGS ${_th_msg_}failure did not generate a ${_th_alert_str_} message" \
-      $?
+      "FLAGS ${_th_msg_}failure did not generate ${_th_alert_str_} message" $?
 
   unset _th_alert_type_ _th_alert_msg_ _th_alert_str_ _th_msg_
 }
