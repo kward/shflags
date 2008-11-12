@@ -1,4 +1,5 @@
 #! /bin/sh
+# $Id$
 # vim:et:ft=sh:sts=2:sw=2
 #
 # Copyright 2008 Kate Ward. All Rights Reserved.
@@ -10,9 +11,6 @@
 
 # load test helpers
 . ./shflags_test_helpers
-
-# set shwordsplit for zsh
-[ -n "${ZSH_VERSION:-}" ] && setopt shwordsplit
 
 #------------------------------------------------------------------------------
 # suite tests
