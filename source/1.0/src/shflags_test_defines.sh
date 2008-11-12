@@ -1,4 +1,5 @@
 #! /bin/sh
+# $Id$
 # vim:et:ft=sh:sts=2:sw=2
 #
 # Copyright 2008 Kate Ward. All Rights Reserved.
@@ -11,9 +12,6 @@
 # load test helpers
 . ./shflags_test_helpers
 
-# set shwordsplit for zsh
-[ -n "${ZSH_VERSION:-}" ] && setopt shwordsplit
-
 #------------------------------------------------------------------------------
 # suite tests
 #
@@ -23,22 +21,22 @@ testFlagsDefine()
   # no arguments
   _flags_define >"${stdoutF}" 2>"${stderrF}"
   assertFalse '_flags_define() with no arguments should have failed.' $?
-  assertErrorMsg
+  assertErrorMsg '' 'no arguments'
 
   # one argument
   _flags_define arg1 >"${stdoutF}" 2>"${stderrF}"
   assertFalse '_flags_define() call with one argument should fail' $?
-  assertErrorMsg
+  assertErrorMsg '' 'one argument'
 
   # two arguments
   _flags_define arg1 arg2 >"${stdoutF}" 2>"${stderrF}"
   assertFalse '_flags_define() call with two arguments should fail' $?
-  assertErrorMsg
+  assertErrorMsg '' 'two arguments'
 
   # three arguments
   _flags_define arg1 arg2 arg3 >"${stdoutF}" 2>"${stderrF}"
   assertFalse '_flags_define() call with three arguments should fail' $?
-  assertErrorMsg
+  assertErrorMsg '' 'three arguments'
 
   # multiple definition -- assumes working boolean definition (tested elsewhere)
   _flags_define ${__FLAGS_TYPE_BOOLEAN} multiDefBool true 'multi def #1' m
@@ -48,16 +46,14 @@ testFlagsDefine()
   assertTrue \
       '_flags_define() should not overwrite previously defined default.' \
       "${FLAGS_multiDefBool:-}"
-  assertWarnMsg
+  assertWarnMsg '' 'existing flag'
 
   # TODO(kward): test requirement of enhanced getopt
 
   # invalid type
-  _flags_define invalid arg2 arg3 arg4 o >"${stdoutF}" 2>"${stderrF}"
-  assertFalse '_flags_define() with invalid "type" should have failed.' $?
-  assertErrorMsg 'unrecognized flag type'
-  grep '^flags:ERROR unrecognized flag type' "${stderrF}" >/dev/null
-  assertTrue 'expected unrecognized flag type error' $?
+  _flags_define invalid arg2 arg3 arg4 i >"${stdoutF}" 2>"${stderrF}"
+  assertFalse '_flags_define() with "invalid" type should have failed.' $?
+  assertErrorMsg 'unrecognized flag type' 'invalid type'
 }
 
 testBoolean()
