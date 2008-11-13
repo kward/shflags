@@ -67,30 +67,30 @@ testValidBooleanLong()
 {
   flags_getoptIsStd && startSkipping
 
-  #DEFINE_boolean bool false 'boolean test' 'b'
+  # note: the default value of bool is 'false'
 
   # leave flag false
   FLAGS --nobool >"${stdoutF}" 2>"${stderrF}"
   rtrn=$?
-  assertTrue 'FLAGS returned a non-zero result' ${rtrn}
+  assertTrue "FLAGS returned a non-zero result (${rtrn})" ${rtrn}
   assertFalse '--noXX flag resulted in true value.' ${FLAGS_bool:-}
-  assertFalse 'expected no output to STDERR' "[ -s \"${stderrF}\" ]"
+  assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
   th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 
   # flip flag true
   FLAGS --bool >"${stdoutF}" 2>"${stderrF}"
   rtrn=$?
-  assertTrue 'FLAGS returned a non-zero result' ${rtrn}
+  assertTrue "FLAGS returned a non-zero result (${rtrn})" ${rtrn}
   assertTrue '--XX flag resulted in false value.' ${FLAGS_bool:-}
-  assertFalse 'expected no output to STDERR' "[ -s \"${stderrF}\" ]"
+  assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
   th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 
   # flip flag back false
   FLAGS --nobool >"${stdoutF}" 2>"${stderrF}"
   rtrn=$?
-  assertTrue 'FLAGS returned a non-zero result' ${rtrn}
+  assertTrue "FLAGS returned a non-zero result (${rtrn})" ${rtrn}
   assertFalse '--noXX flag resulted in true value.' ${FLAGS_bool:-}
-  assertFalse 'expected no output to STDERR' "[ -s \"${stderrF}\" ]"
+  assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
   th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 }
 
@@ -107,9 +107,9 @@ _testValidFloats()
   for value in ${TH_FLOAT_VALID}; do
     FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
     rtrn=$?
-    assertTrue "FLAGS (${value}) returned a non-zero result" ${rtrn}
+    assertTrue "FLAGS (${value}) returned a non-zero result (${rtrn})" ${rtrn}
     assertEquals "float (${value}) test failed." ${value} ${FLAGS_float}
-    assertFalse 'expected no output to STDERR' "[ -s \"${stderrF}\" ]"
+    assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
     th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
   done
 }
@@ -128,7 +128,7 @@ _testInvalidFloats()
     FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
     rtrn=$?
     assertFalse "FLAGS (${value}) returned a zero result" ${rtrn}
-    assertTrue 'expected no output to STDERR' "[ -s \"${stderrF}\" ]"
+    assertTrue 'expected no output to STDERR' "[ -s '${stderrF}' ]"
   done
 }
 
@@ -145,9 +145,9 @@ _testValidIntegers()
   for value in ${TH_INT_VALID}; do
     FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
     rtrn=$?
-    assertTrue "FLAGS (${value}) returned a non-zero result" ${rtrn}
+    assertTrue "FLAGS (${value}) returned a non-zero result (${rtrn})" ${rtrn}
     assertEquals "integer (${value}) test failed." ${value} ${FLAGS_int}
-    assertFalse 'expected no output to STDERR' "[ -s \"${stderrF}\" ]"
+    assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
     th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
   done
 }
@@ -166,7 +166,7 @@ _testInvalidIntegers()
     FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
     rtrn=$?
     assertFalse "invalid integer (${value}) test returned success." ${rtrn}
-    assertTrue 'expected no output to STDERR' "[ -s \"${stderrF}\" ]"
+    assertTrue 'expected no output to STDERR' "[ -s '${stderrF}' ]"
   done
 }
 
@@ -183,7 +183,7 @@ _testValidStrings()
   for value in single_word 'string with spaces'; do
     FLAGS ${flag} "${value}" >"${stdoutF}" 2>"${stderrF}"
     rtrn=$?
-    assertTrue "FLAGS (${value}) returned a non-zero result" ${rtrn}
+    assertTrue "FLAGS (${value}) returned a non-zero result (${rtrn})" ${rtrn}
     assertEquals "string (${value}) test failed." "${value}" "${FLAGS_str}"
     if [ ${rtrn} -eq ${FLAGS_TRUE} ]; then
       assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
@@ -221,7 +221,7 @@ _testMultipleFlags()
   assertNotSame 'float test failed.' 0 ${FLAGS_float}
   assertNotSame 'integer test failed.' 0 ${FLAGS_int}
   assertNotSame 'string test failed.' '' ${FLAGS_str}
-  assertFalse 'expected no output to STDERR' "[ -s \"${stderrF}\" ]"
+  assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
   th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 }
 
@@ -253,7 +253,7 @@ testMultipleNonFlagStringArgsWithSpaces()
   _testNonFlagArgs 3 argOne 'arg #2' arg3
 }
 
-# TODO(kward): testNonstandardIFS()
+# TODO(kward): testNonStandardIFS()
 
 #------------------------------------------------------------------------------
 # suite functions
