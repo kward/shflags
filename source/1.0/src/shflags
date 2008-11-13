@@ -227,8 +227,7 @@ _flags_define()
       -a ${__FLAGS_GETOPT_VERS} -ne ${__FLAGS_GETOPT_VERS_ENH} \
       -a "${_flags_short_}" = "${__FLAGS_NULL}" ]
   then
-    flags_error="getopt on this platform supports only short flags. Please \
-declare one for the (${_flags_name_}) flag."
+    flags_error="short flag required for (${_flags_name_}) on this platform"
     _flags_return_=${FLAGS_ERROR}
   fi
 
@@ -630,14 +629,6 @@ _flags_parseGetopt()
       break
     fi
 
-    # handle special case help flag
-    if [ "${_flags_name_}" = 'help' ]; then
-      flags_help
-      flags_error='help requested'
-      flags_return=${FLAGS_FALSE}
-      break
-    fi
-
     # set new flag value
     [ ${_flags_type_} -eq ${__FLAGS_TYPE_NONE} ] && \
       _flags_type_=`_flags_getFlagInfo \
@@ -686,6 +677,16 @@ _flags_parseGetopt()
         eval "FLAGS_${_flags_name_}='${_flags_arg_}'"
         ;;
     esac
+
+    # handle special case help flag
+    if [ "${_flags_name_}" = 'help' ]; then
+      if [ ${FLAGS_help} -eq ${FLAGS_TRUE} ]; then
+        flags_help
+        flags_error='help requested'
+        flags_return=${FLAGS_FALSE}
+        break
+      fi
+    fi
 
     # shift the option out
     shift

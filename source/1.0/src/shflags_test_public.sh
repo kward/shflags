@@ -117,6 +117,17 @@ EOF
       && cat "${stderrF}"
 }
 
+testNoHelp()
+{
+  flags_getoptIsEnh || startSkipping
+
+  ( FLAGS --nohelp >"${stdoutF}" 2>"${stderrF}" )
+  rtrn=$?
+  assertTrue "FLAGS returned a non-zero result (${rtrn})" ${rtrn}
+  assertFalse 'expected no output to STDOUT' "[ -s '${stdoutF}' ]"
+  assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
+}
+
 #------------------------------------------------------------------------------
 # suite functions
 #
