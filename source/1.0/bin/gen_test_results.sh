@@ -72,7 +72,7 @@ if [ -f "${output}" ]; then
 fi
 
 # run tests
-( cd "${SRC_DIR}"; ./shflags_test.sh 2>&1 |tee "${output}" )
+( cd "${SRC_DIR}"; ./shflags_test.sh |tee "${output}" )
 
 echo >&2
 echo "output written to '${output}'" >&2
