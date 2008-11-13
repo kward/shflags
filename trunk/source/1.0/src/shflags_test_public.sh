@@ -53,7 +53,7 @@ testHelp()
   # test long --help option
   #
 
-  flags_getoptIsStd && startSkipping
+  flags_getoptIsEnh || startSkipping
 
   rslt=`FLAGS --help 2>&1`
   assertFalse 'long help request should have returned non-zero exit code' $?
@@ -63,7 +63,7 @@ testHelp()
 
 testStandardHelpOutput()
 {
-  flags_getoptIsEnh && startSkipping
+  flags_getoptIsStd || startSkipping
 
   DEFINE_boolean test_bool false 'test boolean' b
   DEFINE_integer test_int 0 'test integer' i
