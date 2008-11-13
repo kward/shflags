@@ -29,6 +29,8 @@ testStandardGetopt()
 
 testEnhancedGetopt()
 {
+  flags_getoptIsEnh || startSkipping
+
   _flags_enhancedGetopt '-b' >"${stdoutF}" 2>"${stderrF}"
   assertTrue "didn't parse valid flag 'b'" $?
   _flags_enhancedGetopt '--bool' >"${stdoutF}" 2>"${stderrF}"
@@ -189,7 +191,7 @@ _testValidStrings()
       assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
     else
       # validate that an error is thrown for unsupported getopt uses
-      assertErrorMsg 'spaces in options'
+      assertFatalMsg '.* spaces in options'
     fi
     th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
   done

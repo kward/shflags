@@ -65,13 +65,16 @@ th_showOutput()
 
   isSkipping
   if [ $? -eq ${SHUNIT_FALSE} -a ${_th_rtrn} != ${FLAGS_TRUE} ]; then
-    if [ -n "${_th_stdout}" ]; then
-      echo '--- stdout ---' >&2
+    if [ -n "${_th_stdout}" -a -s "${_th_stdout}" ]; then
+      echo '>>> STDOUT' >&2
       cat "${_th_stdout}" >&2
     fi
-    if [ -n "${_th_stderr}" ]; then
-      echo '--- stderr ---' >&2
+    if [ -n "${_th_stderr}" -a -s "${_th_stderr}" ]; then
+      echo '>>> STDERR' >&2
       cat "${_th_stderr}" >&2
+    fi
+    if [ -n "${_th_stdout}" -o -n "${_th_stderr}" ]; then
+      echo '>>> end output' >&2
     fi
   fi
 
@@ -87,6 +90,7 @@ _th_assertMsg()
   case ${_th_alert_type_} in
     WARN) _th_alert_str_='a warning' ;;
     ERROR) _th_alert_str_='an error' ;;
+    FATAL) _th_alert_str_='a fatal' ;;
   esac
   [ -z "${_th_alert_msg_}" ] && _th_alert_msg_='.*'
   [ -n "${_th_msg_}" ] && _th_msg_="(${_th_msg_}) "
@@ -101,3 +105,4 @@ _th_assertMsg()
 
 assertWarnMsg() { _th_assertMsg 'WARN' "${1:-}" "${2:-}"; }
 assertErrorMsg() { _th_assertMsg 'ERROR' "${1:-}" "${2:-}"; }
+assertFatalMsg() { _th_assertMsg 'FATAL' "${1:-}" "${2:-}"; }
