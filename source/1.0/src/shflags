@@ -102,12 +102,11 @@ fi
 __FLAGS_SHELL_FLAGS='u'
 
 # save the current set of shell flags, and then set some for ourself
-_flags_oldShellFlags=$-
-for _flags_shellFlag in `echo "${__FLAGS_SHELL_FLAGS}" |sed 's/\(.\)/\1 /g'`
+__flags_oldShellFlags=$-
+for __flags_shellFlag in `echo "${__FLAGS_SHELL_FLAGS}" |sed 's/\(.\)/\1 /g'`
 do
-  set "-${_flags_shellFlag}"
+  set "-${__flags_shellFlag}"
 done
-unset _flags_shellFlag
 
 #
 # constants
@@ -181,12 +180,21 @@ __flags_shortNames=' '
 
 __flags_opts=''
 
+# restore the previous set of shell flags
+for __flags_shellFlag in ${__FLAGS_SHELL_FLAGS}; do
+  echo ${__flags_oldShellFlags} \
+  |grep ${__flags_shellFlag} >/dev/null || set +${__flags_shellFlag}
+done
+unset __flags_oldShellFlags __flags_shellFlag
+
 #------------------------------------------------------------------------------
 # private functions
 #
 
-# Define a flag. Calling this function will define the following info variables
-# for the specified flag:
+# Define a flag.
+#
+# Calling this function will define the following info variables for the
+# specified flag:
 #   FLAGS_flagname - the name for this flag (based upon the long flag name)
 #   __flags_<flag_name>_default - the default value
 #   __flags_flagname_help - the help string
@@ -219,8 +227,6 @@ _flags_define()
   _flags_return_=${FLAGS_TRUE}
 
   # TODO(kward): check for validity of the flag name (e.g. dashes)
-  # TODO(kward): throw warning when a flag without a short name is defined on a
-  # system with a standard getopt
 
   # require short option for getopt that don't support long options
   if [ ${_flags_return_} -eq ${FLAGS_TRUE} \
@@ -320,47 +326,49 @@ _flags_define()
   return ${flags_return}
 }
 
-# return a valid getopt of either short or long options using currently defined
-# list of long options as reference
+# Return valid getopt options using currently defined list of long options.
+#
+# This function builds a proper getopt option string for short (and long)
+# options, using the current list of long options for reference.
 #
 # Args:
-#   _flags__optStr: int: option string type (__FLAGS_OPTSTR_*)
+#   _flags_optStr: integer: option string type (__FLAGS_OPTSTR_*)
 # Output:
 #   string: generated option string for getopt
 # Returns:
 #   boolean: success of operation (always returns True)
 _flags_genOptStr()
 {
-  _flags__optStrType=$1
+  _flags_optStrType_=$1
 
-  _flags__opts=''
+  _flags_opts_=''
 
-  for _flags__flag in ${__flags_longNames}; do
-    _flags__type=`_flags_getFlagInfo ${_flags__flag} ${__FLAGS_INFO_TYPE_STR}`
-    case ${_flags__optStrType} in
+  for _flags_flag_ in ${__flags_longNames}; do
+    _flags_type_=`_flags_getFlagInfo ${_flags_flag_} ${__FLAGS_INFO_TYPE_STR}`
+    case ${_flags_optStrType_} in
       ${__FLAGS_OPTSTR_SHORT})
-        _flags__shortName=`_flags_getFlagInfo \
-            ${_flags__flag} ${__FLAGS_INFO_SHORT_STR}`
-        if [ "${_flags__shortName}" != "${__FLAGS_NULL}" ]; then
-          _flags__opts="${_flags__opts}${_flags__shortName}"
+        _flags_shortName_=`_flags_getFlagInfo \
+            ${_flags_flag_} ${__FLAGS_INFO_SHORT_STR}`
+        if [ "${_flags_shortName_}" != "${__FLAGS_NULL}" ]; then
+          _flags_opts_="${_flags_opts_}${_flags_shortName_}"
           # getopt needs a trailing ':' to indicate a needed option
-          [ ${_flags__type} -ne ${__FLAGS_TYPE_BOOLEAN} ] && \
-              _flags__opts="${_flags__opts}:"
+          [ ${_flags_type_} -ne ${__FLAGS_TYPE_BOOLEAN} ] && \
+              _flags_opts_="${_flags_opts_}:"
         fi
         ;;
 
       ${__FLAGS_OPTSTR_LONG})
-        _flags__opts="${_flags__opts:+${_flags__opts},}${_flags__flag}"
+        _flags_opts_="${_flags_opts_:+${_flags_opts_},}${_flags_flag_}"
         # getopt needs a trailing ':' to indicate a needed option
-        [ ${_flags__type} -ne ${__FLAGS_TYPE_BOOLEAN} ] && \
-            _flags__opts="${_flags__opts}:"
+        [ ${_flags_type_} -ne ${__FLAGS_TYPE_BOOLEAN} ] && \
+            _flags_opts_="${_flags_opts_}:"
         ;;
     esac
   done
 
-  echo "${_flags__opts}"
-  unset _flags__flag _flags__opts _flags__optStrType _flags__shortName \
-      _flags__type
+  echo "${_flags_opts_}"
+  unset _flags_flag_ _flags_opts_ _flags_optStrType_ _flags_shortName_ \
+      _flags_type_
   return ${FLAGS_TRUE}
 }
 
@@ -418,18 +426,19 @@ _flags_getFlagInfo()
 #   unnamed: list: list of strings
 # Returns:
 #   boolean: true if item is in the list
-_flags_itemInList() {
-  _flags__str=$1
+_flags_itemInList()
+{
+  _flags_str_=$1
   shift
 
-  echo " ${*:-} " |grep " ${_flags__str} " >/dev/null
+  echo " ${*:-} " |grep " ${_flags_str_} " >/dev/null
   if [ $? -eq 0 ]; then
     flags_return=${FLAGS_TRUE}
   else
     flags_return=${FLAGS_FALSE}
   fi
 
-  unset _flags__str
+  unset _flags_str_
   return ${flags_return}
 }
 
@@ -473,24 +482,24 @@ _flags_validateBoolean()
 #   bool: true if the value is a valid float
 _flags_validateFloat()
 {
-  _flags__float=$1
+  _flags_float_=$1
 
-  if _flags_validateInteger ${_flags__float}; then
+  if _flags_validateInteger ${_flags_float_}; then
     flags_return=${FLAGS_TRUE}
   else
     flags_return=${FLAGS_TRUE}
-    case ${_flags__float} in
+    case ${_flags_float_} in
       -*)  # negative floats
-        _flags__test=`expr "${_flags__float}" : '\(-[0-9][0-9]*\.[0-9][0-9]*\)'`
+        _flags_test_=`expr "${_flags_float_}" : '\(-[0-9][0-9]*\.[0-9][0-9]*\)'`
         ;;
       *)  # positive floats
-        _flags__test=`expr "${_flags__float}" : '\([0-9][0-9]*\.[0-9][0-9]*\)'`
+        _flags_test_=`expr "${_flags_float_}" : '\([0-9][0-9]*\.[0-9][0-9]*\)'`
         ;;
     esac
-    [ "${_flags__test}" != "${_flags__float}" ] && flags_return=${FLAGS_FALSE}
+    [ "${_flags_test_}" != "${_flags_float_}" ] && flags_return=${FLAGS_FALSE}
   fi
 
-  unset _flags__float _flags__test
+  unset _flags_float_ _flags_test_
   return ${flags_return}
 }
 
@@ -502,20 +511,20 @@ _flags_validateFloat()
 #   bool: true if the value is a valid integer
 _flags_validateInteger()
 {
-  _flags__int=$1
+  _flags_int_=$1
 
   flags_return=${FLAGS_TRUE}
-  case ${_flags__int} in
+  case ${_flags_int_} in
     -*)  # negative ints
-      _flags__test=`expr "${_flags__int}" : '\(-[0-9][0-9]*\)'`
+      _flags_test_=`expr "${_flags_int_}" : '\(-[0-9][0-9]*\)'`
       ;;
     *)  # positive ints
-      _flags__test=`expr "${_flags__int}" : '\([0-9][0-9]*\)'`
+      _flags_test_=`expr "${_flags_int_}" : '\([0-9][0-9]*\)'`
       ;;
   esac
-  [ "${_flags__test}" != "${_flags__int}" ] && flags_return=${FLAGS_FALSE}
+  [ "${_flags_test_}" != "${_flags_int_}" ] && flags_return=${FLAGS_FALSE}
 
-  unset _flags__int _flags__test
+  unset _flags_int_ _flags_test_
   return ${flags_return}
 }
 
@@ -928,14 +937,3 @@ flags_reset()
 
   unset _flags_name _flags_type _flags_strToEval
 }
-
-#==============================================================================
-# main
-#
-
-# restore the previous set of shell flags
-for _flags_shellFlag in ${__FLAGS_SHELL_FLAGS}; do
-  echo ${_flags_oldShellFlags} \
-  |grep ${_flags_shellFlag} >/dev/null || set +${_flags_shellFlag}
-done
-unset _flags_oldShellFlags _flags_shellFlag
