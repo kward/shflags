@@ -442,15 +442,22 @@ _flags_itemInList()
   return ${flags_return}
 }
 
-# Returns the length of a string.
+# Returns the width of the current screen.
 #
-# Args:
-#   str: string: string to determine length of
 # Output:
-#   integer: length of string
-_flags_strlen()
+#   integer: width in columns of the current screen.
+_flags_screenColumns()
 {
-  echo "$1" |awk '{print length($0)}'
+  _flags_size_=`stty size 2>/dev/null`
+  if [ $? -eq ${FLAGS_TRUE} ]; then
+    _flags_cols_=`expr "${_flags_size_}" : '[0-9]* \([0-9]*\)'`
+  else
+    # TODO(kward): support 'tput cols' as well, if possible. be warned that it
+    # doesn't work when put inside backticks (i.e. a sub-shell).
+    _flags_cols_=80
+  fi
+  echo ${_flags_cols_}
+  unset _flags_cols_ _flags_size_
 }
 
 # Validate a boolean.
@@ -920,8 +927,9 @@ flags_help()
       _flags_defaultStr="(default: ${_flags_defaultStr})"
 
       _flags_helpStr="  ${_flags_flagStr}  ${_flags_help} ${_flags_defaultStr}"
-      _flags_helpStrLen=`_flags_strlen "${_flags_helpStr}"`
-      if [ ${_flags_helpStrLen} -lt 80 ]; then
+      _flags_helpStrLen=`expr "${_flags_helpStr}" : '.*'`
+      flags_screenCols_=`_flags_screenColumns`
+      if [ ${_flags_helpStrLen} -lt ${flags_screenCols_} ]; then
         echo "${_flags_helpStr}" >&2
       else
         _flags_emptyStr="`echo ${_flags_flagStr} |sed 's/./ /g'`"

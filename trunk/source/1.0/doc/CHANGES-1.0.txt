@@ -30,6 +30,8 @@ when FLAGS() is called stating that the help flag already defined.
 
 Issue# 2: Passing the --nohelp option no longer gives help output.
 
+Issue# 3: Added initial support for screen width detection.
+
 
 Changes with 1.0.1
 ------------------
