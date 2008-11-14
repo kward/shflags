@@ -446,11 +446,11 @@ _flags_itemInList()
 #
 # Args:
 #   str: string: string to determine length of
-# Returns:
+# Output:
 #   integer: length of string
 _flags_strlen()
 {
-  echo "$1" |wc -c |awk '{print $1}'
+  echo "$1" |awk '{print length($0)}'
 }
 
 # Validate a boolean.
@@ -474,7 +474,7 @@ _flags_validateBoolean()
   return ${flags_return}
 }
 
-# validate a float
+# Validate a float.
 #
 # Args:
 #   _flags__float: float: value to validate
@@ -503,7 +503,7 @@ _flags_validateFloat()
   return ${flags_return}
 }
 
-# validate an integer
+# Validate an integer.
 #
 # Args:
 #   _flags__integer: interger: value to validate
@@ -528,6 +528,15 @@ _flags_validateInteger()
   return ${flags_return}
 }
 
+# Parse command-line options using the standard getopt.
+#
+# Note: the flag options are passed around in the global __flags_opts so that
+# the formatting is not lost due to shell parsing and such.
+#
+# Args:
+#   @: varies: command-line options to parse
+# Returns:
+#   integer: a FLAGS success condition
 _flags_standardGetopt()
 {
   flags_return=${FLAGS_TRUE}
@@ -557,6 +566,15 @@ _flags_standardGetopt()
   return ${flags_return}
 }
 
+# Parse command-line options using the enhanced getopt.
+#
+# Note: the flag options are passed around in the global __flags_opts so that
+# the formatting is not lost due to shell parsing and such.
+#
+# Args:
+#   @: varies: command-line options to parse
+# Returns:
+#   integer: a FLAGS success condition
 _flags_enhancedGetopt()
 {
   flags_return=${FLAGS_TRUE}
@@ -579,6 +597,16 @@ _flags_enhancedGetopt()
   return ${flags_return}
 }
 
+# Dynamically parse a getopt result and set appropriate variables.
+#
+# This function does the actual conversion of getopt output and runs it through
+# the standard case structure for parsing. The case structure is actually quite
+# dynamic to support any number of flags.
+#
+# Args:
+#   @: varies: output from getopt parsing
+# Returns:
+#   integer: a FLAGS success condition
 _flags_parseGetopt()
 {
   FLAGS_ARGC=0
