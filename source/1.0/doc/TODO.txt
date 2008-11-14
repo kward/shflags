@@ -8,5 +8,3 @@ improve zsh, automatically ... (pulled from configure)
     alias -g '${1+"$@"}'='"$@"'
     setopt NO_GLOB_SUBST
   else
-
-add 'Output:' section to all function headers
