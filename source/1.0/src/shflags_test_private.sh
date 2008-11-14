@@ -52,7 +52,15 @@ testItemInList()
   assertFalse 'empty lists should not match' $?
 }
 
-testValidateBoolean() {
+testScreenColumns()
+{
+  cols=`_flags_screenColumns`
+  value=`expr "${cols}" : '\([0-9]*\)'`
+  assertNotNull "unexpected screen width (${cols})" "${value}"
+}
+
+testValidateBoolean()
+{
   # valid values
   for value in ${TH_BOOL_VALID}; do
     _flags_validateBoolean "${value}"
@@ -66,7 +74,8 @@ testValidateBoolean() {
   done
 }
 
-testValidateFloat() {
+testValidateFloat()
+{
   # valid values
   for value in ${TH_INT_VALID} ${TH_FLOAT_VALID}; do
     _flags_validateFloat "${value}"
@@ -80,7 +89,8 @@ testValidateFloat() {
   done
 }
 
-testValidateInteger() {
+testValidateInteger()
+{
   # valid values
   for value in ${TH_INT_VALID}; do
     _flags_validateInteger "${value}"
