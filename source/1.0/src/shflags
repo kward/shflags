@@ -448,12 +448,14 @@ _flags_itemInList()
 #   integer: width in columns of the current screen.
 _flags_screenColumns()
 {
-  _flags_size_=`stty size 2>/dev/null`
-  if [ $? -eq ${FLAGS_TRUE} ]; then
+  if _flags_size_=`stty size 2>/dev/null`; then
+    # stty size worked :-)
     _flags_cols_=`expr "${_flags_size_}" : '[0-9]* \([0-9]*\)'`
+  elif _flags_cols_=`tput cols 2>/dev/null`; then
+    # TODO(kward): this doesn't actaully work... tput is executed within a
+    # sub-shell which causes the screen width to be lost.
+    :  # tput worked :-)
   else
-    # TODO(kward): support 'tput cols' as well, if possible. be warned that it
-    # doesn't work when put inside backticks (i.e. a sub-shell).
     _flags_cols_=80
   fi
   echo ${_flags_cols_}

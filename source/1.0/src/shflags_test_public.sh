@@ -135,6 +135,10 @@ testNoHelp()
 oneTimeSetUp()
 {
   th_oneTimeSetUp
+
+  if [ ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_STD} ]; then
+    th_warn 'Standard version of getopt found. Some tests will be skipped.'
+  fi
 }
 
 setUp()
