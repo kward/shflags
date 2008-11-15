@@ -70,7 +70,7 @@ versions_shellVersion()
     return
   fi
 
-  version_='unknown'
+  version_=''
   case ${shell_} in
     */sh)
       # TODO(kward): fix this
@@ -94,7 +94,7 @@ versions_shellVersion()
     *) version_='invalid'
   esac
 
-  echo ${version_}
+  echo ${version_:-unknown}
   unset shell_ version_
 }
 
