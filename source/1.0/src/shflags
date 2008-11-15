@@ -183,6 +183,7 @@ __flags_boolNames=' '  # space separated list of boolean flag names
 __flags_longNames=' '  # space separated list of long flag names
 __flags_shortNames=' '  # space separated list of short flag names
 
+__flags_columns=''  # screen width in columns
 __flags_opts=''  # temporary storage for parsed getopt flags
 
 # restore the previous set of shell flags
@@ -451,19 +452,22 @@ _flags_itemInList()
 #
 # Output:
 #   integer: width in columns of the current screen.
-_flags_screenColumns()
+_flags_columns()
 {
-  if _flags_size_=`stty size 2>/dev/null`; then
-    # stty size worked :-)
-    _flags_cols_=`expr "${_flags_size_}" : '[0-9]* \([0-9]*\)'`
-  elif eval tput cols >/dev/null 2>&1; then
-    set -- `tput cols`
-    _flags_cols_=$1
-  else
-    _flags_cols_=80  # default terminal width
+  if [ -z "${__flags_columns}" ]; then
+    # determine the value and store it
+    if eval stty size >/dev/null 2>&1; then
+      # stty size worked :-)
+      set -- `stty size`
+      __flags_columns=$2
+    elif eval tput cols >/dev/null 2>&1; then
+      set -- `tput cols`
+      __flags_columns=$1
+    else
+      __flags_columns=80  # default terminal width
+    fi
   fi
-  echo ${_flags_cols_}
-  unset _flags_cols_ _flags_size_
+  echo ${__flags_columns}
 }
 
 # Validate a boolean.
@@ -557,8 +561,9 @@ _flags_standardGetopt()
 
   # check for spaces in passed options
   for _flags_opt_ in "$@"; do
-    _flags_match_=`echo "${_flags_opt_}" |sed 's/ //g'`
-    if [ "${_flags_match_}" != "${_flags_opt_}" ]; then
+    # note: the silliness with the x's is purely for ksh93 on Ubuntu 6.06
+    _flags_match_=`echo "x${_flags_opt_}x" |sed 's/ //g'`
+    if [ "${_flags_match_}" != "x${_flags_opt_}x" ]; then
       flags_error='the available getopt does not support spaces in options'
       flags_return=${FLAGS_ERROR}
       break
@@ -926,11 +931,15 @@ flags_help()
 
       flags_helpStr_="  ${flags_flagStr_}  ${flags_help_} ${flags_defaultStr_}"
       flags_helpStrLen_=`expr "${flags_helpStr_}" : '.*'`
-      flags_screenCols_=`_flags_screenColumns`
-      if [ ${flags_helpStrLen_} -lt ${flags_screenCols_} ]; then
+      flags_columns_=`_flags_columns`
+      if [ ${flags_helpStrLen_} -lt ${flags_columns_} ]; then
         echo "${flags_helpStr_}" >&2
       else
-        flags_emptyStr_="`echo ${flags_flagStr_} |sed 's/./ /g'`"
+        # note: the silliness with the x's is purely for ksh93 on Ubuntu 6.06.
+        # the sed strips the x's back out, plus the zero byte at the end of the
+        # string passed by echo (a C thing...).
+        flags_emptyStr_="`echo \"x${flags_flagStr_}x\" |tr -c '' ' ' \
+            |sed 's/...$//'`"
         echo "  ${flags_flagStr_}  ${flags_help_}" >&2
         echo "  ${flags_emptyStr_}  ${flags_defaultStr_}" >&2
       fi
@@ -939,7 +948,7 @@ flags_help()
 
   unset flags_boolStr_ flags_default_ flags_defaultStr_ flags_emptyStr_ \
       flags_flagStr_ flags_help_ flags_helpStr flags_helpStrLen flags_name_ \
-      flags_short_ flags_type_
+      flags_columns_ flags_short_ flags_type_
   return ${FLAGS_TRUE}
 }
 
