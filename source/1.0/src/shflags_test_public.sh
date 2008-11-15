@@ -136,8 +136,10 @@ oneTimeSetUp()
 {
   th_oneTimeSetUp
 
-  if [ ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_STD} ]; then
-    th_warn 'Standard version of getopt found. Some tests will be skipped.'
+  if flags_getoptIsStd; then
+    th_warn 'Standard version of getopt found. Enhanced tests will be skipped.'
+  else
+    th_warn 'Enhanced version of getopt found. Standard tests will be skipped.'
   fi
 }
 
