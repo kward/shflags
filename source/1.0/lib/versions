@@ -51,8 +51,14 @@ versions_osVersion()
       ;;
     Linux)
       if [ -r '/etc/lsb-release' ]; then
-        os_version_=`. /etc/lsb-release \
-            && echo "${DISTRIB_ID}-${DISTRIB_RELEASE}"`
+        os_version_=`. /etc/lsb-release && \
+            echo "${DISTRIB_ID:-}-${DISTRIB_RELEASE:-}"`
+      fi
+      if [ "${os_version_}" = '-' ]; then
+        os_version_=''
+        if [ -r '/etc/redhat-release' ]; then
+          os_version_=`cat /etc/redhat-release`
+        fi
       fi
       ;;
     SunOS) os_version_=`echo ${os_release_} |sed 's/[0-9]*\.\([0-9]*\)/\1/'` ;;
