@@ -112,9 +112,9 @@ flags:
 EOF
   ( FLAGS_HELP=${help}; FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
   diff "${expectedF}" "${stderrF}" >/dev/null
-  assertTrue 'unexpected help output' $?
-  [ ${__shunit_skip} -eq ${SHUNIT_FALSE} -a ${rtrn} -ne ${FLAGS_TRUE} ] \
-      && cat "${stderrF}"
+  rtrn=$?
+  assertTrue 'unexpected help output' ${rtrn}
+  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 }
 
 testNoHelp()
