@@ -8,7 +8,7 @@ tests=" shflags_test_defines.sh shflags_test_parsing.sh shflags_test_private.sh 
 
 # system info
 $ date
-Sat Nov 15 20:10:00 GMT 2008
+Sat Nov 15 20:17:09 GMT 2008
 $ uname -mprsv
 Darwin 9.5.0 Darwin Kernel Version 9.5.0: Wed Sep  3 11:29:43 PDT 2008; root:xnu-1228.7.58~1/RELEASE_I386 i386 i386
 
