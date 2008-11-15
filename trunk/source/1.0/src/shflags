@@ -451,12 +451,11 @@ _flags_screenColumns()
   if _flags_size_=`stty size 2>/dev/null`; then
     # stty size worked :-)
     _flags_cols_=`expr "${_flags_size_}" : '[0-9]* \([0-9]*\)'`
-  elif _flags_cols_=`tput cols 2>/dev/null`; then
-    # TODO(kward): this doesn't actaully work... tput is executed within a
-    # sub-shell which causes the screen width to be lost.
-    :  # tput worked :-)
+  elif eval tput cols >/dev/null 2>&1; then
+    set -- `tput cols`
+    _flags_cols_=$1
   else
-    _flags_cols_=80
+    _flags_cols_=80  # default terminal width
   fi
   echo ${_flags_cols_}
   unset _flags_cols_ _flags_size_
