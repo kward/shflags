@@ -94,18 +94,17 @@ uname -mprsv
 for shell in ${shells}; do
   echo
 
-  # check for existance of shell
-  if [ ! -x ${shell} ]; then
-    th_warn "unable to run tests with the ${shell} shell"
-    continue
-  fi
-
   cat <<EOF
 
 #------------------------------------------------------------------------------
 # Running the test suite with ${shell}
 #
 EOF
+  # check for existance of shell
+  if [ ! -x ${shell} ]; then
+    th_warn "unable to run tests with the ${shell} shell"
+    continue
+  fi
 
   shell_name=`basename ${shell}`
   shell_version=`versions_shellVersion "${shell}"`
