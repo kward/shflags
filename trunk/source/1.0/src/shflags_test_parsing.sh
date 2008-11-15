@@ -21,7 +21,9 @@
 testStandardGetopt()
 {
   _flags_standardGetopt '-b' >"${stdoutF}" 2>"${stderrF}"
-  assertTrue "didn't parse valid flag 'b'" $?
+  rslt=$?
+  assertTrue "didn't parse valid flag 'b'" ${rslt}
+  th_showOutput ${rslt} "${stdoutF}" "${stderrF}"
 
   _flags_standardGetopt '-x' >"${stdoutF}" 2>"${stderrF}"
   assertFalse "parsed invalid flag 'x'" $?
@@ -265,8 +267,10 @@ oneTimeSetUp()
 {
   th_oneTimeSetUp
 
-  if [ ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_STD} ]; then
-    th_warn 'Standard version of getopt found. Some tests will be skipped.'
+  if flags_getoptIsStd; then
+    th_warn 'Standard version of getopt found. Enhanced tests will be skipped.'
+  else
+    th_warn 'Enhanced version of getopt found. Standard tests will be skipped.'
   fi
 }
 
