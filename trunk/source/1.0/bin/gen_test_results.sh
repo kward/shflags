@@ -49,8 +49,8 @@ SRC_DIR="${BASE_DIR}/src"
 . ${SRC_DIR}/shflags || die 'unable to load shflags library'
 . ${LIB_DIR}/versions || die 'unable to load versions library'
 
-os_name=`versions_osName |sed 's/ /_/g'`
-os_version=`versions_osVersion`
+os_name=`versions_osName |tr ' ' '_'`
+os_version=`versions_osVersion |tr ' ' '_'`
 
 DEFINE_boolean force false 'force overwrite' f
 DEFINE_string output_dir "`pwd`" 'output dir' d
