@@ -52,9 +52,9 @@ testItemInList()
   assertFalse 'empty lists should not match' $?
 }
 
-testScreenColumns()
+testColumns()
 {
-  cols=`_flags_screenColumns`
+  cols=`_flags_columns`
   value=`expr "${cols}" : '\([0-9]*\)'`
   assertNotNull "unexpected screen width (${cols})" "${value}"
 }
