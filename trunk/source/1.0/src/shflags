@@ -72,7 +72,7 @@
 
 # return if FLAGS already loaded
 [ -n "${FLAGS_VERSION:-}" ] && return 0
-FLAGS_VERSION='1.0.2pre'
+FLAGS_VERSION='1.0.2'
 
 FLAGS_TRUE=0
 FLAGS_FALSE=1
