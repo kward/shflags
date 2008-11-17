@@ -8,7 +8,7 @@ FLAGS_PARENT no longer transforms into a constant so that it can be defined at
 run time in scripts.
 
 Added warning about short flags being unsupported when there are problems
-parsing the options with getopt.
+parsing the options with **getopt**.
 
 Add default values to end of description strings.
 
@@ -17,10 +17,10 @@ values for empty strings.
 
 Added warning when a duplicate flag definition is attempted.
 
-Improved assert[Warn|Error]Msg() test helper grepping.
+Improved ``assert[Warn|Error]Msg()`` test helper grepping.
 
 Replaced shell_versions.sh with a new versions library and created
-gen_test_results.sh to make releases easier.
+**gen_test_results.sh** to make releases easier.
 
 Copied the coding standards from shUnit2, but haven't fully implemented them
 in shFlags yet.
@@ -30,7 +30,7 @@ when FLAGS() is called stating that the help flag already defined.
 
 Issue# 2: Passing the --nohelp option no longer gives help output.
 
-Issue# 3: Added initial support for screen width detection.
+Issue# 3: Added support for screen width detection.
 
 
 Changes with 1.0.1
@@ -58,5 +58,5 @@ Changes with 1.0.0
 This is the first official release, so everything is new.
 
 
-.. vim:spell
+.. vim:fileencoding=latin1:ft=rst:spell:tw=80
 .. $Id$

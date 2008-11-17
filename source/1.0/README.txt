@@ -47,17 +47,6 @@ Write Release Notes
 This should be pretty self explainatory. Use one of the release notes from a
 previous release as an example.
 
-To get the versions of the various shells, run the `bin/version_info.sh`
-command. ::
-
-  $ bin/shell_versions.sh
-  os:Mac OS X version:10.5.3
-  shell:/bin/bash version:3.2.17(1)-release
-  shell:/bin/dash version:not_installed
-  shell:/bin/ksh version:M-1993-12-28
-  shell:/bin/pdksh version:not_installed
-  shell:/bin/zsh version:4.3.4
-
 Update Version
 --------------
 
