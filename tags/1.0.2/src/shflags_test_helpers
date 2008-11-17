@@ -1,0 +1,108 @@
+# $Id$
+# vim:et:ft=sh:sts=2:sw=2
+#
+# Copyright 2008 Kate Ward. All Rights Reserved.
+# Released under the LGPL (GNU Lesser General Public License)
+#
+# Author: kate.ward@forestent.com (Kate Ward)
+#
+# shFlags unit test common functions
+
+__th_skipping=0
+
+# treat unset variables as an error
+set -u
+
+# set shwordsplit for zsh
+[ -n "${ZSH_VERSION:-}" ] && setopt shwordsplit
+
+# my name
+TH_MY_NAME=`basename "$0"`
+
+# path to shFlags library. can be overridden by setting SHFLAGS_INC
+TH_SHFLAGS=${SHFLAGS_INC:-./shflags}
+
+# path to shUnit2 library. can be overridden by setting SHUNIT_INC
+TH_SHUNIT=${SHUNIT_INC:-../lib/shunit2}
+
+TH_BOOL_VALID='true t 0 false f 1'
+TH_BOOL_INVALID='123 123.0 blah'
+TH_FLOAT_VALID='-1234.0 -1234 -1.0 -1 0.0 0 1.0 1 1234.0 1234'
+TH_FLOAT_INVALID='true false invalid 1.2.3 -1.2.3 0. -.5'
+TH_INT_VALID='-1234 -1 0 1 1234'
+TH_INT_INVALID='-1.0 0.0 1.0 invalid'
+
+#
+# test helper functions
+#
+
+# message functions
+th_trace() { echo "test:TRACE $@" >&2; }
+th_debug() { echo "test:DEBUG $@" >&2; }
+th_info() { echo "test:INFO $@" >&2; }
+th_warn() { echo "test:WARN $@" >&2; }
+th_error() { echo "test:ERROR $@" >&2; }
+th_fatal() { echo "test:FATAL $@" >&2; }
+
+th_oneTimeSetUp()
+{
+  # load shFlags
+  [ -n "${ZSH_VERSION:-}" ] && FLAGS_PARENT=$0
+  . ${TH_SHFLAGS}
+
+  # these files will be cleaned up automatically by shUnit2
+  tmpDir=${shunit_tmpDir}
+  stdoutF="${tmpDir}/stdout"
+  stderrF="${tmpDir}/stderr"
+  expectedF="${tmpDir}/expected"
+}
+
+th_showOutput()
+{
+  _th_rtrn=$1
+  _th_stdout=$2
+  _th_stderr=$3
+
+  isSkipping
+  if [ $? -eq ${SHUNIT_FALSE} -a ${_th_rtrn} != ${FLAGS_TRUE} ]; then
+    if [ -n "${_th_stdout}" -a -s "${_th_stdout}" ]; then
+      echo '>>> STDOUT' >&2
+      cat "${_th_stdout}" >&2
+    fi
+    if [ -n "${_th_stderr}" -a -s "${_th_stderr}" ]; then
+      echo '>>> STDERR' >&2
+      cat "${_th_stderr}" >&2
+    fi
+    if [ -n "${_th_stdout}" -o -n "${_th_stderr}" ]; then
+      echo '>>> end output' >&2
+    fi
+  fi
+
+  unset _th_rtrn _th_stdout _th_stderr
+}
+
+_th_assertMsg()
+{
+  _th_alert_type_=$1
+  _th_alert_msg_=$2
+  _th_msg_=$3
+
+  case ${_th_alert_type_} in
+    WARN) _th_alert_str_='a warning' ;;
+    ERROR) _th_alert_str_='an error' ;;
+    FATAL) _th_alert_str_='a fatal' ;;
+  esac
+  [ -z "${_th_alert_msg_}" ] && _th_alert_msg_='.*'
+  [ -n "${_th_msg_}" ] && _th_msg_="(${_th_msg_}) "
+
+  grep -- "^flags:${_th_alert_type_} ${_th_alert_msg_}" "${stderrF}" \
+      >/dev/null
+  assertTrue \
+      "FLAGS ${_th_msg_}failure did not generate ${_th_alert_str_} message" $?
+
+  unset _th_alert_type_ _th_alert_msg_ _th_alert_str_ _th_msg_
+}
+
+assertWarnMsg() { _th_assertMsg 'WARN' "${1:-}" "${2:-}"; }
+assertErrorMsg() { _th_assertMsg 'ERROR' "${1:-}" "${2:-}"; }
+assertFatalMsg() { _th_assertMsg 'FATAL' "${1:-}" "${2:-}"; }
