@@ -101,18 +101,17 @@ Export the Release
   .../shflags/builds
   $ svn export https://shflags.googlecode.com/svn/tags/1.0.0 shflags-1.0.0
 
-Create Tarball
---------------
+Create the tarball
+------------------
 ::
 
   $ tar cfz ../releases/shflags-1.0.0.tgz shflags-1.0.0
 
-md5sum the Tarball and Sign With gpg
-------------------------------------
+Sign the tarball with gpg
+-------------------------
 ::
 
   $ cd ../releases
-  $ md5sum shflags-1.0.0.tgz >shflags-1.0.0.tgz.md5
   $ gpg --default-key kate.ward@forestent.com --detach-sign shflags-1.0.0.tgz
 
 Post the release
@@ -122,9 +121,10 @@ To post the release, the ProjectInfo page needs to be updated with the release
 info (release, date, and MD5), and the release with GPG signature needs to
 uploaded.
 
-Post to Freshmeat
------------------
+Post to the Web
+---------------
 
+- http://shflags.googlecode.com/
 - http://freshmeat.net/
 
 
@@ -146,5 +146,5 @@ parsable into an HTML file.
 .. generate HTML using rst2html from Docutils of
 .. http://docutils.sourceforge.net/
 ..
-.. vim:syntax=rst:textwidth=80
+.. vim:fileencoding=latin1:ft=rst:spell:tw=80
 .. $Revision$
