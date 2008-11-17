@@ -935,13 +935,23 @@ flags_help()
       if [ ${flags_helpStrLen_} -lt ${flags_columns_} ]; then
         echo "${flags_helpStr_}" >&2
       else
+        echo "  ${flags_flagStr_}  ${flags_help_}" >&2
         # note: the silliness with the x's is purely for ksh93 on Ubuntu 6.06.
         # the sed strips the x's back out, plus the zero byte at the end of the
-        # string passed by echo (a C thing...).
+        # string passed by echo (C strings are zero byte terminated).
         flags_emptyStr_="`echo \"x${flags_flagStr_}x\" |tr -c '' ' ' \
             |sed 's/...$//'`"
-        echo "  ${flags_flagStr_}  ${flags_help_}" >&2
-        echo "  ${flags_emptyStr_}  ${flags_defaultStr_}" >&2
+        flags_helpStr_="  ${flags_emptyStr_}  ${flags_defaultStr_}"
+        flags_helpStrLen_=`expr "${flags_helpStr_}" : '.*'`
+        if [ ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_STD} \
+            -o ${flags_helpStrLen_} -lt ${flags_columns_} ]; then
+          # indented to match help string
+          echo "${flags_helpStr_}" >&2
+        else
+          # indented four from left to allow for longer defaults as long flag
+          # names might be used too, making things too long
+          echo "    ${flags_defaultStr_}" >&2
+        fi
       fi
     done
   fi

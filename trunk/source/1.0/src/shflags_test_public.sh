@@ -69,7 +69,10 @@ testStandardHelpOutput()
   DEFINE_integer test_int 0 'test integer' i
   DEFINE_string test_str '' 'test string' s
   DEFINE_string long_desc 'blah' \
-      'testing of a long description to force wrap of default value' l
+      'testing of a long description to force wrap of default value' D
+  DEFINE_string long_default \
+      'this_is_a_really_long_default_value_to_force_alternate_indentation' \
+      'testing of long default value' F
   help='USAGE: standard [flags] args'
 
   cat >"${expectedF}" <<EOF
@@ -78,8 +81,10 @@ flags:
   -b  test boolean (default: false)
   -i  test integer (default: 0)
   -s  test string (default: '')
-  -l  testing of a long description to force wrap of default value
+  -D  testing of a long description to force wrap of default value
       (default: 'blah')
+  -F  testing of long default value
+      (default: 'this_is_a_really_long_default_value_to_force_alternate_indentation')
   -h  show this help (default: false)
 EOF
   ( FLAGS_HELP=${help}; FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
@@ -98,6 +103,9 @@ testEnhancedHelpOutput()
   DEFINE_string test_str '' 'test string' s
   DEFINE_string long_desc 'blah' \
       'testing of a long description to force wrap of default value' l
+  DEFINE_string long_default \
+      'this_is_a_really_long_default_value_to_force_alternate_indentation' \
+      'testing of long default value' F
   help='USAGE: enhanced [flags] args'
 
   cat >"${expectedF}" <<EOF
@@ -106,8 +114,10 @@ flags:
   -b,--[no]test_bool:  test boolean (default: false)
   -i,--test_int:  test integer (default: 0)
   -s,--test_str:  test string (default: '')
-  -l,--long_desc:  testing of a long description to force wrap of default value
+  -D,--long_desc:  testing of a long description to force wrap of default value
                    (default: 'blah')
+  -F,--long_default:  testing of long default value
+    (default: 'this_is_a_really_long_default_value_to_force_alternate_indentation')
   -h,--[no]help:  show this help (default: false)
 EOF
   ( FLAGS_HELP=${help}; FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
