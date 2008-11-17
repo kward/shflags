@@ -102,7 +102,7 @@ testEnhancedHelpOutput()
   DEFINE_integer test_int 0 'test integer' i
   DEFINE_string test_str '' 'test string' s
   DEFINE_string long_desc 'blah' \
-      'testing of a long description to force wrap of default value' l
+      'testing of a long description to force wrap of default value' D
   DEFINE_string long_default \
       'this_is_a_long_default_value_to_force_alternate_indentation' \
       'testing of long default value' F
