@@ -10,6 +10,7 @@
 # shFlags unit test for the flag definition methods
 #
 # TODO(kward): assert on FLAGS errors
+# TODO(kward): testNonStandardIFS()
 
 # load test helpers
 . ./shflags_test_helpers
@@ -20,12 +21,12 @@
 
 testStandardGetopt()
 {
-  _flags_standardGetopt '-b' >"${stdoutF}" 2>"${stderrF}"
+  _flags_getoptStandard '-b' >"${stdoutF}" 2>"${stderrF}"
   rslt=$?
   assertTrue "didn't parse valid flag 'b'" ${rslt}
   th_showOutput ${rslt} "${stdoutF}" "${stderrF}"
 
-  _flags_standardGetopt '-x' >"${stdoutF}" 2>"${stderrF}"
+  _flags_getoptStandard '-x' >"${stdoutF}" 2>"${stderrF}"
   assertFalse "parsed invalid flag 'x'" $?
 }
 
@@ -33,14 +34,14 @@ testEnhancedGetopt()
 {
   flags_getoptIsEnh || startSkipping
 
-  _flags_enhancedGetopt '-b' >"${stdoutF}" 2>"${stderrF}"
+  _flags_getoptEnhanced '-b' >"${stdoutF}" 2>"${stderrF}"
   assertTrue "didn't parse valid flag 'b'" $?
-  _flags_enhancedGetopt '--bool' >"${stdoutF}" 2>"${stderrF}"
+  _flags_getoptEnhanced '--bool' >"${stdoutF}" 2>"${stderrF}"
   assertTrue "didn't parse valid flag 'bool'" $?
 
-  _flags_enhancedGetopt '-x' >"${stdoutF}" 2>"${stderrF}"
+  _flags_getoptEnhanced '-x' >"${stdoutF}" 2>"${stderrF}"
   assertFalse "parsed invalid flag 'x'" $?
-  _flags_enhancedGetopt '--xyz' >"${stdoutF}" 2>"${stderrF}"
+  _flags_getoptEnhanced '--xyz' >"${stdoutF}" 2>"${stderrF}"
   assertFalse "parsed invalid flag 'xyz'" $?
 }
 
@@ -231,15 +232,15 @@ _testMultipleFlags()
 
 _testNonFlagArgs()
 {
-  argc=$1
+  argv=$1
   shift
 
-  FLAGS $@
-  assertTrue 'parse returned value.' $?
+  FLAGS "$@"
+  assertTrue 'parse returned non-zero value.' $?
 
-  # shift out the parsed arguments to reach those that weren't parsed
-  shift ${FLAGS_ARGC}
-  assertSame 'wrong argc value.' ${argc} $#
+  eval set -- "${FLAGS_ARGV}"
+  assertEquals 'wrong count of argv arguments returned.' ${argv} $#
+  assertEquals 'wrong count of argc arguments returned.' 0 ${FLAGS_ARGC}
 }
 
 testSingleNonFlagArg()
@@ -254,10 +255,33 @@ testMultipleNonFlagArgs()
 
 testMultipleNonFlagStringArgsWithSpaces()
 {
-  _testNonFlagArgs 3 argOne 'arg #2' arg3
+  _testNonFlagArgs 3 argOne 'arg two' arg3
 }
 
-# TODO(kward): testNonStandardIFS()
+testFlagsWithEquals()
+{
+  FLAGS --str='str_flag' 'non_flag' >"${stdoutF}" 2>"${stderrF}"
+  assertTrue 'FLAGS returned a non-zero result' $?
+  assertEquals 'string flag not set properly' 'str_flag' "${FLAGS_str}"
+  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+
+  eval set -- "${FLAGS_ARGV}"
+  assertEquals 'wrong count of argv arguments returned.' 1 $#
+  assertEquals 'wrong count of argc arguments returned.' 1 ${FLAGS_ARGC}
+}
+
+testComplicatedCommandLine()
+{
+  FLAGS -i 1 --str='two' non_flag_1 --float 3 non_flag_two 'non flag 3' \
+      >"${stdoutF}" 2>"${stderrF}"
+  assertTrue 'FLAGS returned a non-zero result' $?
+  assertEquals 1 ${FLAGS_int}
+  assertEquals 'two' "${FLAGS_str}"
+  assertEquals 3 ${FLAGS_float}
+
+  eval set -- "${FLAGS_ARGV}"
+  assertEquals $# 3
+}
 
 #------------------------------------------------------------------------------
 # suite functions
