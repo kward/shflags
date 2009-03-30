@@ -19,6 +19,7 @@
 DEFINE_string 'name' 'world' 'name to say hello to' 'n'
 
 # parse the command-line
-FLAGS "$@" || exit 1; shift ${FLAGS_ARGC}
+FLAGS "$@" || exit 1
+eval set -- "${FLAGS_ARGV}"
 
 echo "Hello, ${FLAGS_name}!"

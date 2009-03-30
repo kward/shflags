@@ -14,34 +14,46 @@
 # - direct calling of the flags_help() function for script controlled usage
 #   output
 # - handling of non-flag type command-line arguments that follow the flags
+#
+# Try the following:
+# $ ./write_date.sh now.out
+# $ cat now.out
+#
+# $ ./write_date.sh now.out
+# $ cat now.out
+#
+# $ ./write_date.sh -f now.out
+# $ cat now.out
 
 # source shflags
 . ../src/shflags
-
-write_date() { date >"$1"; }
 
 # configure shflags
 DEFINE_boolean 'force' false 'force overwriting' 'f'
 FLAGS_HELP="USAGE: $0 [flags] filename"
 
-# parse the command-line
-FLAGS "$@" || exit 1; shift ${FLAGS_ARGC}
 
-# check for filename
-if [ $# -eq 0 ]; then
-  echo 'error: filename missing' >&2
+write_date()
+{
+  date >"$1"
+}
+
+die()
+{
+  [ $# -gt 0 ] && echo "error: $@" >&2
   flags_help
   exit 1
-fi
+}
+
+
+# parse the command-line
+FLAGS "$@" || exit 1
+eval set -- "${FLAGS_ARGV}"
+
+# check for filename
+[ $# -gt 0 ] || die 'filename missing'
 filename=$1
 
-if [ ! -f "${filename}" ]; then
-  write_date "${filename}"
-else
-  if [ ${FLAGS_force} -eq ${FLAGS_TRUE} ]; then
-    write_date "${filename}"
-  else
-    echo 'warning: filename exists; not overwriting' >&2
-    exit 2
-  fi
-fi
+[ -f "${filename}" -a ${FLAGS_force} -eq ${FLAGS_FALSE} ] \
+    && die 'filename exists; not overwriting'
+write_date "${filename}"

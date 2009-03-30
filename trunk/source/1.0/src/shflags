@@ -4,7 +4,8 @@
 # Copyright 2008 Kate Ward. All Rights Reserved.
 # Released under the LGPL (GNU Lesser General Public License)
 #
-# shFlags -- Advanced command-line flag library for Unix shell scripts
+# shFlags -- Advanced command-line flag library for Unix shell scripts.
+# http://code.google.com/p/shflags/
 #
 # Author: kate.ward@forestent.com (Kate Ward)
 #
@@ -37,12 +38,17 @@
 #
 # EXAMPLE USAGE:
 #
+#   -- begin hello.sh --
 #   #! /bin/sh
 #   . ./shflags
-#
-#   DEFINE_string name 'world' "somebody's name"
-#   FLAGS "$@" || exit $?; shift ${FLAGS_ARGC}
+#   DEFINE_string name 'world' "somebody's name" n
+#   FLAGS "$@" || exit $?
+#   eval set -- "${FLAGS_ARGV}"
 #   echo "Hello, ${FLAGS_name}."
+#   -- end hello.sh --
+#
+#   $ ./hello.sh -n Kate
+#   Hello, Kate.
 #
 # NOTE: Not all systems include a getopt version that supports long flags. On
 # these systems, only short flags are recognized.
@@ -72,7 +78,7 @@
 
 # return if FLAGS already loaded
 [ -n "${FLAGS_VERSION:-}" ] && return 0
-FLAGS_VERSION='1.0.2'
+FLAGS_VERSION='1.0.3pre'
 
 FLAGS_TRUE=0
 FLAGS_FALSE=1
@@ -97,17 +103,6 @@ if [ -n "${ZSH_VERSION:-}" ]; then
   fi
 fi
 
-# shell flags
-#  u: treat unset variables as an error when performing parameter expansion
-__FLAGS_SHELL_FLAGS='u'
-
-# save the current set of shell flags, and then set some for ourself
-__flags_oldShellFlags=$-
-for __flags_shellFlag in `echo "${__FLAGS_SHELL_FLAGS}" |sed 's/\(.\)/\1 /g'`
-do
-  set "-${__flags_shellFlag}"
-done
-
 #
 # constants
 #
@@ -121,6 +116,7 @@ getopt >/dev/null 2>&1
 case $? in
   0) __FLAGS_GETOPT_VERS=${__FLAGS_GETOPT_VERS_STD} ;;  # bsd getopt
   2)
+    # TODO(kward): look into '-T' option to test the internal getopt() version
     if [ "`getopt --version`" = '-- ' ]; then
       __FLAGS_GETOPT_VERS=${__FLAGS_GETOPT_VERS_STD}
     else
@@ -183,15 +179,9 @@ __flags_boolNames=' '  # space separated list of boolean flag names
 __flags_longNames=' '  # space separated list of long flag names
 __flags_shortNames=' '  # space separated list of short flag names
 
+__flags_argc=0  # count of non-flag arguments
 __flags_columns=''  # screen width in columns
 __flags_opts=''  # temporary storage for parsed getopt flags
-
-# restore the previous set of shell flags
-for __flags_shellFlag in ${__FLAGS_SHELL_FLAGS}; do
-  echo ${__flags_oldShellFlags} \
-  |grep ${__flags_shellFlag} >/dev/null || set +${__flags_shellFlag}
-done
-unset __flags_oldShellFlags __flags_shellFlag
 
 #------------------------------------------------------------------------------
 # private functions
@@ -357,7 +347,7 @@ _flags_genOptStr()
             ${_flags_flag_} ${__FLAGS_INFO_SHORT_STR}`
         if [ "${_flags_shortName_}" != "${__FLAGS_NULL}" ]; then
           _flags_opts_="${_flags_opts_}${_flags_shortName_}"
-          # getopt needs a trailing ':' to indicate a needed option
+          # getopt needs a trailing ':' to indicate a required argument
           [ ${_flags_type_} -ne ${__FLAGS_TYPE_BOOLEAN} ] && \
               _flags_opts_="${_flags_opts_}:"
         fi
@@ -365,7 +355,7 @@ _flags_genOptStr()
 
       ${__FLAGS_OPTSTR_LONG})
         _flags_opts_="${_flags_opts_:+${_flags_opts_},}${_flags_flag_}"
-        # getopt needs a trailing ':' to indicate a needed option
+        # getopt needs a trailing ':' to indicate a required argument
         [ ${_flags_type_} -ne ${__FLAGS_TYPE_BOOLEAN} ] && \
             _flags_opts_="${_flags_opts_}:"
         ;;
@@ -554,7 +544,7 @@ _flags_validateInteger()
 #   @: varies: command-line options to parse
 # Returns:
 #   integer: a FLAGS success condition
-_flags_standardGetopt()
+_flags_getoptStandard()
 {
   flags_return=${FLAGS_TRUE}
   _flags_shortOpts_=`_flags_genOptStr ${__FLAGS_OPTSTR_SHORT}`
@@ -593,7 +583,7 @@ _flags_standardGetopt()
 #   @: varies: command-line options to parse
 # Returns:
 #   integer: a FLAGS success condition
-_flags_enhancedGetopt()
+_flags_getoptEnhanced()
 {
   flags_return=${FLAGS_TRUE}
   _flags_shortOpts_=`_flags_genOptStr ${__FLAGS_OPTSTR_SHORT}`
@@ -627,7 +617,6 @@ _flags_enhancedGetopt()
 #   integer: a FLAGS success condition
 _flags_parseGetopt()
 {
-  FLAGS_ARGC=0
   flags_return=${FLAGS_TRUE}
 
   if [ ${__FLAGS_GETOPT_VERS} -ne ${__FLAGS_GETOPT_VERS_ENH} ]; then
@@ -636,6 +625,13 @@ _flags_parseGetopt()
     # note the quotes around the `$@' -- they are essential!
     eval set -- "$@"
   fi
+
+  # provide user with number of arguments to shift by later
+  # NOTE: the FLAGS_ARGC variable is obsolete as of 1.0.3 because it does not
+  # properly give user access to non-flag arguments mixed in between flag
+  # arguments. Its usage was replaced by FLAGS_ARGV, and it is being kept only
+  # for backwards compatibility reasons.
+  FLAGS_ARGC=`expr $# - 1 - ${__flags_argc}`
 
   # handle options. note options with values must do an additional shift
   while true; do
@@ -743,15 +739,16 @@ _flags_parseGetopt()
       fi
     fi
 
-    # shift the option out
+    # shift the option and non-boolean arguements out.
     shift
-    FLAGS_ARGC=`expr ${FLAGS_ARGC} + 1`
+    [ ${_flags_type_} != ${__FLAGS_TYPE_BOOLEAN} ] && shift
+  done
 
-    # additional shift for the argument
-    if [ ${_flags_type_} != ${__FLAGS_TYPE_BOOLEAN} ]; then
-      shift
-      FLAGS_ARGC=`expr ${FLAGS_ARGC} + 1`
-    fi
+  # give user back non-flag arguments
+  FLAGS_ARGV=''
+  while [ $# -gt 0 ]; do
+    FLAGS_ARGV="${FLAGS_ARGV:+${FLAGS_ARGV} }'$1'"
+    shift
   done
 
   unset _flags_arg_ _flags_len_ _flags_name_ _flags_opt_ _flags_pos_ \
@@ -795,12 +792,14 @@ FLAGS()
   [ -z "${__flags_help_type:-}" ] && \
       DEFINE_boolean 'help' false 'show this help' 'h'
 
+  # record original number of args for use elsewhere
+  __flags_argc=$#
+
   # parse options
-  # TODO(kward): look into '-T' option to test the internal getopt() version
   if [ ${__FLAGS_GETOPT_VERS} -ne ${__FLAGS_GETOPT_VERS_ENH} ]; then
-    _flags_standardGetopt "$@"
+    _flags_getoptStandard "$@"
   else
-    _flags_enhancedGetopt "$@"
+    _flags_getoptEnhanced "$@"
   fi
   flags_return=$?
 
