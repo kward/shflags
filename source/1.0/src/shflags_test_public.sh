@@ -76,7 +76,7 @@ testStandardHelpOutput()
   help='USAGE: standard [flags] args'
 
   cat >"${expectedF}" <<EOF
-USAGE: standard [flags] args
+${help}
 flags:
   -b  test boolean (default: false)
   -i  test integer (default: 0)
@@ -109,7 +109,7 @@ testEnhancedHelpOutput()
   help='USAGE: enhanced [flags] args'
 
   cat >"${expectedF}" <<EOF
-USAGE: enhanced [flags] args
+${help}
 flags:
   -b,--[no]test_bool:  test boolean (default: false)
   -i,--test_int:  test integer (default: 0)
