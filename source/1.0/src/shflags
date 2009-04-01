@@ -179,7 +179,6 @@ __flags_boolNames=' '  # space separated list of boolean flag names
 __flags_longNames=' '  # space separated list of long flag names
 __flags_shortNames=' '  # space separated list of short flag names
 
-__flags_argc=0  # count of non-flag arguments
 __flags_columns=''  # screen width in columns
 __flags_opts=''  # temporary storage for parsed getopt flags
 
@@ -612,11 +611,15 @@ _flags_getoptEnhanced()
 # dynamic to support any number of flags.
 #
 # Args:
+#   argc: int: original command-line argument count
 #   @: varies: output from getopt parsing
 # Returns:
 #   integer: a FLAGS success condition
 _flags_parseGetopt()
 {
+  _flags_argc_=$1
+  shift
+
   flags_return=${FLAGS_TRUE}
 
   if [ ${__FLAGS_GETOPT_VERS} -ne ${__FLAGS_GETOPT_VERS_ENH} ]; then
@@ -631,7 +634,7 @@ _flags_parseGetopt()
   # properly give user access to non-flag arguments mixed in between flag
   # arguments. Its usage was replaced by FLAGS_ARGV, and it is being kept only
   # for backwards compatibility reasons.
-  FLAGS_ARGC=`expr $# - 1 - ${__flags_argc}`
+  FLAGS_ARGC=`expr $# - 1 - ${_flags_argc_}`
 
   # handle options. note options with values must do an additional shift
   while true; do
@@ -793,7 +796,7 @@ FLAGS()
       DEFINE_boolean 'help' false 'show this help' 'h'
 
   # record original number of args for use elsewhere
-  __flags_argc=$#
+  flags_argc_=$#
 
   # parse options
   if [ ${__FLAGS_GETOPT_VERS} -ne ${__FLAGS_GETOPT_VERS_ENH} ]; then
@@ -804,7 +807,7 @@ FLAGS()
   flags_return=$?
 
   if [ ${flags_return} -eq ${FLAGS_TRUE} ]; then
-    _flags_parseGetopt "${__flags_opts}"
+    _flags_parseGetopt ${flags_argc_} "${__flags_opts}"
     flags_return=$?
   fi
 
