@@ -4,22 +4,23 @@ Changes in shFlags 1.0.x
 Changes with 1.0.3
 ------------------
 
-MAJOR CHANGE! FLAGS_ARGC is now obsolete, and is replaced by FLAGS_ARGV.
+MAJOR CHANGE! ``FLAGS_ARGC`` is now obsolete, and is replaced by
+``FLAGS_ARGV``.
 
 Fixed issue# 7 where long flags defined with '=' (e.g. --abc=123) made it
 impossible for the user to know how many non-flag command-line arguments were
-available because the value returned by FLAGS_ARGC was wrong. The FLAGS_ARGC
-value is now obsolete, but will be maintained for backwards compatibility. The
-new method of getting the non-flag arguments is by executing 'eval set --
-"${FLAGS_ARGV}"' after the FLAGS command. The arguments will then be available
-using the standard shell $#, $@, $*, $1, etc. variables.
+available because the value returned by ``FLAGS_ARGC`` was wrong. The
+``FLAGS_ARGC`` value is now obsolete, but will be maintained for backwards
+compatibility. The new method of getting the non-flag arguments is by executing
+``eval set -- "${FLAGS_ARGV}"`` after the **FLAGS** call. The arguments will
+then be available using the standard shell $#, $@, $*, $1, etc. variables.
 
 Due to above fix for issue# 7, there is now proper support for mixing flags
 with non-flag arguments on the command-line. Previously, all non-flag arguments
 had to be at the end of the command-line.
 
-Renamed _flags_standardGetopt() and _flags_enhancedGetopt() functions to
-_flags_getoptStandard() and _flags_getoptEnhanced().
+Renamed ``_flags_standardGetopt()`` and ``_flags_enhancedGetopt()`` functions to
+``_flags_getoptStandard()`` and ``_flags_getoptEnhanced()``.
 
 Took out the setting and restoration of the '-u' shell flag to treat unset
 variables as an error. No point in having it in this library as it is verified
