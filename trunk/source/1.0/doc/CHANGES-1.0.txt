@@ -5,7 +5,7 @@ Changes with 1.0.3
 ------------------
 
 MAJOR CHANGE! ``FLAGS_ARGC`` is now obsolete, and is replaced by
-``FLAGS_ARGV``.
+``FLAGS_ARGV``. See below for more info.
 
 Fixed issue# 7 where long flags defined with '=' (e.g. --abc=123) made it
 impossible for the user to know how many non-flag command-line arguments were
@@ -28,6 +28,8 @@ in the unit tests, and provides basically no benefit.
 
 Fixed bug under Solaris where the generated help was adding extra 'x'
 characters.
+
+Added checks for reserved flag variables (e.g. FLAGS_TRUE).
 
 
 Changes with 1.0.2

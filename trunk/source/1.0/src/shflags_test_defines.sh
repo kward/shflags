@@ -180,6 +180,15 @@ testShortNameLength()
   :
 }
 
+testFlagNameIsReserved()
+{
+  ( DEFINE_string TRUE '' 'true is a reserved flag name' t \
+      >"${stdoutF}" 2>"${stderrF}" )
+  rtrn=$?
+  assertEquals ${FLAGS_ERROR} ${rtrn}
+  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+}
+
 #------------------------------------------------------------------------------
 # suite functions
 #
