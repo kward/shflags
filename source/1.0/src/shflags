@@ -890,6 +890,7 @@ flags_help()
     echo 'flags:' >&2
     for flags_name_ in ${__flags_longNames}; do
       flags_flagStr_=''
+      flags_boolStr_=''
 
       flags_default_=`_flags_getFlagInfo \
           "${flags_name_}" ${__FLAGS_INFO_DEFAULT_STR}`
@@ -900,17 +901,14 @@ flags_help()
       flags_type_=`_flags_getFlagInfo \
           "${flags_name_}" ${__FLAGS_INFO_TYPE_STR}`
 
-      [ "${flags_short_}" != "${__FLAGS_NULL}" ] && \
-          flags_flagStr_="${flags_flagStr_}-${flags_short_}"
+      [ "${flags_short_}" != "${__FLAGS_NULL}" ] \
+          && flags_flagStr_="-${flags_short_}"
 
       if [ ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_ENH} ]; then
-        [ "${flags_short_}" != "${__FLAGS_NULL}" ] && \
-            flags_flagStr_="${flags_flagStr_},"
-        if [ ${flags_type_} -eq ${__FLAGS_TYPE_BOOLEAN} ]; then
-          flags_boolStr_='[no]'
-        else
-          flags_boolStr_=''
-        fi
+        [ "${flags_short_}" != "${__FLAGS_NULL}" ] \
+            && flags_flagStr_="${flags_flagStr_},"
+        [ ${flags_type_} -eq ${__FLAGS_TYPE_BOOLEAN} ] \
+            && flags_boolStr_='[no]'
         flags_flagStr_="${flags_flagStr_}--${flags_boolStr_}${flags_name_}:"
       fi
 
@@ -938,8 +936,8 @@ flags_help()
         # note: the silliness with the x's is purely for ksh93 on Ubuntu 6.06.
         # the sed strips the x's back out, plus the zero byte at the end of the
         # string passed by echo (C strings are zero byte terminated).
-        flags_emptyStr_="`echo \"x${flags_flagStr_}x\" |tr -c '' ' ' \
-            |sed 's/...$//'`"
+        flags_emptyStr_="`echo \"x${flags_flagStr_}x\" \
+            |awk '{printf "%"length($0)-2"s", ""}'`"
         flags_helpStr_="  ${flags_emptyStr_}  ${flags_defaultStr_}"
         flags_helpStrLen_=`expr "${flags_helpStr_}" : '.*'`
         if [ ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_STD} \
