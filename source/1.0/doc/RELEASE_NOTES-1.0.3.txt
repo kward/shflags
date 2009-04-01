@@ -80,13 +80,10 @@ Known Issues
 ------------
 
 The **getopt** version provided by default with all versions of Mac OS X (up to
-and including 10.5.6) is the standard version. As such, only short flags are
-supported. Additionally, the version supplied does not support intermixing flag
-and non-flag arguments on the command-line.
-
-The **getopt** version provided by default with all versions of Solaris (up to
-and including Solaris 10 and OpenSolaris) is the standard version. As such,
-only short flags are supported.
+and including 10.5.6) and Solaris (up to and including Solaris 10 and
+OpenSolaris) is the standard version. As such, only short flags are supported.
+Additionally, the version supplied does not support intermixing flag and
+non-flag arguments on the command-line.
 
 Workarounds
 -----------
