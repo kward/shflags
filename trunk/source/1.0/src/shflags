@@ -933,9 +933,8 @@ flags_help()
         echo "${flags_helpStr_}" >&2
       else
         echo "  ${flags_flagStr_}  ${flags_help_}" >&2
-        # note: the silliness with the x's is purely for ksh93 on Ubuntu 6.06.
-        # the sed strips the x's back out, plus the zero byte at the end of the
-        # string passed by echo (C strings are zero byte terminated).
+        # note: the silliness with the x's is purely for ksh93 on Ubuntu 6.06
+        # because it doesn't like empty strings when used in this manner.
         flags_emptyStr_="`echo \"x${flags_flagStr_}x\" \
             |awk '{printf "%"length($0)-2"s", ""}'`"
         flags_helpStr_="  ${flags_emptyStr_}  ${flags_defaultStr_}"
