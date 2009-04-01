@@ -33,7 +33,7 @@
 #
 # SPECIAL FLAGS: There are a few flags that have special meaning:
 #   --help (or -?)  prints a list of all the flags in a human-readable fashion
-#   --flagfile=foo  read flags from foo.
+#   --flagfile=foo  read flags from foo.  (not implemented yet)
 #   --              as in getopt(), terminates flag-processing
 #
 # EXAMPLE USAGE:
@@ -80,9 +80,13 @@
 [ -n "${FLAGS_VERSION:-}" ] && return 0
 FLAGS_VERSION='1.0.3pre'
 
+# return values
 FLAGS_TRUE=0
 FLAGS_FALSE=1
 FLAGS_ERROR=2
+
+# reserved flag names
+FLAGS_RESERVED='ARGC ARGV ERROR FALSE HELP PARENT RESERVED TRUE VERSION'
 
 _flags_debug() { echo "flags:DEBUG $@" >&2; }
 _flags_warn() { echo "flags:WARN $@" >&2; }
@@ -157,6 +161,7 @@ __flags_constants=`set |awk -F= '/^FLAGS_/ || /^__FLAGS_/ {print $1}'`
 for __flags_const in ${__flags_constants}; do
   # skip certain flags
   case ${__flags_const} in
+    FLAGS_HELP) continue ;;
     FLAGS_PARENT) continue ;;
   esac
   # set flag readonly
@@ -222,6 +227,13 @@ _flags_define()
   _flags_return_=${FLAGS_TRUE}
 
   # TODO(kward): check for validity of the flag name (e.g. dashes)
+
+  # check whether the flag name is reserved
+  echo " ${FLAGS_RESERVED} " |grep " ${_flags_name_} " >/dev/null
+  if [ $? -eq 0 ]; then
+    flags_error="flag name (${_flags_name_}) is reserved"
+    _flags_return_=${FLAGS_ERROR}
+  fi
 
   # require short option for getopt that don't support long options
   if [ ${_flags_return_} -eq ${FLAGS_TRUE} \
