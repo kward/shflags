@@ -26,6 +26,9 @@ Took out the setting and restoration of the '-u' shell flag to treat unset
 variables as an error. No point in having it in this library as it is verified
 in the unit tests, and provides basically no benefit.
 
+Fixed bug under Solaris where the generated help was adding extra 'x'
+characters.
+
 
 Changes with 1.0.2
 ------------------
