@@ -19,7 +19,7 @@
 # suite tests
 #
 
-testStandardGetopt()
+testGetopt_Standard()
 {
   _flags_getoptStandard '-b' >"${stdoutF}" 2>"${stderrF}"
   rslt=$?
@@ -30,7 +30,7 @@ testStandardGetopt()
   assertFalse "parsed invalid flag 'x'" $?
 }
 
-testEnhancedGetopt()
+testGetopt_Enhanced()
 {
   flags_getoptIsEnh || startSkipping
 
@@ -70,7 +70,7 @@ testValidBooleanShort()
 
 testValidBooleanLong()
 {
-  flags_getoptIsStd && startSkipping
+  flags_getoptIsEnh || startSkipping
 
   # note: the default value of bool is 'false'
 
@@ -102,7 +102,7 @@ testValidBooleanLong()
 testValidFloats()
 {
   _testValidFloats '-f'
-  flags_getoptIsStd && startSkipping
+  flags_getoptIsEnh || startSkipping
   _testValidFloats '--float'
 }
 
@@ -122,7 +122,7 @@ _testValidFloats()
 testInvalidFloats()
 {
   _testInvalidFloats '-f'
-  flags_getoptIsStd && startSkipping
+  flags_getoptIsEnh || startSkipping
   _testInvalidFloats '--float'
 }
 
@@ -140,7 +140,7 @@ _testInvalidFloats()
 testValidIntegers()
 {
   _testValidIntegers '-i'
-  flags_getoptIsStd && startSkipping
+  flags_getoptIsEnh || startSkipping
   _testValidIntegers '--int'
 }
 
@@ -160,7 +160,7 @@ _testValidIntegers()
 testInvalidIntegers()
 {
   _testInvalidIntegers '-i'
-  flags_getoptIsStd && startSkipping
+  flags_getoptIsEnh || startSkipping
   _testInvalidIntegers '--int'
 }
 
@@ -178,7 +178,7 @@ _testInvalidIntegers()
 testValidStrings()
 {
   _testValidStrings '-s'
-  flags_getoptIsStd && startSkipping
+  flags_getoptIsEnh || startSkipping
   _testValidStrings '--str'
 }
 
@@ -203,7 +203,7 @@ _testValidStrings()
 testMultipleFlags()
 {
   _testMultipleFlags '-b' '-i' '-f' '-s'
-  flags_getoptIsStd && startSkipping
+  flags_getoptIsEnh || startSkipping
   _testMultipleFlags '--bool' '--int' '--float' '--str'
 }
 
@@ -235,8 +235,10 @@ _testNonFlagArgs()
   argv=$1
   shift
 
-  FLAGS "$@"
-  assertTrue 'parse returned non-zero value.' $?
+  FLAGS "$@" >"${stdoutF}" 2>"${stderrF}"
+  rtrn=$?
+  assertTrue 'parse returned non-zero value.' ${rtrn}
+  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 
   eval set -- "${FLAGS_ARGV}"
   assertEquals 'wrong count of argv arguments returned.' ${argv} $#
@@ -260,6 +262,8 @@ testMultipleNonFlagStringArgsWithSpaces()
 
 testFlagsWithEquals()
 {
+  flags_getoptIsEnh || startSkipping
+
   FLAGS --str='str_flag' 'non_flag' >"${stdoutF}" 2>"${stderrF}"
   assertTrue 'FLAGS returned a non-zero result' $?
   assertEquals 'string flag not set properly' 'str_flag' "${FLAGS_str}"
@@ -270,17 +274,32 @@ testFlagsWithEquals()
   assertEquals 'wrong count of argc arguments returned.' 1 ${FLAGS_ARGC}
 }
 
-testComplicatedCommandLine()
+_testComplicatedCommandLine()
 {
-  FLAGS -i 1 --str='two' non_flag_1 --float 3 non_flag_two 'non flag 3' \
-      >"${stdoutF}" 2>"${stderrF}"
-  assertTrue 'FLAGS returned a non-zero result' $?
-  assertEquals 1 ${FLAGS_int}
-  assertEquals 'two' "${FLAGS_str}"
-  assertEquals 3 ${FLAGS_float}
+  FLAGS "$@" >"${stdoutF}" 2>"${stderrF}"
+  rtrn=$?
+  assertTrue 'FLAGS returned a non-zero result' ${rtrn}
+  assertEquals 'failed std int test' 1 ${FLAGS_int}
+  assertEquals 'failed std str test' 'two' "${FLAGS_str}"
+  assertEquals 'failed std float test' 3 ${FLAGS_float}
+  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 
   eval set -- "${FLAGS_ARGV}"
-  assertEquals $# 3
+  assertEquals 'incorrect number of std argv values' 3 $#
+}
+
+testComplicatedCommandLine_Standard()
+{
+  _testComplicatedCommandLine \
+      -i 1 non_flag_1 -s 'two' non_flag_2 -f 3 non_flag_3
+}
+
+testComplicatedCommandLine_Enhanced()
+{
+  flags_getoptIsEnh || startSkipping
+
+  _testComplicatedCommandLine \
+      -i 1 non_flag_1 --str='two' non_flag_2 --float 3 'non flag 3'
 }
 
 #------------------------------------------------------------------------------

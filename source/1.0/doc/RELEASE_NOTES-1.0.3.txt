@@ -27,8 +27,11 @@ wrong when flag and non-flag arguments are mixed together on the command-line.
 To gain access to the non-flag arguments, replace the following snippet of code
 in your scripts with the updated version.
 
-:old: shift ${FLAGS_ARGC}
-:new: eval set -- "${FLAGS_ARGV}"
+old ::
+  shift ${FLAGS_ARGC}
+
+new ::
+  eval set -- "${FLAGS_ARGV}"
 
 Please see the CHANGES-1.0.txt file for a complete list of changes.
 
@@ -78,7 +81,8 @@ Known Issues
 
 The **getopt** version provided by default with all versions of Mac OS X (up to
 and including 10.5.6) is the standard version. As such, only short flags are
-supported.
+supported. Additionally, the version supplied does not support intermixing flag
+and non-flag arguments on the command-line.
 
 The **getopt** version provided by default with all versions of Solaris (up to
 and including Solaris 10 and OpenSolaris) is the standard version. As such,
