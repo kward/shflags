@@ -55,7 +55,8 @@ os_version=`versions_osVersion |tr ' ' '_'`
 DEFINE_boolean force false 'force overwrite' f
 DEFINE_string output_dir "`pwd`" 'output dir' d
 DEFINE_string output_file "${os_name}-${os_version}.txt" 'output file' o
-FLAGS "$@" || exit $?; shift ${FLAGS_ARGC}
+FLAGS "${@:-}" || exit $?
+eval set -- "${FLAGS_ARGV}"
 
 # determine output filename
 output="${FLAGS_output_dir:+${FLAGS_output_dir}/}${FLAGS_output_file}"
