@@ -186,7 +186,7 @@ testFlagNameIsReserved()
       >"${stdoutF}" 2>"${stderrF}" )
   rtrn=$?
   assertEquals ${FLAGS_ERROR} ${rtrn}
-  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+  assertErrorMsg 'flag name (TRUE) is reserved'
 }
 
 #------------------------------------------------------------------------------

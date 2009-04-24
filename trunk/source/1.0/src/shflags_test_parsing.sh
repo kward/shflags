@@ -19,7 +19,7 @@
 # suite tests
 #
 
-testGetopt_Standard()
+testGetoptStandard()
 {
   _flags_getoptStandard '-b' >"${stdoutF}" 2>"${stderrF}"
   rslt=$?
@@ -30,7 +30,7 @@ testGetopt_Standard()
   assertFalse "parsed invalid flag 'x'" $?
 }
 
-testGetopt_Enhanced()
+testGetoptEnhanced()
 {
   flags_getoptIsEnh || startSkipping
 
@@ -177,27 +177,29 @@ _testInvalidIntegers()
 
 testValidStrings()
 {
-  _testValidStrings '-s'
+  _testValidStrings -s single_word
   flags_getoptIsEnh || startSkipping
-  _testValidStrings '--str'
+  _testValidStrings --str single_word
+  _testValidStrings --str 'string with spaces'
 }
 
 _testValidStrings()
 {
   flag=$1
-  for value in single_word 'string with spaces'; do
-    FLAGS ${flag} "${value}" >"${stdoutF}" 2>"${stderrF}"
-    rtrn=$?
-    assertTrue "FLAGS (${value}) returned a non-zero result (${rtrn})" ${rtrn}
-    assertEquals "string (${value}) test failed." "${value}" "${FLAGS_str}"
-    if [ ${rtrn} -eq ${FLAGS_TRUE} ]; then
-      assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
-    else
-      # validate that an error is thrown for unsupported getopt uses
-      assertFatalMsg '.* spaces in options'
-    fi
-    th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
-  done
+  value=$2
+
+  FLAGS ${flag} "${value}" >"${stdoutF}" 2>"${stderrF}"
+  rtrn=$?
+  assertTrue "'FLAGS ${flag} ${value}' returned a non-zero result (${rtrn})" \
+      ${rtrn}
+  assertEquals "string (${value}) test failed." "${value}" "${FLAGS_str}"
+  if [ ${rtrn} -eq ${FLAGS_TRUE} ]; then
+    assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
+  else
+    # validate that an error is thrown for unsupported getopt uses
+    assertFatalMsg '.* spaces in options'
+  fi
+  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 }
 
 testMultipleFlags()
@@ -232,7 +234,7 @@ _testMultipleFlags()
 
 _testNonFlagArgs()
 {
-  argv=$1
+  argc=$1
   shift
 
   FLAGS "$@" >"${stdoutF}" 2>"${stderrF}"
@@ -241,7 +243,7 @@ _testNonFlagArgs()
   th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 
   eval set -- "${FLAGS_ARGV}"
-  assertEquals 'wrong count of argv arguments returned.' ${argv} $#
+  assertEquals 'wrong count of argv arguments returned.' ${argc} $#
   assertEquals 'wrong count of argc arguments returned.' 0 ${FLAGS_ARGC}
 }
 
@@ -257,6 +259,7 @@ testMultipleNonFlagArgs()
 
 testMultipleNonFlagStringArgsWithSpaces()
 {
+  flags_getoptIsEnh || startSkipping
   _testNonFlagArgs 3 argOne 'arg two' arg3
 }
 
@@ -274,32 +277,37 @@ testFlagsWithEquals()
   assertEquals 'wrong count of argc arguments returned.' 1 ${FLAGS_ARGC}
 }
 
-_testComplicatedCommandLine()
+testComplicatedCommandLineStandard()
 {
-  FLAGS "$@" >"${stdoutF}" 2>"${stderrF}"
+  flags_getoptIsStd || startSkipping
+
+  # note: standard getopt stops parsing after first non-flag argument :-(
+  FLAGS -i 1 non_flag_1 -s 'two' non_flag_2 -f 3 non_flag_3 \
+      >"${stdoutF}" 2>"${stderrF}"
   rtrn=$?
   assertTrue 'FLAGS returned a non-zero result' ${rtrn}
-  assertEquals 'failed std int test' 1 ${FLAGS_int}
-  assertEquals 'failed std str test' 'two' "${FLAGS_str}"
-  assertEquals 'failed std float test' 3 ${FLAGS_float}
+  assertEquals 'failed int test' 1 ${FLAGS_int}
   th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 
   eval set -- "${FLAGS_ARGV}"
-  assertEquals 'incorrect number of std argv values' 3 $#
+  assertEquals 'incorrect number of argv values' 7 $#
 }
 
-testComplicatedCommandLine_Standard()
-{
-  _testComplicatedCommandLine \
-      -i 1 non_flag_1 -s 'two' non_flag_2 -f 3 non_flag_3
-}
-
-testComplicatedCommandLine_Enhanced()
+testComplicatedCommandLineEnhanced()
 {
   flags_getoptIsEnh || startSkipping
 
-  _testComplicatedCommandLine \
-      -i 1 non_flag_1 --str='two' non_flag_2 --float 3 'non flag 3'
+  FLAGS -i 1 non_flag_1 --str='two' non_flag_2 --float 3 'non flag 3' \
+      >"${stdoutF}" 2>"${stderrF}"
+  rtrn=$?
+  assertTrue 'FLAGS returned a non-zero result' ${rtrn}
+  assertEquals 'failed int test' 1 ${FLAGS_int}
+  assertEquals 'failed str test' 'two' "${FLAGS_str}"
+  assertEquals 'failed float test' 3 ${FLAGS_float}
+  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+
+  eval set -- "${FLAGS_ARGV}"
+  assertEquals 'incorrect number of argv values' 3 $#
 }
 
 #------------------------------------------------------------------------------
