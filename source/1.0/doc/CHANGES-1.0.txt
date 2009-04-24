@@ -31,6 +31,13 @@ characters.
 
 Added checks for reserved flag variables (e.g. FLAGS_TRUE).
 
+Fixed some unset variable bugs.
+
+Now report the actual getopt error if there is one.
+
+All tests now properly enable skipping based on whether a standard or enhanced
+getopt is found.
+
 
 Changes with 1.0.2
 ------------------
