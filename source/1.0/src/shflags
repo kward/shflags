@@ -573,15 +573,15 @@ _flags_getoptStandard()
 
   if [ ${flags_return} -eq ${FLAGS_TRUE} ]; then
     __flags_opts=`getopt ${_flags_shortOpts_} $@ 2>&1`
-    if [ $? -ne ${FLAGS_TRUE} ]; then
-      # TODO(kward): actually output the failed value
-      _flags_warn 'getopt on this platform supports only short flags.'
+    _flags_rtrn_=$?
+    if [ ${_flags_rtrn_} -ne ${FLAGS_TRUE} ]; then
+      _flags_warn "${__flags_opts}"
       flags_error='unable to parse provided options with getopt.'
       flags_return=${FLAGS_ERROR}
     fi
   fi
 
-  unset _flags_match_ _flags_opt_ _flags_shortOpts_
+  unset _flags_match_ _flags_opt_ _flags_rtrn_ _flags_shortOpts_
   return ${flags_return}
 }
 
@@ -606,13 +606,14 @@ _flags_getoptEnhanced()
       -o ${_flags_shortOpts_} \
       -l "${_flags_longOpts_},${_flags_boolOpts_}" \
       -- "$@" 2>&1`
-  if [ $? -ne ${FLAGS_TRUE} ]; then
-    # TODO(kward): actually output the failed value
+  _flags_rtrn_=$?
+  if [ ${_flags_rtrn_} -ne ${FLAGS_TRUE} ]; then
+    _flags_warn "${__flags_opts}"
     flags_error='unable to parse provided options with getopt.'
     flags_return=${FLAGS_ERROR}
   fi
 
-  unset _flags_boolOpts_ _flags_longOpts_ _flags_shortOpts_
+  unset _flags_boolOpts_ _flags_longOpts_ _flags_rtrn_ _flags_shortOpts_
   return ${flags_return}
 }
 
@@ -653,6 +654,7 @@ _flags_parseGetopt()
     _flags_opt_=$1
     _flags_arg_=${2:-}
     _flags_type_=${__FLAGS_TYPE_NONE}
+    _flags_name_=''
 
     # determine long flag name
     case "${_flags_opt_}" in
@@ -807,19 +809,22 @@ FLAGS()
   [ -z "${__flags_help_type:-}" ] && \
       DEFINE_boolean 'help' false 'show this help' 'h'
 
-  # record original number of args for use elsewhere
-  flags_argc_=$#
-
   # parse options
-  if [ ${__FLAGS_GETOPT_VERS} -ne ${__FLAGS_GETOPT_VERS_ENH} ]; then
-    _flags_getoptStandard "$@"
+  if [ $# -gt 0 ]; then
+    if [ ${__FLAGS_GETOPT_VERS} -ne ${__FLAGS_GETOPT_VERS_ENH} ]; then
+      _flags_getoptStandard "$@"
+    else
+      _flags_getoptEnhanced "$@"
+    fi
+    flags_return=$?
   else
-    _flags_getoptEnhanced "$@"
+    # nothing passed; won't bother running getopt
+    __flags_opts='--'
+    flags_return=${FLAGS_TRUE}
   fi
-  flags_return=$?
 
   if [ ${flags_return} -eq ${FLAGS_TRUE} ]; then
-    _flags_parseGetopt ${flags_argc_} "${__flags_opts}"
+    _flags_parseGetopt $# "${__flags_opts}"
     flags_return=$?
   fi
 
