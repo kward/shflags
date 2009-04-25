@@ -50,11 +50,11 @@ SRC_DIR="${BASE_DIR}/src"
 . ${LIB_DIR}/versions || die 'unable to load versions library'
 
 os_name=`versions_osName |tr ' ' '_'`
-os_version=`versions_osVersion |tr ' ' '_'`
+os_release=`versions_osRelease |tr ' ' '_'`
 
 DEFINE_boolean force false 'force overwrite' f
 DEFINE_string output_dir "`pwd`" 'output dir' d
-DEFINE_string output_file "${os_name}-${os_version}.txt" 'output file' o
+DEFINE_string output_file "${os_name}-${os_release}.txt" 'output file' o
 FLAGS "${@:-}" || exit $?
 eval set -- "${FLAGS_ARGV}"
 
