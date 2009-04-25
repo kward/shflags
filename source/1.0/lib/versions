@@ -31,13 +31,13 @@ versions_osName()
   unset os_name_ os_system_
 }
 
-versions_osVersion()
+versions_osRelease()
 {
-  os_version_='unrecognized'
+  os_str_='unrecognized'
   os_system_=`uname -s`
   os_release_=`uname -r`
   case ${os_system_} in
-    Cygwin) os_version_='unknown' ;;
+    Cygwin) os_str_='unknown' ;;
     Darwin)
       major_='10'
       sub_=`echo ${os_release_} |\
@@ -47,24 +47,34 @@ versions_osVersion()
         9.*) minor_='5' ;;
         *) minor_='X'; sub_='X' ;;
       esac
-      os_version_="${major_}.${minor_}.${sub_}"
+      os_str_="${major_}.${minor_}.${sub_}"
       ;;
     Linux)
       if [ -r '/etc/lsb-release' ]; then
-        os_version_=`. /etc/lsb-release && \
+        os_str_=`. /etc/lsb-release && \
             echo "${DISTRIB_ID:-}-${DISTRIB_RELEASE:-}"`
       fi
-      if [ "${os_version_}" = '-' ]; then
-        os_version_=''
+      if [ "${os_release_}" = '-' ]; then
+        os_str_=''
         if [ -r '/etc/redhat-release' ]; then
-          os_version_=`cat /etc/redhat-release`
+          os_str_=`cat /etc/redhat-release`
         fi
       fi
       ;;
-    SunOS) os_version_=`echo ${os_release_} |sed 's/[0-9]*\.\([0-9]*\)/\1/'` ;;
+    SunOS)
+      os_version_=`versions_osVersion`
+
+      os_str_=`echo ${os_release_} |sed 's/[0-9]*\.\([0-9]*\)/\1/'`
+      os_str_="${os_release_}-${os_version_}"
+      ;;
   esac
-  echo ${os_version_}
-  unset os_name_ os_release_ os_version_ major_ minor_ sub_
+  echo ${os_str_}
+  unset os_name_ os_release_ os_str_ os_version_ major_ minor_ sub_
+}
+
+versions_osVersion()
+{
+  uname -v
 }
 
 versions_shellVersion()

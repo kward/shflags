@@ -38,6 +38,8 @@ Now report the actual getopt error if there is one.
 All tests now properly enable skipping based on whether a standard or enhanced
 getopt is found.
 
+Added the OS version to OS release for Solaris.
+
 
 Changes with 1.0.2
 ------------------
