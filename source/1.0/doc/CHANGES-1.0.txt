@@ -40,6 +40,8 @@ getopt is found.
 
 Added the OS version to OS release for Solaris.
 
+Fixed flags_reset() so it unsets the default value environment vars.
+
 
 Changes with 1.0.2
 ------------------

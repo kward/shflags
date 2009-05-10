@@ -978,7 +978,7 @@ flags_help()
   return ${FLAGS_TRUE}
 }
 
-# Reset all flags back to their default values.
+# Reset shflags back to an uninitialized state.
 #
 # Args:
 #   none
@@ -989,6 +989,7 @@ flags_reset()
   for flags_name_ in ${__flags_longNames}; do
     flags_strToEval_="unset FLAGS_${flags_name_}"
     for flags_type_ in \
+        ${__FLAGS_INFO_DEFAULT} \
         ${__FLAGS_INFO_HELP} \
         ${__FLAGS_INFO_SHORT} \
         ${__FLAGS_INFO_TYPE}
