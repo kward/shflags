@@ -20,7 +20,7 @@ Tested Shells
 Development and testing of shFlags was done by Kate Ward. More products for Unix shell scripts can be found at http://forestent.com/.
 
 == Downloading ==
-If you would like to verify the GPG signatures of the releases, please take a look at my [http://forestent.com/wiki/Info:GnuPG GnuPG Info] page.
+If you would like to verify the GPG signatures of the releases, please take a look at my [http://forestent.com/info/gpg_info.txt GnuPG Info] page.
 
 === 1.0.x – Stable releases ===
 || *Release* || *Date* ||
