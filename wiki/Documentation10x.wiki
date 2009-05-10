@@ -33,7 +33,8 @@ Example: `examples/hello_world.sh`
 DEFINE_string 'name' 'world' 'name to say hello to' 'n'
 
 # parse the command-line
-FLAGS "$@" || exit 1; shift ${FLAGS_ARGC}
+FLAGS "$@" || exit 1
+eval set -- "${FLAGS_ARGV}"
 
 # say Hello!
 echo "Hello, ${FLAGS_name}!"
@@ -68,7 +69,8 @@ Wow. That's a lot. Let's keep going.
 
 {{{
 # parse the command-line
-FLAGS "$@" || exit 1; shift ${FLAGS_ARGC}
+FLAGS "$@" || exit 1
+eval set -- "${FLAGS_ARGV}"
 }}}
 Here is where all the magic happens. The call to `FLAGS` with the passing of `"$@"` sends all command-line arguments into the shFlags library for processing. If everything is successful, a return value of 0 (`${FLAGS_TRUE}`) is returned an things continue. If a false value of 1 (`${FLAGS_FALSE}`) or an error value of 2 (`${FLAGS_ERROR}`) is returned, the processing is halted with the `exit 1`. If there are any command-line arguments left over that shFlags didn't know how to process, they get shifted off the stack with the '`shift ${FLAGS_ARGC}`' so the script can handle them itself.
 
@@ -111,14 +113,13 @@ Until this section gets written, see the source code in `src/shflags` and the va
 The actual flag parsing step looks deceptively simple, but at the same time confusing.
 
 {{{
-FLAGS "$@" || exit 1; shift ${FLAGS_ARGC}
+FLAGS "$@" || exit 1
+eval set -- "${FLAGS_ARGV}"
 }}}
-
-The above line is technically two lines. They are separated by a semicolon ';'.
 
 The `FLAGS "$@" || exit 1` takes the command-line arguments `$@` in their unparsed form and passes them to the `FLAGS` function for processing. If `$*` had been used, any spaces in string arguments that were passed would be lost. The double-quotes surrounding the `$@` are also required to maintain the spaces in string arguments. If `FLAGS` returns with a failure (represented by ${FLAGS_ERROR}) the script is exited with an exit code of 1.
 
-The `shift ${FLAGS_ARGC}` shifts any command-line arguments off the stack so that your script can process them itself. This is typically useful when you want to pass some flags to your script to alter processing, but you still want to allow non-flag type options to be passed as well.
+The `eval set -- "${FLAGS_ARGV}` replaces the $1, $2, $@, etc. variables with the non-flag values so that your script can process them normally. This is typically useful when you want to pass some flags to your script to alter processing, but you still want to allow non-flag type options to be passed as well.
 
 == Supported flag types ==
 shFlags supports the following flag types. As you may already know, shell does not natively support some of these types (e.g. float) so their actual implementation and usage will be a string.
@@ -175,7 +176,8 @@ debug() { [ ${FLAGS_debug} -eq ${FLAGS_TRUE} ] && echo "DEBUG: $@" >&2; }
 DEFINE_boolean 'debug' false 'enable debug mode' 'd'
 
 # parse the command-line
-FLAGS "$@" || exit 1; shift ${FLAGS_ARGC}
+FLAGS "$@" || exit 1
+eval set -- "${FLAGS_ARGV}"
 
 debug 'debug mode enabled'
 echo 'something interesting'
@@ -198,7 +200,8 @@ DEFINE_boolean 'force' false 'force overwriting' 'f'
 FLAGS_HELP="USAGE: $0 [flags] filename"
 
 # parse the command-line
-FLAGS "$@" || exit 1; shift ${FLAGS_ARGC}
+FLAGS "$@" || exit 1
+eval set -- "${FLAGS_ARGV}"
 
 # check for filename
 if [ $# -eq 0 ]; then
@@ -255,6 +258,6 @@ Thu Jun 26 23:10:02 IST 2008
 }}}
 
 = Known Issues =
-See the `RELEASE_NOTES` for the most up-to-date list of known issues.
+See the appropriate `RELEASE_NOTES` for the most up-to-date list of known issues.
 
-The `getopt` of Mac OS X (including 10.5) supports only short options. All flags require a short option if they are to function properly.
+The `getopt` version provided by default with all versions of Mac OS X (up to and including 10.5.6) and Solaris (up to and including Solaris 10 and OpenSolaris) is the standard version.
