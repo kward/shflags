@@ -1,0 +1,105 @@
+Coding Standards
+================
+
+shFlags is more than just a simple 20 line shell script. It is a pretty
+significant library of shell code that at first glance is not that easy to
+understand. To improve code readability and usability, some guidelines have
+been set down to make the code more understandable for anyone who wants to read
+or modify it.
+
+Function Documentation
+----------------------
+
+Each function should be preceded by a header that provides the following:
+
+#. A one-sentence summary of what the function does
+#. (optional) A longer description of what the function does, and perhaps some
+   special information that helps convey its usage better.
+#. Args: a one-line summary of each argument of the form:
+   ``name: type: description``
+#. Output: a one-line summary of the output provided. Only output to STDOUT
+   must be documented, unless the output to STDERR is of significance (i.e. not
+   just an error message). The output should be of the form:
+   ``type: description``
+#. Returns: a one-line summary of the value returned. Returns in shell are
+   always integers, but if the output is a true/false for success (i.e. a
+   boolean), it should be noted. The output should be of the form:
+   ``type: description``
+
+Here is a sample header: ::
+
+  # Return valid getopt options using currently defined list of long options.
+  #
+  # This function builds a proper getopt option string for short (and long)
+  # options, using the current list of long options for reference.
+  #
+  # Args:
+  #   _flags_optStr: integer: option string type (__FLAGS_OPTSTR_*)
+  # Output:
+  #   string: generated option string for getopt
+  # Returns:
+  #   boolean: success of operation (always returns True)
+
+Variable and Function Names
+---------------------------
+
+All shFlags specific constants, variables, and functions will be prefixed
+appropriately with 'flags'. This is to distinguish usage in the shFlags code
+from users own scripts so that the shell name space remains predictable to
+users. The exceptions here are the standard ``assertEquals``, etc. functions.
+
+All non built-in constants and variables will be surrouned with squiggle
+brackets, e.g. '${flags_someVariable}' to improve code readability.
+
+Due to some shells not supporting local variables in functions, care in the
+naming and use of variables, both public and private, is very important.
+Accidental overriding of the variables can occur easily if care is not taken as
+all variables are technically global variables in some shells.
+
+================================  ========================
+**type**                          **sample**
+global public constant            ``FLAGS_TRUE``
+global private constant           ``__FLAGS_SHELL_FLAGS``
+global public variable            not used
+global private variable           ``__flags_someVariable``
+global macro                      ``_FLAGS_SOME_MACRO_``
+public function                   ``assertEquals``
+public function, local variable   ``flags_someVariable_``
+private function                  ``_flags_someFunction``
+private function, local variable  ``_flags_someVariable_``
+================================  ========================
+
+Where it makes sense, variables can have the first letter of the second and
+later words capitalized. For example, the local variable name for the total
+number of test cases seen might be ``flags_totalTestsSeen_``.
+
+Local Variable Cleanup
+----------------------
+
+As many shells do not support local variables, no support for cleanup of
+variables is present either. As such, all variables local to a function must be
+cleared up with the ``unset`` command at the end of each function.
+
+Indentation
+-----------
+
+Code block indentation is two (2) spaces, and tabs may not be used. ::
+
+  if [ -z 'some string' ]; then
+    someFunction
+  fi
+
+Lines of code should be no longer than 80 characters unless absolutely
+necessary. When lines are wrapped using the backslash character '\', subsequent
+lines should be indented with four (4) spaces so as to differentiate from the
+standard spacing of two characters, and tabs may not be used. ::
+
+  for x in some set of very long set of arguments that make for a very long \
+      that extends much too long for one line
+  do
+    echo ${x}
+  done
+
+
+.. vim:spell
+.. $Id$

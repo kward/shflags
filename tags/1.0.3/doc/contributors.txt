@@ -1,0 +1,4 @@
+I'd like to thank these people for their contributisons to shFlags.
+
+Maciej Bliziński <blizinski@google.com> -- _many_ code reviews
+Bjarni Einarsson <bre@google.com> -- bug reports
