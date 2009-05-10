@@ -397,17 +397,16 @@ $ pwd
 $ svn export https://shflags.googlecode.com/svn/tags/1.0.0 shflags-1.0.0
 </pre>
 </div>
-<div class="section" id="create-tarball">
-<h2>Create Tarball</h2>
+<div class="section" id="create-the-tarball">
+<h2>Create the tarball</h2>
 <pre class="literal-block">
 $ tar cfz ../releases/shflags-1.0.0.tgz shflags-1.0.0
 </pre>
 </div>
-<div class="section" id="md5sum-the-tarball-and-sign-with-gpg">
-<h2>md5sum the Tarball and Sign With gpg</h2>
+<div class="section" id="sign-the-tarball-with-gpg">
+<h2>Sign the tarball with gpg</h2>
 <pre class="literal-block">
 $ cd ../releases
-$ md5sum shflags-1.0.0.tgz &gt;shflags-1.0.0.tgz.md5
 $ gpg --default-key kate.ward&#64;forestent.com --detach-sign shflags-1.0.0.tgz
 </pre>
 </div>
@@ -417,9 +416,10 @@ $ gpg --default-key kate.ward&#64;forestent.com --detach-sign shflags-1.0.0.tgz
 info (release, date, and MD5), and the release with GPG signature needs to
 uploaded.</p>
 </div>
-<div class="section" id="post-to-freshmeat">
-<h2>Post to Freshmeat</h2>
+<div class="section" id="post-to-the-web">
+<h2>Post to the Web</h2>
 <ul class="simple">
+<li><a class="reference external" href="http://shflags.googlecode.com/">http://shflags.googlecode.com/</a></li>
 <li><a class="reference external" href="http://freshmeat.net/">http://freshmeat.net/</a></li>
 </ul>
 </div>
@@ -444,7 +444,7 @@ parsable into an HTML file.</p>
 <!-- generate HTML using rst2html from Docutils of -->
 <!-- http://docutils.sourceforge.net/ -->
 <!--  -->
-<!-- vim:syntax=rst:textwidth=80 -->
+<!-- vim:fileencoding=latin1:ft=rst:spell:tw=80 -->
 <!-- $Revision$ -->
 </div>
 </div>
