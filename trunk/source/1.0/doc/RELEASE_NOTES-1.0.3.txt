@@ -4,9 +4,9 @@ shFlags.sh 1.0.3 Release Notes
 
 Preface
 =======
-Copyright 2009 Kate Ward. All Rights Reserved.
+Copyright 2008-2009 Kate Ward. All Rights Reserved.
 Released under the LGPL (GNU Lesser General Public License)
-Author: Kate Ward (kate.ward@forestent.com)
+Author: kate.ward@forestent.com (Kate Ward)
 
 This document covers any known issues and workarounds for the stated release of
 shFlags.
@@ -14,7 +14,7 @@ shFlags.
 Release info
 ============
 
-This is a major bugfix release. The biggest fix is in how non-flag arguments are
+This is a major bug fix release. The biggest fix is in how non-flag arguments are
 made available to the script.
 
 Major changes
