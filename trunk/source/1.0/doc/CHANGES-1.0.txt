@@ -1,6 +1,13 @@
 Changes in shFlags 1.0.x
 ========================
 
+Changes with 1.0.4
+------------------
+
+Fixed usage of ``expn`` under FreeBSD 7.2 (FreeNAS 0.7.1) that was causing many
+unit tests to fail.
+
+
 Changes with 1.0.3
 ------------------
 
