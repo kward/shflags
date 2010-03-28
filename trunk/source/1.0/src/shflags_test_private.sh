@@ -16,6 +16,47 @@
 # suite tests
 #
 
+testColumns()
+{
+  cols=`_flags_columns`
+  value=`expr "${cols}" : '\([0-9]*\)'`
+  assertNotNull "unexpected screen width (${cols})" "${value}"
+}
+
+testGenOptStr()
+{
+  _testGenOptStr '' ''
+
+  DEFINE_boolean bool false 'boolean value' b
+  _testGenOptStr 'b' 'bool'
+
+  DEFINE_float float 0.0 'float value' f
+  _testGenOptStr 'bf:' 'bool,float:'
+
+  DEFINE_integer int 0 'integer value' i
+  _testGenOptStr 'bf:i:' 'bool,float:,int:'
+
+  DEFINE_string str 0 'string value' s
+  _testGenOptStr 'bf:i:s:' 'bool,float:,int:,str:'
+
+  DEFINE_boolean help false 'show help' h
+  _testGenOptStr 'bf:i:s:h' 'bool,float:,int:,str:,help'
+}
+
+_testGenOptStr()
+{
+  short=$1
+  long=$2
+
+  result=`_flags_genOptStr ${__FLAGS_OPTSTR_SHORT}`
+  assertTrue 'short option string generation failed' $?
+  assertEquals "${short}" "${result}"
+
+  result=`_flags_genOptStr ${__FLAGS_OPTSTR_LONG}`
+  assertTrue 'long option string generation failed' $?
+  assertEquals "${long}" "${result}"
+}
+
 testGetFlagInfo()
 {
   __flags_blah_foobar='1234'
@@ -50,13 +91,6 @@ testItemInList()
 
   _flags_itemInList 'blah' ''
   assertFalse 'empty lists should not match' $?
-}
-
-testColumns()
-{
-  cols=`_flags_columns`
-  value=`expr "${cols}" : '\([0-9]*\)'`
-  assertNotNull "unexpected screen width (${cols})" "${value}"
 }
 
 testValidateBoolean()
