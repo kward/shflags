@@ -22,9 +22,8 @@ versions_osName()
   os_name_='unrecognized'
   os_system_=`uname -s`
   case ${os_system_} in
-    Cygwin) os_name_='Cygwin' ;;
+    Cygwin|FreeBSD|Linux) os_name_=${os_system_} ;;
     Darwin) os_name_='Mac OS X' ;;
-    Linux) os_name_='Linux' ;;
     SunOS) os_name_='Solaris' ;;
   esac
   echo ${os_name_}
@@ -38,6 +37,7 @@ versions_osRelease()
   os_release_=`uname -r`
   case ${os_system_} in
     Cygwin) os_str_='unknown' ;;
+
     Darwin)
       major_='10'
       sub_=`echo ${os_release_} |\
@@ -49,10 +49,16 @@ versions_osRelease()
       esac
       os_str_="${major_}.${minor_}.${sub_}"
       ;;
+
+    FreeBSD)
+      os_str_=`echo "${os_release_}" \
+            |sed 's/\([0-9]\.[0-9]\)-RELEASE-.*/\1/'`
+      ;;
+
     Linux)
       if [ -r '/etc/lsb-release' ]; then
         os_str_=`. /etc/lsb-release && \
-            echo "${DISTRIB_ID:-}-${DISTRIB_RELEASE:-}"`
+            echo "${DISTRIB_ID:-}${DISTRIB_RELEASE:+-${DISTRIB_RELEASE}}"`
       fi
       if [ "${os_release_}" = '-' ]; then
         os_str_=''
@@ -61,13 +67,16 @@ versions_osRelease()
         fi
       fi
       ;;
-    SunOS)
-      os_version_=`versions_osVersion`
 
-      os_str_=`echo ${os_release_} |sed 's/[0-9]*\.\([0-9]*\)/\1/'`
-      os_str_="${os_release_}-${os_version_}"
+    SunOS)
+      case ${os_release_} in
+        5.8) os_str_='8' ;;
+        5.9) os_str_='9' ;;
+        5.10) os_str_='10' ;;
+      esac
       ;;
   esac
+
   echo ${os_str_}
   unset os_name_ os_release_ os_str_ os_version_ major_ minor_ sub_
 }
@@ -159,15 +168,18 @@ versions_main()
   # treat unset variables as an error
   set -u
 
-  os_name=`versions_osName`
-  os_version=`versions_osVersion`
-  echo "os: ${os_name} version: ${os_version}"
+  echo "os name: `versions_osName`"
+  echo "os release: `versions_osRelease`"
+  echo "os version: `versions_osVersion`"
 
   for shell in ${VERSIONS_SHELLS}; do
     shell_version=`versions_shellVersion ${shell}`
     echo "shell: ${shell} version: ${shell_version}"
   done
 }
+
+VERSIONS_OS_NAME=`versions_osName`
+VERSIONS_OS_RELEASE=`versions_osRelease`
 
 if [ "`basename $0`" = 'versions' ]; then
   versions_main "$@"
