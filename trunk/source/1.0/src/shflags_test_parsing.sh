@@ -112,8 +112,9 @@ _testValidFloats()
   for value in ${TH_FLOAT_VALID}; do
     FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
     rtrn=$?
-    assertTrue "FLAGS (${value}) returned a non-zero result (${rtrn})" ${rtrn}
-    assertEquals "float (${value}) test failed." ${value} ${FLAGS_float}
+    assertTrue "FLAGS ${flag} ${value} returned non-zero result (${rtrn})" \
+        ${rtrn}
+    assertEquals "float (${flag} ${value}) test failed." ${value} ${FLAGS_float}
     assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
     th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
   done
@@ -328,7 +329,7 @@ oneTimeSetUp()
 setUp()
 {
   flags_reset
-  DEFINE_boolean bool false 'boolean value' b
+  DEFINE_boolean bool false 'boolean test' 'b'
   DEFINE_float float 0.0 'float test' 'f'
   DEFINE_integer int 0 'integer test' 'i'
   DEFINE_string str '' 'string test' 's'
