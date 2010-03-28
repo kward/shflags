@@ -86,7 +86,7 @@ FLAGS_FALSE=1
 FLAGS_ERROR=2
 
 # reserved flag names
-FLAGS_RESERVED='ARGC ARGV ERROR FALSE HELP PARENT RESERVED TRUE VERSION'
+FLAGS_RESERVED_LIST=' ARGC ARGV ERROR FALSE HELP PARENT RESERVED TRUE VERSION '
 
 _flags_debug() { echo "flags:DEBUG $@" >&2; }
 _flags_warn() { echo "flags:WARN $@" >&2; }
@@ -229,8 +229,8 @@ _flags_define()
   # TODO(kward): check for validity of the flag name (e.g. dashes)
 
   # check whether the flag name is reserved
-  echo " ${FLAGS_RESERVED} " |grep " ${_flags_name_} " >/dev/null
-  if [ $? -eq 0 ]; then
+  _flags_itemInList ${_flags_name_} "${FLAGS_RESERVED_LIST}"
+  if [ $? -eq ${FLAGS_TRUE} ]; then
     flags_error="flag name (${_flags_name_}) is reserved"
     _flags_return_=${FLAGS_ERROR}
   fi
@@ -352,6 +352,8 @@ _flags_genOptStr()
 
   for _flags_flag_ in ${__flags_longNames}; do
     _flags_type_=`_flags_getFlagInfo ${_flags_flag_} ${__FLAGS_INFO_TYPE}`
+    [ $? -eq ${FLAGS_TRUE} ] || \
+        ( _flags_fatal 'call to _flags_type_ failed'; return ${FLAGS_ERROR} )
     case ${_flags_optStrType_} in
       ${__FLAGS_OPTSTR_SHORT})
         _flags_shortName_=`_flags_getFlagInfo \
@@ -394,9 +396,9 @@ _flags_getFlagInfo()
   _flags_info_=$2
 
   _flags_nameVar_="__flags_${_flags_name_}_${_flags_info_}"
-  _flags_strToEval_="_flags_value_=\"\${${_flags_nameVar_}:-}\""
+  _flags_strToEval_="_flags_nameValue_=\"\${${_flags_nameVar_}:-}\""
   eval "${_flags_strToEval_}"
-  if [ -n "${_flags_value_}" ]; then
+  if [ -n "${_flags_nameValue_}" ]; then
     flags_return=${FLAGS_TRUE}
   else
     # see if the _flags_name_ variable is a string as strings can be empty...
@@ -407,9 +409,9 @@ _flags_getFlagInfo()
     # try to find the _type variable of the _type variable, and so on. Not so
     # good ;-)
     _flags_typeVar_="__flags_${_flags_name_}_${__FLAGS_INFO_TYPE}"
-    _flags_strToEval_="_flags_type_=\"\${${_flags_typeVar_}:-}\""
+    _flags_strToEval_="_flags_typeValue_=\"\${${_flags_typeVar_}:-}\""
     eval "${_flags_strToEval_}"
-    if [ "${_flags_type_}" = "${__FLAGS_TYPE_STRING}" ]; then
+    if [ "${_flags_typeValue_}" = "${__FLAGS_TYPE_STRING}" ]; then
       flags_return=${FLAGS_TRUE}
     else
       flags_return=${FLAGS_ERROR}
@@ -417,9 +419,9 @@ _flags_getFlagInfo()
     fi
   fi
 
-  echo "${_flags_value_}"
-  unset _flags_info_ _flags_name_ _flags_strToEval_ _flags_type_ _flags_value_ \
-      _flags_nameVar_ _flags_typeVar_
+  echo "${_flags_nameValue_}"
+  unset _flags_info_ _flags_name_ _flags_nameValue_ _flags_nameVar_ \
+      _flags_strToEval_ _flags_typeValue_ _flags_typeVar_
   [ ${flags_return} -eq ${FLAGS_ERROR} ] && _flags_error "${flags_error}"
   return ${flags_return}
 }
