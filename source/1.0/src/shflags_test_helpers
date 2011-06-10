@@ -51,7 +51,7 @@ th_oneTimeSetUp()
   . ${TH_SHFLAGS}
 
   # these files will be cleaned up automatically by shUnit2
-  tmpDir=${shunit_tmpDir}
+  tmpDir=${SHUNIT_TMPDIR}
   stdoutF="${tmpDir}/stdout"
   stderrF="${tmpDir}/stderr"
   expectedF="${tmpDir}/expected"

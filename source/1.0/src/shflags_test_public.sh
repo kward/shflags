@@ -22,32 +22,32 @@ testHelp()
   # test short -h option
   #
 
-  rslt=`FLAGS -h 2>&1`
-  rtrn=$?
-  assertFalse \
-      'short request for help should have returned non-zero exit code.' \
-      ${rtrn}
-  echo "${rslt}" |grep -- 'show this help' >/dev/null
-  rtrn=$?
+  result=`FLAGS -h 2>&1`
+  r3turn=$?
+  assertTrue \
+      'short help request should have returned a true exit code.' \
+      ${r3turn}
+  echo "${result}" |grep -- 'show this help' >/dev/null
+  grepped=$?
   assertTrue \
       'short request for help should have produced some help output.' \
-      ${rtrn}
-  [ ${rtrn} -ne ${FLAGS_TRUE} ] && echo "${rslt}" >&2
+      ${grepped}
+  [ ${grepped} -ne ${FLAGS_TRUE} ] && echo "${result}" >&2
 
   # test proper output when FLAGS_HELP set
-  rslt=`FLAGS_HELP='this is a test'; FLAGS -h 2>&1`
-  echo "${rslt}" |grep -- 'this is a test' >/dev/null
-  rtrn=$?
-  assertTrue 'setting FLAGS_HELP did not produce expected result' ${rtrn}
-  [ ${rtrn} -ne ${FLAGS_TRUE} ] && echo "${rslt}" >&2
+  result=`FLAGS_HELP='this is a test'; FLAGS -h 2>&1`
+  echo "${result}" |grep -- 'this is a test' >/dev/null
+  grepped=$?
+  assertTrue 'setting FLAGS_HELP did not produce expected result' ${grepped}
+  [ ${grepped} -ne ${FLAGS_TRUE} ] && echo "${result}" >&2
 
   # test that "'" chars work in help string
   DEFINE_boolean b false "help string containing a ' char" b
-  rslt=`FLAGS -h 2>&1`
-  echo "${rslt}" |grep -- "help string containing a ' char" >/dev/null
-  rtrn=$?
-  assertTrue "help strings containing apostrophes don't work" ${rtrn}
-  [ ${rtrn} -ne ${FLAGS_TRUE} ] && echo "${rslt}" >&2
+  result=`FLAGS -h 2>&1`
+  echo "${result}" |grep -- "help string containing a ' char" >/dev/null
+  grepped=$?
+  assertTrue "help strings containing apostrophes don't work" ${grepped}
+  [ ${grepped} -ne ${FLAGS_TRUE} ] && echo "${result}" >&2
 
   #
   # test long --help option
@@ -55,10 +55,16 @@ testHelp()
 
   flags_getoptIsEnh || startSkipping
 
-  rslt=`FLAGS --help 2>&1`
-  assertFalse 'long help request should have returned non-zero exit code' $?
-  echo "${rslt}" |grep -- 'show this help' >/dev/null
-  assertTrue 'long help request should have produced some help output.' $?
+  result=`FLAGS --help 2>&1`
+  r3turn=$?
+  assertTrue \
+      'long help request should have returned a true exit code' \
+      ${r3turn}
+  echo "${result}" |grep -- 'show this help' >/dev/null
+  grepped=$?
+  assertTrue \
+      'long help request should have produced some help output.' \
+      ${grepped}
 }
 
 testStandardHelpOutput()
@@ -88,10 +94,12 @@ flags:
   -h  show this help (default: false)
 EOF
   ( FLAGS_HELP=${help}; FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
+  r3turn=$?
+  assertTrue 'a call for help should not return an error' ${r3turn}
   diff "${expectedF}" "${stderrF}" >/dev/null
-  rtrn=$?
-  assertTrue 'unexpected help output' ${rtrn}
-  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+  differed=$?
+  assertTrue 'unexpected help output' ${differed}
+  th_showOutput ${differed} "${stdoutF}" "${stderrF}"
 }
 
 testEnhancedHelpOutput()
@@ -118,13 +126,15 @@ flags:
                    (default: 'blah')
   -F,--long_default:  testing of long default value
     (default: 'this_is_a_long_default_value_to_force_alternate_indentation')
-  -h,--[no]help:  show this help (default: false)
+  -h,--help:  show this help (default: false)
 EOF
   ( FLAGS_HELP=${help}; FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
+  r3turn=$?
+  assertTrue 'a call for help should not return an error' ${r3turn}
   diff "${expectedF}" "${stderrF}" >/dev/null
-  rtrn=$?
-  assertTrue 'unexpected help output' ${rtrn}
-  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+  differed=$?
+  assertTrue 'unexpected help output' ${differed}
+  th_showOutput ${differed} "${stdoutF}" "${stderrF}"
 }
 
 testNoHelp()
@@ -132,8 +142,8 @@ testNoHelp()
   flags_getoptIsEnh || startSkipping
 
   ( FLAGS --nohelp >"${stdoutF}" 2>"${stderrF}" )
-  rtrn=$?
-  assertTrue "FLAGS returned a non-zero result (${rtrn})" ${rtrn}
+  r3turn=$?
+  assertTrue "FLAGS returned a non-zero result (${r3turn})" ${r3turn}
   assertFalse 'expected no output to STDOUT' "[ -s '${stdoutF}' ]"
   assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
 }
