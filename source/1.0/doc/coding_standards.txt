@@ -100,6 +100,12 @@ standard spacing of two characters, and tabs may not be used. ::
     echo ${x}
   done
 
+When a conditional expression is written using the builtin [ command, and that
+line must be wrapped, place the control || or && operators on the same line as
+the expression where possible, with the list to be executed on its own line. ::
+
+  [ -n 'some really long expression' -a -n 'some other long expr' ] && \
+      echo 'that was actually true!'
 
 .. vim:spell
 .. $Id$
