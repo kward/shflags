@@ -4,11 +4,23 @@ Changes in shFlags 1.0.x
 Changes with 1.0.4
 ------------------
 
-Fixed issue #10. Usage of ``expn`` under FreeBSD 7.2 (FreeNAS 0.7.1) and FreeBSD
+Fixed issue #10. Usage of ``expr`` under FreeBSD 7.2 (FreeNAS 0.7.1) and FreeBSD
 8.0 that was causing many unit tests to fail.
 
 Fixed issue where booleans were sometimes mis-configured to require additional
 values like other flags.
+
+Changed _flags_fatal() to exit with FLAGS_ERROR immediately.
+
+Fixed issue #11. When help is requested, the help flag is no longer prefixed
+with [no].
+
+Upgraded shUnit2 to 2.1.6.
+
+Fixed issue #12. Requesting help shouldn't be considered an error.
+
+Added the ability to override the use of the OS default 'getopt' command by
+defining the FLAGS_GETOPT_CMD variable.
 
 
 Changes with 1.0.3
