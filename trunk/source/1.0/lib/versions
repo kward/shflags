@@ -11,7 +11,15 @@
 # versions of installed shells and the OS. The library can also be run as a
 # script if set execuatable.
 
-VERSIONS_SHELLS='/bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/sh /bin/zsh'
+ARGV0=`basename "$0"`
+LSB_RELEASE='/etc/lsb-release'
+VERSIONS_SHELLS="/bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/sh /bin/zsh"
+
+TRUE=0
+FALSE=1
+ERROR=2
+
+__versions_haveStrings=${ERROR}
 
 #------------------------------------------------------------------------------
 # functions
@@ -22,68 +30,68 @@ versions_osName()
   os_name_='unrecognized'
   os_system_=`uname -s`
   case ${os_system_} in
-    Cygwin|FreeBSD|Linux) os_name_=${os_system_} ;;
+    CYGWIN_NT-*) os_name_='Cygwin' ;;
     Darwin) os_name_='Mac OS X' ;;
-    SunOS) os_name_='Solaris' ;;
+    FreeBSD) os_name_='FreeBSD' ;;
+    Linux) os_name_='Linux' ;;
+    SunOS)
+      if grep 'OpenSolaris' /etc/release >/dev/null; then
+        os_name_='OpenSolaris'
+      else
+        os_name_='Solaris'
+      fi
+      ;;
   esac
   echo ${os_name_}
   unset os_name_ os_system_
 }
 
-versions_osRelease()
+versions_osVersion()
 {
-  os_str_='unrecognized'
+  os_version_='unrecognized'
   os_system_=`uname -s`
   os_release_=`uname -r`
   case ${os_system_} in
-    Cygwin) os_str_='unknown' ;;
-
+    CYGWIN_NT-*)
+      os_version_=`expr "${os_release_}" : '\([0-9]*\.[0-9]\.[0-9]*\).*'`
+      ;;
     Darwin)
       major_='10'
-      sub_=`echo ${os_release_} |\
-          sed 's/^[0-9]*\.\([0-9]*\)\.[0-9]*$/\1/'`
+      sub_=`echo ${os_release_} |sed 's/^[0-9]*\.\([0-9]*\)\.[0-9]*$/\1/'`
       case ${os_release_} in
         8.*) minor_='4' ;;
         9.*) minor_='5' ;;
+        10.*) minor_='6' ;;
         *) minor_='X'; sub_='X' ;;
       esac
-      os_str_="${major_}.${minor_}.${sub_}"
+      os_version_="${major_}.${minor_}.${sub_}"
       ;;
-
     FreeBSD)
-      os_str_=`echo "${os_release_}" \
-            |sed 's/\([0-9]\.[0-9]\)-RELEASE-.*/\1/'`
+      os_version_=`expr "${os_release_}" : '\([0-9]*\.[0-9]*\)-.*'`
       ;;
-
     Linux)
-      if [ -r '/etc/lsb-release' ]; then
-        os_str_=`. /etc/lsb-release && \
-            echo "${DISTRIB_ID:-}${DISTRIB_RELEASE:+-${DISTRIB_RELEASE}}"`
-      fi
-      if [ "${os_release_}" = '-' ]; then
-        os_str_=''
-        if [ -r '/etc/redhat-release' ]; then
-          os_str_=`cat /etc/redhat-release`
+      if [ -r "${LSB_RELEASE}" ]; then
+        if grep -q 'DISTRIB_ID=Ubuntu' "${LSB_RELEASE}"; then
+          os_version_=`cat "${LSB_RELEASE}" \
+            |awk -F= '$1~/DISTRIB_DESCRIPTION/{print $2}' \
+            |sed 's/"//g;s/ /-/g'`
         fi
+      elif [ -r '/etc/redhat-release' ]; then
+        os_version_=`cat /etc/redhat-release`
       fi
       ;;
-
     SunOS)
-      case ${os_release_} in
-        5.8) os_str_='8' ;;
-        5.9) os_str_='9' ;;
-        5.10) os_str_='10' ;;
-      esac
+      if grep 'OpenSolaris' /etc/release >/dev/null; then
+        os_version_=`grep 'OpenSolaris' /etc/release |awk '{print $2"("$3")"}'`
+      else
+        major_=`echo ${os_release_} |sed 's/[0-9]*\.\([0-9]*\)/\1/'`
+        minor_=`grep Solaris /etc/release |sed 's/[^u]*\(u[0-9]*\).*/\1/'`
+        os_version_="${major_}${minor_}"
+      fi
       ;;
   esac
-
-  echo ${os_str_}
-  unset os_name_ os_release_ os_str_ os_version_ major_ minor_ sub_
-}
-
-versions_osVersion()
-{
-  uname -v
+  echo ${os_version_}
+  unset os_name_ os_release_ os_version_ major_ minor_ sub_
 }
 
 versions_shellVersion()
@@ -130,6 +138,9 @@ versions_shell_bash()
 
 versions_shell_dash()
 {
+  eval dpkg >/dev/null 2>&1
+  [ $? -eq 127 ] && return  # return if dpkg not found
+
   dpkg -l |grep ' dash ' |awk '{print $3}'
 }
 
@@ -137,11 +148,20 @@ versions_shell_ksh()
 {
   versions_shell_=$1
 
-  versions_version_=`strings ${versions_shell_} 2>&1 \
+  # see if --version gives a result
+  versions_version_=`${versions_shell_} --version 2>&1 \
+    |sed 's/.*\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\).*/\1/'`
+
+  # --version didn't work... look into the binary
+  if [ $? -ne ${TRUE} ]; then 
+    _versions_have_strings
+    versions_version_=`strings ${versions_shell_} 2>&1 \
       |grep Version \
       |sed 's/^.*Version \(.*\)$/\1/;s/ s+ \$$//;s/ /-/g'`
-  [ -z "${versions_version_}" ] \
-      && versions_version_=`versions_shell_pdksh ${versions_shell_}`
+    [ -z "${versions_version_}" ] \
+        && versions_version_=`versions_shell_pdksh ${versions_shell_}`
+  fi
+
   echo ${versions_version_}
 
   unset versions_shell_ versions_version_
@@ -149,6 +169,7 @@ versions_shell_ksh()
 
 versions_shell_pdksh()
 {
+  _versions_have_strings
   strings $1 2>&1 \
   |grep 'PD KSH' \
   |sed -e 's/.*PD KSH \(.*\)/\1/;s/ /-/g'
@@ -156,7 +177,30 @@ versions_shell_pdksh()
 
 versions_shell_zsh()
 {
-  echo 'echo ${ZSH_VERSION}' |$1
+  versions_shell_=$1
+
+  versions_version_=`${versions_shell_} --version 2>&1 |awk '{print $2}'`
+
+  if [ $? -ne ${TRUE} ]; then
+    versions_version_=`echo 'echo ${ZSH_VERSION}' |${versions_shell_}`
+  fi
+
+  echo ${versions_version_}
+
+  unset versions_shell_ versions_version_
+}
+
+# Determine if the 'strings' binary installed.
+_versions_have_strings()
+{
+  [ ${__versions_haveStrings} -ne ${ERROR} ] && return
+  eval strings /dev/null >/dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    __versions_haveStrings=${TRUE}
+  else
+    echo 'WARN: strings not installed. try installing binutils?' >&2
+    __versions_haveStrings=${FALSE}
+  fi
 }
 
 #------------------------------------------------------------------------------
@@ -168,9 +212,9 @@ versions_main()
   # treat unset variables as an error
   set -u
 
-  echo "os name: `versions_osName`"
-  echo "os release: `versions_osRelease`"
-  echo "os version: `versions_osVersion`"
+  os_name=`versions_osName`
+  os_version=`versions_osVersion`
+  echo "os: ${os_name} version: ${os_version}"
 
   for shell in ${VERSIONS_SHELLS}; do
     shell_version=`versions_shellVersion ${shell}`
@@ -178,9 +222,6 @@ versions_main()
   done
 }
 
-VERSIONS_OS_NAME=`versions_osName`
-VERSIONS_OS_RELEASE=`versions_osRelease`
-
-if [ "`basename $0`" = 'versions' ]; then
+if [ "${ARGV0}" = 'versions' ]; then
   versions_main "$@"
 fi
