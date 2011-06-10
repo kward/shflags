@@ -22,6 +22,8 @@ Fixed issue #12. Requesting help shouldn't be considered an error.
 Added the ability to override the use of the OS default 'getopt' command by
 defining the FLAGS_GETOPT_CMD variable.
 
+Updated gen_test_results.sh and versions from shUnit2 source.
+
 
 Changes with 1.0.3
 ------------------

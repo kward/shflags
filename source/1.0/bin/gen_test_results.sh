@@ -20,49 +20,38 @@ die()
   exit 1
 }
 
-relToAbsPath()
-{
-  path_=$1
-
-  # prepend current directory to relative paths
-  echo "${path_}" |grep '^/' >/dev/null || path_="`pwd`/${path_}"
-
-  # clean up the path
-  old_=${path_}
-  while true; do
-    new_=`echo "${old_}" |sed 's/[^/]*\/\.\.\/*//g;s/\/\.\//\//'`
-    [ "${old_}" = "${new_}" ] && break
-    old_=${new_}
-  done
-
-  echo "${new_}"
-  unset path_ old_ new_
-}
-
 BASE_DIR="`dirname $0`/.."
-BASE_DIR=`relToAbsPath "${BASE_DIR}"`
-
 LIB_DIR="${BASE_DIR}/lib"
-SRC_DIR="${BASE_DIR}/src"
 
 # load libraries
-. ${SRC_DIR}/shflags || die 'unable to load shflags library'
+. ${LIB_DIR}/shflags || die 'unable to load shflags library'
+. ${LIB_DIR}/shlib || die 'unable to load shlib library'
 . ${LIB_DIR}/versions || die 'unable to load versions library'
 
-os_name=`versions_osName |tr ' ' '_'`
-os_release=`versions_osRelease |tr ' ' '_'`
+# redefining BASE_DIR now that we have the shlib functions
+BASE_DIR=`shlib_relToAbsPath "${BASE_DIR}"`
+BIN_DIR="${BASE_DIR}/bin"
+SRC_DIR="${BASE_DIR}/src"
 
+os_name=`versions_osName |sed 's/ /_/g'`
+os_version=`versions_osVersion`
+
+# load external flags
+. ${BIN_DIR}/gen_test_results.flags
+
+# define flags
 DEFINE_boolean force false 'force overwrite' f
 DEFINE_string output_dir "`pwd`" 'output dir' d
-DEFINE_string output_file "${os_name}-${os_release}.txt" 'output file' o
-FLAGS "${@:-}" || exit $?
-eval set -- "${FLAGS_ARGV}"
+DEFINE_string output_file "${os_name}-${os_version}.txt" 'output file' o
+FLAGS "${@:-}" || exit $?; shift ${FLAGS_ARGC}
 
 # determine output filename
 output="${FLAGS_output_dir:+${FLAGS_output_dir}/}${FLAGS_output_file}"
-output=`relToAbsPath "${output}"`
+output=`shlib_relToAbsPath "${output}"`
 
 # checks
+[ -n "${FLAGS_suite}" ] || die 'suite flag missing'
+
 if [ -f "${output}" ]; then
   if [ ${FLAGS_force} -eq ${FLAGS_TRUE} ]; then
     rm -f "${output}"
@@ -74,7 +63,7 @@ fi
 touch "${output}" 2>/dev/null || die "unable to write to '${output}'"
 
 # run tests
-( cd "${SRC_DIR}"; ./shflags_test.sh |tee "${output}" )
+( cd "${SRC_DIR}"; ./${FLAGS_suite} |tee "${output}" )
 
 echo >&2
 echo "output written to '${output}'" >&2
