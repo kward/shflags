@@ -1022,7 +1022,8 @@ flags_help()
 flags_reset()
 {
   for flags_name_ in ${__flags_longNames}; do
-    flags_strToEval_="unset FLAGS_${flags_name_}"
+    flags_usName_=`_flags_underscoreName ${flags_name_}`
+    flags_strToEval_="unset FLAGS_${flags_usName_}"
     for flags_type_ in \
         ${__FLAGS_INFO_DEFAULT} \
         ${__FLAGS_INFO_HELP} \
@@ -1030,7 +1031,7 @@ flags_reset()
         ${__FLAGS_INFO_TYPE}
     do
       flags_strToEval_=\
-"${flags_strToEval_} __flags_${flags_name_}_${flags_type_}"
+"${flags_strToEval_} __flags_${flags_usName_}_${flags_type_}"
     done
     eval ${flags_strToEval_}
   done
@@ -1041,5 +1042,5 @@ flags_reset()
   __flags_shortNames=' '
   __flags_definedNames=' '
 
-  unset flags_name_ flags_type_ flags_strToEval_
+  unset flags_name_ flags_type_ flags_strToEval_ flags_usName_
 }
