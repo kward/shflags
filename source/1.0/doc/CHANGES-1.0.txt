@@ -24,6 +24,10 @@ defining the FLAGS_GETOPT_CMD variable.
 
 Updated gen_test_results.sh and versions from shUnit2 source.
 
+Fixed issues# 13, 14. Added support for dashes ('-') in long flag names. The
+defined flag will still be declared with underscores ('_') due to shell
+limitations, so only one of a dashed flag name or an underscored flag name are
+allowed, not both.
 
 Changes with 1.0.3
 ------------------

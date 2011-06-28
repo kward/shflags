@@ -48,6 +48,16 @@ testFlagsDefine()
       "${FLAGS_multiDefBool:-}"
   assertWarnMsg '' 'existing flag'
 
+  # duplicate dashed and underscored definition
+  _flags_define ${__FLAGS_TYPE_STRING} long-name 'foo' 'dashed name' l
+  _flags_define ${__FLAGS_TYPE_STRING} long_name 'bar' 'underscored name' l \
+      >"${stdoutF}" 2>"${stderrF}"
+  assertFalse '_flags_define() with existing flag name should fail' $?
+  assertEquals \
+      '_flags_define() should not overwrite previously defined default.' \
+      "${FLAGS_long_name}" 'foo'
+  assertWarnMsg '' 'already exists'
+
   # TODO(kward): test requirement of enhanced getopt
 
   # invalid type
