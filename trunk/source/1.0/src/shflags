@@ -189,9 +189,11 @@ unset __flags_const __flags_constants
 # internal variables
 #
 
-__flags_boolNames=' '  # space separated list of boolean flag names
-__flags_longNames=' '  # space separated list of long flag names
-__flags_shortNames=' '  # space separated list of short flag names
+# space separated lists
+__flags_boolNames=' '  # boolean flag names
+__flags_longNames=' '  # long flag names
+__flags_shortNames=' '  # short flag names
+__flags_definedNames=' ' # defined flag names (used for validation)
 
 __flags_columns=''  # screen width in columns
 __flags_opts=''  # temporary storage for parsed getopt flags
@@ -234,11 +236,10 @@ _flags_define()
   _flags_short_=${5:-${__FLAGS_NULL}}
 
   _flags_return_=${FLAGS_TRUE}
-
-  # TODO(kward): check for validity of the flag name (e.g. dashes)
+  _flags_usName_=`_flags_underscoreName ${_flags_name_}`
 
   # check whether the flag name is reserved
-  _flags_itemInList ${_flags_name_} "${__FLAGS_RESERVED_LIST}"
+  _flags_itemInList ${_flags_usName_} "${__FLAGS_RESERVED_LIST}"
   if [ $? -eq ${FLAGS_TRUE} ]; then
     flags_error="flag name (${_flags_name_}) is reserved"
     _flags_return_=${FLAGS_ERROR}
@@ -255,10 +256,8 @@ _flags_define()
 
   # check for existing long name definition
   if [ ${_flags_return_} -eq ${FLAGS_TRUE} ]; then
-    if _flags_itemInList "${_flags_name_}" \
-        ${__flags_longNames} ${__flags_boolNames}
-    then
-      flags_error="flag name ([no]${_flags_name_}) already defined"
+    if _flags_itemInList ${_flags_usName_} ${__flags_definedNames}; then
+      flags_error="definition for ([no]${_flags_name_}) already exists"
       _flags_warn "${flags_error}"
       _flags_return_=${FLAGS_FALSE}
     fi
@@ -321,25 +320,41 @@ _flags_define()
 
   if [ ${_flags_return_} -eq ${FLAGS_TRUE} ]; then
     # store flag information
-    eval "FLAGS_${_flags_name_}='${_flags_default_}'"
-    eval "__flags_${_flags_name_}_${__FLAGS_INFO_TYPE}=${_flags_type_}"
-    eval "__flags_${_flags_name_}_${__FLAGS_INFO_DEFAULT}=\
+    eval "FLAGS_${_flags_usName_}='${_flags_default_}'"
+    eval "__flags_${_flags_usName_}_${__FLAGS_INFO_TYPE}=${_flags_type_}"
+    eval "__flags_${_flags_usName_}_${__FLAGS_INFO_DEFAULT}=\
 \"${_flags_default_}\""
-    eval "__flags_${_flags_name_}_${__FLAGS_INFO_HELP}=\"${_flags_help_}\""
-    eval "__flags_${_flags_name_}_${__FLAGS_INFO_SHORT}='${_flags_short_}'"
+    eval "__flags_${_flags_usName_}_${__FLAGS_INFO_HELP}=\"${_flags_help_}\""
+    eval "__flags_${_flags_usName_}_${__FLAGS_INFO_SHORT}='${_flags_short_}'"
 
-    # append flag name(s) to list of names
-    __flags_longNames="${__flags_longNames}${_flags_name_} "
+    # append flag names to name lists
     __flags_shortNames="${__flags_shortNames}${_flags_short_} "
+    __flags_longNames="${__flags_longNames}${_flags_name_} "
     [ ${_flags_type_} -eq ${__FLAGS_TYPE_BOOLEAN} ] && \
         __flags_boolNames="${__flags_boolNames}no${_flags_name_} "
+
+    # append flag names to defined names for later validation checks
+    __flags_definedNames="${__flags_definedNames}${_flags_usName_} "
+    [ ${_flags_type_} -eq ${__FLAGS_TYPE_BOOLEAN} ] && \
+        __flags_definedNames="${__flags_definedNames}no${_flags_usName_} "
   fi
 
   flags_return=${_flags_return_}
-  unset _flags_default_ _flags_help_ _flags_name_ _flags_return_ _flags_short_ \
-      _flags_type_
+  unset _flags_default_ _flags_help_ _flags_name_ _flags_return_ \
+      _flags_short_ _flags_type_ _flags_usName_
   [ ${flags_return} -eq ${FLAGS_ERROR} ] && _flags_error "${flags_error}"
   return ${flags_return}
+}
+
+# Underscore a flag name by replacing dashes with underscores.
+#
+# Args:
+#   unnamed: string: log flag name
+# Output:
+#   string: underscored name
+_flags_underscoreName()
+{
+  echo $1 |tr '-' '_'
 }
 
 # Return valid getopt options using currently defined list of long options.
@@ -359,13 +374,14 @@ _flags_genOptStr()
 
   _flags_opts_=''
 
-  for _flags_flag_ in ${__flags_longNames}; do
-    _flags_type_=`_flags_getFlagInfo ${_flags_flag_} ${__FLAGS_INFO_TYPE}`
+  for _flags_name_ in ${__flags_longNames}; do
+    _flags_usName_=`_flags_underscoreName ${_flags_name_}`
+    _flags_type_=`_flags_getFlagInfo ${_flags_usName_} ${__FLAGS_INFO_TYPE}`
     [ $? -eq ${FLAGS_TRUE} ] || _flags_fatal 'call to _flags_type_ failed'
     case ${_flags_optStrType_} in
       ${__FLAGS_OPTSTR_SHORT})
         _flags_shortName_=`_flags_getFlagInfo \
-            ${_flags_flag_} ${__FLAGS_INFO_SHORT}`
+            ${_flags_usName_} ${__FLAGS_INFO_SHORT}`
         if [ "${_flags_shortName_}" != "${__FLAGS_NULL}" ]; then
           _flags_opts_="${_flags_opts_}${_flags_shortName_}"
           # getopt needs a trailing ':' to indicate a required argument
@@ -375,7 +391,7 @@ _flags_genOptStr()
         ;;
 
       ${__FLAGS_OPTSTR_LONG})
-        _flags_opts_="${_flags_opts_:+${_flags_opts_},}${_flags_flag_}"
+        _flags_opts_="${_flags_opts_:+${_flags_opts_},}${_flags_name_}"
         # getopt needs a trailing ':' to indicate a required argument
         [ ${_flags_type_} -ne ${__FLAGS_TYPE_BOOLEAN} ] && \
             _flags_opts_="${_flags_opts_}:"
@@ -384,15 +400,15 @@ _flags_genOptStr()
   done
 
   echo "${_flags_opts_}"
-  unset _flags_flag_ _flags_opts_ _flags_optStrType_ _flags_shortName_ \
-      _flags_type_
+  unset _flags_name_ _flags_opts_ _flags_optStrType_ _flags_shortName_ \
+      _flags_type_ _flags_usName_
   return ${FLAGS_TRUE}
 }
 
 # Returns flag details based on a flag name and flag info.
 #
 # Args:
-#   string: long flag name
+#   string: underscored flag name
 #   string: flag info (see the _flags_define function for valid info types)
 # Output:
 #   string: value of dereferenced flag variable
@@ -400,51 +416,54 @@ _flags_genOptStr()
 #   integer: one of FLAGS_{TRUE|FALSE|ERROR}
 _flags_getFlagInfo()
 {
-  _flags_name_=$1
-  _flags_info_=$2
+  # note: adding gFI to variable names to prevent naming conflicts with calling
+  # functions
+  _flags_gFI_usName_=$1
+  _flags_gFI_info_=$2
 
-  _flags_nameVar_="__flags_${_flags_name_}_${_flags_info_}"
-  _flags_strToEval_="_flags_nameValue_=\"\${${_flags_nameVar_}:-}\""
+  _flags_infoVar_="__flags_${_flags_gFI_usName_}_${_flags_gFI_info_}"
+  _flags_strToEval_="_flags_infoValue_=\"\${${_flags_infoVar_}:-}\""
   eval "${_flags_strToEval_}"
-  if [ -n "${_flags_nameValue_}" ]; then
+  if [ -n "${_flags_infoValue_}" ]; then
     flags_return=${FLAGS_TRUE}
   else
-    # see if the _flags_name_ variable is a string as strings can be empty...
+    # see if the _flags_gFI_usName_ variable is a string as strings can be
+    # empty...
     # note: the DRY principle would say to have this function call itself for
     # the next three lines, but doing so results in an infinite loop as an
     # invalid _flags_name_ will also not have the associated _type variable.
     # Because it doesn't (it will evaluate to an empty string) the logic will
     # try to find the _type variable of the _type variable, and so on. Not so
     # good ;-)
-    _flags_typeVar_="__flags_${_flags_name_}_${__FLAGS_INFO_TYPE}"
+    _flags_typeVar_="__flags_${_flags_gFI_usName_}_${__FLAGS_INFO_TYPE}"
     _flags_strToEval_="_flags_typeValue_=\"\${${_flags_typeVar_}:-}\""
     eval "${_flags_strToEval_}"
     if [ "${_flags_typeValue_}" = "${__FLAGS_TYPE_STRING}" ]; then
       flags_return=${FLAGS_TRUE}
     else
       flags_return=${FLAGS_ERROR}
-      flags_error="invalid flag name (${_flags_nameVar_})"
+      flags_error="missing flag info variable (${_flags_infoVar_})"
     fi
   fi
 
-  echo "${_flags_nameValue_}"
-  unset _flags_info_ _flags_name_ _flags_nameValue_ _flags_nameVar_ \
+  echo "${_flags_infoValue_}"
+  unset _flags_gFI_usName_ _flags_gfI_info_ _flags_infoValue_ _flags_infoVar_ \
       _flags_strToEval_ _flags_typeValue_ _flags_typeVar_
   [ ${flags_return} -eq ${FLAGS_ERROR} ] && _flags_error "${flags_error}"
   return ${flags_return}
 }
 
-# check for presense of item in a list. passed a string (e.g. 'abc'), this
-# function will determine if the string is present in the list of strings (e.g.
-# ' foo bar abc ').
+# Check for presense of item in a list.
+#
+# Passed a string (e.g. 'abc'), this function will determine if the string is
+# present in the list of strings (e.g.  ' foo bar abc ').
 #
 # Args:
-#   _flags__str: string: string to search for in a list of strings
+#   _flags_str_: string: string to search for in a list of strings
 #   unnamed: list: list of strings
 # Returns:
 #   boolean: true if item is in the list
-_flags_itemInList()
-{
+_flags_itemInList() {
   _flags_str_=$1
   shift
 
@@ -710,32 +729,33 @@ _flags_parseGetopt()
     fi
 
     # set new flag value
+    _flags_usName_=`_flags_underscoreName ${_flags_name_}`
     [ ${_flags_type_} -eq ${__FLAGS_TYPE_NONE} ] && \
         _flags_type_=`_flags_getFlagInfo \
-            "${_flags_name_}" ${__FLAGS_INFO_TYPE}`
+            "${_flags_usName_}" ${__FLAGS_INFO_TYPE}`
     case ${_flags_type_} in
       ${__FLAGS_TYPE_BOOLEAN})
         if [ ${_flags_len_} -eq ${__FLAGS_LEN_LONG} ]; then
           if [ "${_flags_arg_}" != "${__FLAGS_NULL}" ]; then
-            eval "FLAGS_${_flags_name_}=${FLAGS_TRUE}"
+            eval "FLAGS_${_flags_usName_}=${FLAGS_TRUE}"
           else
-            eval "FLAGS_${_flags_name_}=${FLAGS_FALSE}"
+            eval "FLAGS_${_flags_usName_}=${FLAGS_FALSE}"
           fi
         else
           _flags_strToEval_="_flags_val_=\
-\${__flags_${_flags_name_}_${__FLAGS_INFO_DEFAULT}}"
+\${__flags_${_flags_usName_}_${__FLAGS_INFO_DEFAULT}}"
           eval "${_flags_strToEval_}"
           if [ ${_flags_val_} -eq ${FLAGS_FALSE} ]; then
-            eval "FLAGS_${_flags_name_}=${FLAGS_TRUE}"
+            eval "FLAGS_${_flags_usName_}=${FLAGS_TRUE}"
           else
-            eval "FLAGS_${_flags_name_}=${FLAGS_FALSE}"
+            eval "FLAGS_${_flags_usName_}=${FLAGS_FALSE}"
           fi
         fi
         ;;
 
       ${__FLAGS_TYPE_FLOAT})
         if _flags_validateFloat "${_flags_arg_}"; then
-          eval "FLAGS_${_flags_name_}='${_flags_arg_}'"
+          eval "FLAGS_${_flags_usName_}='${_flags_arg_}'"
         else
           flags_error="invalid float value (${_flags_arg_})"
           flags_return=${FLAGS_ERROR}
@@ -745,7 +765,7 @@ _flags_parseGetopt()
 
       ${__FLAGS_TYPE_INTEGER})
         if _flags_validateInteger "${_flags_arg_}"; then
-          eval "FLAGS_${_flags_name_}='${_flags_arg_}'"
+          eval "FLAGS_${_flags_usName_}='${_flags_arg_}'"
         else
           flags_error="invalid integer value (${_flags_arg_})"
           flags_return=${FLAGS_ERROR}
@@ -754,12 +774,12 @@ _flags_parseGetopt()
         ;;
 
       ${__FLAGS_TYPE_STRING})
-        eval "FLAGS_${_flags_name_}='${_flags_arg_}'"
+        eval "FLAGS_${_flags_usName_}='${_flags_arg_}'"
         ;;
     esac
 
     # handle special case help flag
-    if [ "${_flags_name_}" = 'help' ]; then
+    if [ "${_flags_usName_}" = 'help' ]; then
       if [ ${FLAGS_help} -eq ${FLAGS_TRUE} ]; then
         flags_help
         flags_error='help requested'
@@ -781,7 +801,7 @@ _flags_parseGetopt()
   done
 
   unset _flags_arg_ _flags_len_ _flags_name_ _flags_opt_ _flags_pos_ \
-      _flags_strToEval_ _flags_type_ _flags_val_
+      _flags_strToEval_ _flags_type_ _flags_usName_ _flags_val_
   return ${flags_return}
 }
 
@@ -923,15 +943,16 @@ flags_help()
     for flags_name_ in ${__flags_longNames}; do
       flags_flagStr_=''
       flags_boolStr_=''
+      flags_usName_=`_flags_underscoreName ${flags_name_}`
 
       flags_default_=`_flags_getFlagInfo \
-          "${flags_name_}" ${__FLAGS_INFO_DEFAULT}`
+          "${flags_usName_}" ${__FLAGS_INFO_DEFAULT}`
       flags_help_=`_flags_getFlagInfo \
-          "${flags_name_}" ${__FLAGS_INFO_HELP}`
+          "${flags_usName_}" ${__FLAGS_INFO_HELP}`
       flags_short_=`_flags_getFlagInfo \
-          "${flags_name_}" ${__FLAGS_INFO_SHORT}`
+          "${flags_usName_}" ${__FLAGS_INFO_SHORT}`
       flags_type_=`_flags_getFlagInfo \
-          "${flags_name_}" ${__FLAGS_INFO_TYPE}`
+          "${flags_usName_}" ${__FLAGS_INFO_TYPE}`
 
       [ "${flags_short_}" != "${__FLAGS_NULL}" ] && \
           flags_flagStr_="-${flags_short_}"
@@ -941,7 +962,7 @@ flags_help()
             flags_flagStr_="${flags_flagStr_},"
         # add [no] to long boolean flag names, except the 'help' flag
         [ ${flags_type_} -eq ${__FLAGS_TYPE_BOOLEAN} \
-          -a "${flags_name_}" != 'help' ] && \
+          -a "${flags_usName_}" != 'help' ] && \
             flags_boolStr_='[no]'
         flags_flagStr_="${flags_flagStr_}--${flags_boolStr_}${flags_name_}:"
       fi
@@ -988,7 +1009,7 @@ flags_help()
 
   unset flags_boolStr_ flags_default_ flags_defaultStr_ flags_emptyStr_ \
       flags_flagStr_ flags_help_ flags_helpStr flags_helpStrLen flags_name_ \
-      flags_columns_ flags_short_ flags_type_
+      flags_columns_ flags_short_ flags_type_ flags_usName_
   return ${FLAGS_TRUE}
 }
 
@@ -1018,6 +1039,7 @@ flags_reset()
   __flags_boolNames=' '
   __flags_longNames=' '
   __flags_shortNames=' '
+  __flags_definedNames=' '
 
   unset flags_name_ flags_type_ flags_strToEval_
 }
