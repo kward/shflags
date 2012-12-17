@@ -85,11 +85,18 @@
 
 # return if FLAGS already loaded
 [ -n "${FLAGS_VERSION:-}" ] && return 0
-
 FLAGS_VERSION='1.0.4pre'
 
-# a user can set the path to a different getopt command by overriding this
-# variable in their script
+FLAGS_UNAME_S=`uname -s`
+
+# Different OSes need different commands.
+case "${FLAGS_UNAME_S}" in
+  BSD) FLAGS_EXPR_CMD='gexpr' ;;
+  *) FLAGS_EXPR_CMD='expr' ;;
+esac
+
+# A user can set the path to a different getopt command by overriding this
+# variable in their script.
 FLAGS_GETOPT_CMD=${FLAGS_GETOPT_CMD:-getopt}
 
 # return values that scripts can use
@@ -537,11 +544,11 @@ _flags_validateFloat()
     flags_return=${FLAGS_TRUE}
     case ${_flags_float_} in
       -*)  # negative floats
-        _flags_test_=`expr -- "${_flags_float_}" :\
+        _flags_test_=`${FLAGS_EXPR_CMD} -- "${_flags_float_}" :\
             '\(-[0-9][0-9]*\.[0-9][0-9]*\)'`
         ;;
       *)  # positive floats
-        _flags_test_=`expr -- "${_flags_float_}" :\
+        _flags_test_=`${FLAGS_EXPR_CMD} -- "${_flags_float_}" :\
             '\([0-9][0-9]*\.[0-9][0-9]*\)'`
         ;;
     esac
@@ -565,10 +572,10 @@ _flags_validateInteger()
   flags_return=${FLAGS_TRUE}
   case ${_flags_int_} in
     -*)  # negative ints
-      _flags_test_=`expr -- "${_flags_int_}" : '\(-[0-9][0-9]*\)'`
+      _flags_test_=`${FLAGS_EXPR_CMD} -- "${_flags_int_}" : '\(-[0-9][0-9]*\)'`
       ;;
     *)  # positive ints
-      _flags_test_=`expr -- "${_flags_int_}" : '\([0-9][0-9]*\)'`
+      _flags_test_=`${FLAGS_EXPR_CMD} -- "${_flags_int_}" : '\([0-9][0-9]*\)'`
       ;;
   esac
   [ "${_flags_test_}" != "${_flags_int_}" ] && flags_return=${FLAGS_FALSE}
@@ -678,7 +685,7 @@ _flags_parseGetopt()
   # properly give user access to non-flag arguments mixed in between flag
   # arguments. Its usage was replaced by FLAGS_ARGV, and it is being kept only
   # for backwards compatibility reasons.
-  FLAGS_ARGC=`expr $# - 1 - ${_flags_argc_}`
+  FLAGS_ARGC=`${FLAGS_EXPR_CMD} $# - 1 - ${_flags_argc_}`
 
   # handle options. note options with values must do an additional shift
   while true; do
@@ -692,14 +699,14 @@ _flags_parseGetopt()
       --) shift; break ;;  # discontinue option parsing
 
       --*)  # long option
-        _flags_opt_=`expr -- "${_flags_opt_}" : '--\(.*\)'`
+        _flags_opt_=`${FLAGS_EXPR_CMD} -- "${_flags_opt_}" : '--\(.*\)'`
         _flags_len_=${__FLAGS_LEN_LONG}
         if _flags_itemInList "${_flags_opt_}" ${__flags_longNames}; then
           _flags_name_=${_flags_opt_}
         else
           # check for negated long boolean version
           if _flags_itemInList "${_flags_opt_}" ${__flags_boolNames}; then
-            _flags_name_=`expr -- "${_flags_opt_}" : 'no\(.*\)'`
+            _flags_name_=`${FLAGS_EXPR_CMD} -- "${_flags_opt_}" : 'no\(.*\)'`
             _flags_type_=${__FLAGS_TYPE_BOOLEAN}
             _flags_arg_=${__FLAGS_NULL}
           fi
@@ -707,7 +714,7 @@ _flags_parseGetopt()
         ;;
 
       -*)  # short option
-        _flags_opt_=`expr -- "${_flags_opt_}" : '-\(.*\)'`
+        _flags_opt_=`${FLAGS_EXPR_CMD} -- "${_flags_opt_}" : '-\(.*\)'`
         _flags_len_=${__FLAGS_LEN_SHORT}
         if _flags_itemInList "${_flags_opt_}" ${__flags_shortNames}; then
           # yes. match short name to long name. note purposeful off-by-one
@@ -982,7 +989,7 @@ flags_help()
       flags_defaultStr_="(default: ${flags_defaultStr_})"
 
       flags_helpStr_="  ${flags_flagStr_}  ${flags_help_} ${flags_defaultStr_}"
-      flags_helpStrLen_=`expr -- "${flags_helpStr_}" : '.*'`
+      flags_helpStrLen_=`${FLAGS_EXPR_CMD} -- "${flags_helpStr_}" : '.*'`
       flags_columns_=`_flags_columns`
       if [ ${flags_helpStrLen_} -lt ${flags_columns_} ]; then
         echo "${flags_helpStr_}" >&2
@@ -993,7 +1000,7 @@ flags_help()
         flags_emptyStr_="`echo \"x${flags_flagStr_}x\" \
             |awk '{printf "%"length($0)-2"s", ""}'`"
         flags_helpStr_="  ${flags_emptyStr_}  ${flags_defaultStr_}"
-        flags_helpStrLen_=`expr -- "${flags_helpStr_}" : '.*'`
+        flags_helpStrLen_=`${FLAGS_EXPR_CMD} -- "${flags_helpStr_}" : '.*'`
         if [ ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_STD} \
             -o ${flags_helpStrLen_} -lt ${flags_columns_} ]; then
           # indented to match help string

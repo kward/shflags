@@ -32,6 +32,8 @@ allowed, not both.
 Issue #20. Updated LGPL v2.1 license from
 http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt.
 
+Issue #15. Use ``gexpr`` instead of ``expr`` on BSD variants.
+
 
 Changes with 1.0.3
 ------------------
