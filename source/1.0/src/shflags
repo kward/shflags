@@ -87,16 +87,16 @@
 [ -n "${FLAGS_VERSION:-}" ] && return 0
 FLAGS_VERSION='1.0.4pre'
 
-FLAGS_UNAME_S=`uname -s`
-
-# Different OSes need different commands.
-case "${FLAGS_UNAME_S}" in
-  BSD) FLAGS_EXPR_CMD='gexpr' ;;
-  *) FLAGS_EXPR_CMD='expr' ;;
+# Set some reasonable defaults.
+__FLAGS_UNAME_S=`uname -s`
+case "${__FLAGS_UNAME_S}" in
+  BSD) __FLAGS_EXPR_CMD='gexpr' ;;
+  *) __FLAGS_EXPR_CMD='expr' ;;
 esac
 
-# A user can set the path to a different getopt command by overriding this
-# variable in their script.
+# A user can set the path to different commands by overriding these variables in
+# their script.
+FLAGS_EXPR_CMD=${FLAGS_EXPR_CMD:-${__FLAGS_EXPR_CMD}}
 FLAGS_GETOPT_CMD=${FLAGS_GETOPT_CMD:-getopt}
 
 # return values that scripts can use
