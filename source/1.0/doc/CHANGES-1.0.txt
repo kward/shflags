@@ -29,6 +29,10 @@ defined flag will still be declared with underscores ('_') due to shell
 limitations, so only one of a dashed flag name or an underscored flag name are
 allowed, not both.
 
+Issue #20. Updated LGPL v2.1 license from
+http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt.
+
+
 Changes with 1.0.3
 ------------------
 
