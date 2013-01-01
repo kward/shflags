@@ -34,6 +34,11 @@ http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt.
 
 Issue #15. Use ``gexpr`` instead of ``expr`` on BSD variants.
 
+Minor tweaks to make run on FreeBSD 9.1.
+
+Fixed issue in shflags_test_public.sh where screens >80 columns were causing a
+test to fail.
+
 
 Changes with 1.0.3
 ------------------
