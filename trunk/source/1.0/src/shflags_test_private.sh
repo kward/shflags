@@ -67,7 +67,7 @@ testGetFlagInfo()
 
   rslt=`_flags_getFlagInfo 'blah' 'hubbabubba' >"${stdoutF}" 2>"${stderrF}"`
   assertEquals 'invalid flag did not result in an error' ${FLAGS_ERROR} $?
-  assertErrorMsg 'invalid flag name'
+  assertErrorMsg 'missing flag info variable'
 }
 
 testItemInList()
