@@ -39,6 +39,8 @@ Minor tweaks to make run on FreeBSD 9.1.
 Fixed issue in shflags_test_public.sh where screens >80 columns were causing a
 test to fail.
 
+Issue #22. Fixed broken testGetFlagInfo() test.
+
 
 Changes with 1.0.3
 ------------------
