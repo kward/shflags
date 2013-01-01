@@ -680,7 +680,7 @@ _flags_parseGetopt()
     eval set -- "$@"
   fi
 
-  # provide user with number of arguments to shift by later
+  # Provide user with the number of arguments to shift by later.
   # NOTE: the FLAGS_ARGC variable is obsolete as of 1.0.3 because it does not
   # properly give user access to non-flag arguments mixed in between flag
   # arguments. Its usage was replaced by FLAGS_ARGV, and it is being kept only
