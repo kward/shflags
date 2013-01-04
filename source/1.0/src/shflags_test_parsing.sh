@@ -45,7 +45,7 @@ testGetoptEnhanced()
   assertFalse "parsed invalid flag 'xyz'" $?
 }
 
-testValidBooleanShort()
+testValidBoolsShort()
 {
   # flip flag to true
   FLAGS -b >"${stdoutF}" 2>"${stderrF}"
@@ -68,11 +68,12 @@ testValidBooleanShort()
   th_showOutput $? "${stdoutF}" "${stderrF}"
 }
 
-testValidBooleanLong()
+# TODO(kate): separate into multiple functions to reflect correct usage
+testValidBoolsLong()
 {
   flags_getoptIsEnh || startSkipping
 
-  # note: the default value of bool is 'false'
+  # Note: the default value of bool is 'false'.
 
   # leave flag false
   FLAGS --nobool >"${stdoutF}" 2>"${stderrF}"
@@ -131,10 +132,11 @@ _testInvalidFloats()
 {
   flag=$1
   for value in ${TH_FLOAT_INVALID}; do
-    FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
+    ( FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"; )
     rtrn=$?
     assertFalse "FLAGS (${value}) returned a zero result" ${rtrn}
-    assertTrue 'expected no output to STDERR' "[ -s '${stderrF}' ]"
+    assertFalse 'expected no output to STDOUT' "[ -s '${stdoutF}' ]"
+    assertTrue 'expected output to STDERR' "[ -s '${stderrF}' ]"
   done
 }
 
@@ -169,10 +171,11 @@ _testInvalidIntegers()
 {
   flag=$1
   for value in ${TH_INT_INVALID}; do
-    FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
+    ( FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"; )
     rtrn=$?
     assertFalse "invalid integer (${value}) test returned success." ${rtrn}
-    assertTrue 'expected no output to STDERR' "[ -s '${stderrF}' ]"
+    assertFalse 'expected no output to STDOUT' "[ -s '${stdoutF}' ]"
+    assertTrue 'expected output to STDERR' "[ -s '${stderrF}' ]"
   done
 }
 
@@ -328,11 +331,15 @@ oneTimeSetUp()
 
 setUp()
 {
-  flags_reset
   DEFINE_boolean bool false 'boolean test' 'b'
   DEFINE_float float 0.0 'float test' 'f'
   DEFINE_integer int 0 'integer test' 'i'
   DEFINE_string str '' 'string test' 's'
+}
+
+tearDown()
+{
+  flags_reset
 }
 
 # load and run shUnit2

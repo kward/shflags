@@ -87,28 +87,21 @@
 [ -n "${FLAGS_VERSION:-}" ] && return 0
 FLAGS_VERSION='1.0.4pre'
 
-# Set some reasonable defaults.
+# return values that scripts can use
+FLAGS_TRUE=0
+FLAGS_FALSE=1
+FLAGS_ERROR=2
+
+# determine some reasonable command defaults
 __FLAGS_UNAME_S=`uname -s`
 case "${__FLAGS_UNAME_S}" in
   BSD) __FLAGS_EXPR_CMD='gexpr' ;;
   *) __FLAGS_EXPR_CMD='expr' ;;
 esac
 
-# A user can set the path to different commands by overriding these variables in
-# their script.
+# commands a user can override if needed
 FLAGS_EXPR_CMD=${FLAGS_EXPR_CMD:-${__FLAGS_EXPR_CMD}}
 FLAGS_GETOPT_CMD=${FLAGS_GETOPT_CMD:-getopt}
-
-# return values that scripts can use
-FLAGS_TRUE=0
-FLAGS_FALSE=1
-FLAGS_ERROR=2
-
-# logging functions
-_flags_debug() { echo "flags:DEBUG $@" >&2; }
-_flags_warn() { echo "flags:WARN $@" >&2; }
-_flags_error() { echo "flags:ERROR $@" >&2; }
-_flags_fatal() { echo "flags:FATAL $@" >&2; exit ${FLAGS_ERROR}; }
 
 # specific shell checks
 if [ -n "${ZSH_VERSION:-}" ]; then
@@ -120,6 +113,16 @@ if [ -n "${ZSH_VERSION:-}" ]; then
     _flags_fatal "zsh does not pass \$0 through properly. please declare' \
 \"FLAGS_PARENT=\$0\" before calling shFlags"
   fi
+fi
+
+# can we use built-ins?
+( echo "${FLAGS_TRUE#0}"; ) >/dev/null 2>&1
+if [ $? -eq ${FLAGS_TRUE} ]; then
+  __FLAGS_FX_VALID_FLOAT='_flags_validFloatBuiltin'
+  __FLAGS_FX_VALID_INT='_flags_validIntBuiltin'
+else
+  __FLAGS_FX_VALID_FLOAT='_flags_validFloatExpr'
+  __FLAGS_FX_VALID_INT='_flags_validIntExpr'
 fi
 
 #
@@ -209,6 +212,12 @@ __flags_opts=''  # temporary storage for parsed getopt flags
 # private functions
 #
 
+# logging functions
+_flags_debug() { echo "flags:DEBUG $@" >&2; }
+_flags_warn() { echo "flags:WARN $@" >&2; }
+_flags_error() { echo "flags:ERROR $@" >&2; }
+_flags_fatal() { echo "flags:FATAL $@" >&2; exit ${FLAGS_ERROR}; }
+
 # Define a flag.
 #
 # Calling this function will define the following info variables for the
@@ -287,7 +296,7 @@ _flags_define()
   if [ ${_flags_return_} -eq ${FLAGS_TRUE} ]; then
     case ${_flags_type_} in
       ${__FLAGS_TYPE_BOOLEAN})
-        if _flags_validateBoolean "${_flags_default_}"; then
+        if _flags_validBool "${_flags_default_}"; then
           case ${_flags_default_} in
             true|t|0) _flags_default_=${FLAGS_TRUE} ;;
             false|f|1) _flags_default_=${FLAGS_FALSE} ;;
@@ -299,7 +308,7 @@ _flags_define()
         ;;
 
       ${__FLAGS_TYPE_FLOAT})
-        if _flags_validateFloat "${_flags_default_}"; then
+        if ${__FLAGS_FX_VALID_FLOAT} "${_flags_default_}"; then
           :
         else
           flags_error="invalid default flag value '${_flags_default_}'"
@@ -308,7 +317,7 @@ _flags_define()
         ;;
 
       ${__FLAGS_TYPE_INTEGER})
-        if _flags_validateInteger "${_flags_default_}"; then
+        if ${__FLAGS_FX_VALID_INT} "${_flags_default_}"; then
           :
         else
           flags_error="invalid default flag value '${_flags_default_}'"
@@ -513,7 +522,7 @@ _flags_columns()
 #   _flags__bool: boolean: value to validate
 # Returns:
 #   bool: true if the value is a valid boolean
-_flags_validateBoolean()
+_flags_validBool()
 {
   _flags_bool_=$1
 
@@ -528,28 +537,63 @@ _flags_validateBoolean()
   return ${flags_return}
 }
 
+# Validate a float using built-ins.
+#
+# Args:
+#   _flags_float_: float: value to validate
+#   _flags_recursed_: boolean: running recursed
+# Returns:
+#   bool: true if the value is a valid integer
+_flags_validFloatBuiltin()
+{
+  flags_return=${FLAGS_FALSE}
+  [ -n "$1" ] || return ${flags_return}
+  _flags_float_=$1
+
+  _flags_curr_=${_flags_float_#-}  # strip leading negative sign
+
+  # strip leading and trailing integers until only the decimal point remains
+  _flags_last_=${_flags_curr_}
+  _flags_curr_=${_flags_curr_#[0-9]}
+  _flags_curr_=${_flags_curr_%[0-9]}
+  while [ \
+    "${_flags_curr_}" != '.' -a \
+    -n "${_flags_curr_}" -a \
+    "${_flags_curr_}" != "${_flags_last_}" \
+  ]; do
+    _flags_last_=${_flags_curr_}
+    _flags_curr_=${_flags_curr_#[0-9]}
+    _flags_curr_=${_flags_curr_%[0-9]}
+  done
+  [ "${_flags_curr_}" = '.' -o -z "${_flags_curr_}" ] && \
+    flags_return=${FLAGS_TRUE}
+
+  unset _flags_curr_ _flags_float_ _flags_last_
+  return ${flags_return}
+}
+
 # Validate a float.
 #
 # Args:
 #   _flags__float: float: value to validate
 # Returns:
 #   bool: true if the value is a valid float
-_flags_validateFloat()
+_flags_validFloatExpr()
 {
   _flags_float_=$1
 
-  if _flags_validateInteger ${_flags_float_}; then
+  if ${__FLAGS_FX_VALID_INT} ${_flags_float_}; then
     flags_return=${FLAGS_TRUE}
   else
     flags_return=${FLAGS_TRUE}
     case ${_flags_float_} in
       -*)  # negative floats
         _flags_test_=`${FLAGS_EXPR_CMD} -- "${_flags_float_}" :\
-            '\(-[0-9][0-9]*\.[0-9][0-9]*\)'`
+            '\(-[0-9]*\.[0-9]*\)'`
         ;;
       *)  # positive floats
         _flags_test_=`${FLAGS_EXPR_CMD} -- "${_flags_float_}" :\
-            '\([0-9][0-9]*\.[0-9][0-9]*\)'`
+            '\([0-9]*\.[0-9]*\)'`
         ;;
     esac
     [ "${_flags_test_}" != "${_flags_float_}" ] && flags_return=${FLAGS_FALSE}
@@ -559,13 +603,40 @@ _flags_validateFloat()
   return ${flags_return}
 }
 
-# Validate an integer.
+# Validate an integer using built-ins.
 #
 # Args:
-#   _flags__integer: interger: value to validate
+#   _flags_int_: integer: value to validate
+#   _flags_recursed_: boolean: running recursed
 # Returns:
 #   bool: true if the value is a valid integer
-_flags_validateInteger()
+_flags_validIntBuiltin()
+{
+  flags_return=${FLAGS_FALSE}
+  [ -n "$1" ] || return ${flags_return}
+  _flags_int_=$1
+
+  _flags_curr_=${_flags_int_#-}  # strip leading negative sign
+
+  _flags_last_=${_flags_curr_}
+  _flags_curr_=${_flags_curr_#[0-9]}
+  while [ -n "${_flags_curr_}" -a "${_flags_curr_}" != "${_flags_last_}" ]; do
+    _flags_last_=${_flags_curr_}
+    _flags_curr_=${_flags_curr_#[0-9]}
+  done
+  [ -z "${_flags_curr_}" ] && flags_return=${FLAGS_TRUE}
+
+  unset _flags_curr_ _flags_int_ _flags_last_
+  return ${flags_return}
+}
+
+# Validate an integer using expr.
+#
+# Args:
+#   _flags_int_: interger: value to validate
+# Returns:
+#   bool: true if the value is a valid integer
+_flags_validIntExpr()
 {
   _flags_int_=$1
 
@@ -761,7 +832,7 @@ _flags_parseGetopt()
         ;;
 
       ${__FLAGS_TYPE_FLOAT})
-        if _flags_validateFloat "${_flags_arg_}"; then
+        if ${__FLAGS_FX_VALID_FLOAT} "${_flags_arg_}"; then
           eval "FLAGS_${_flags_usName_}='${_flags_arg_}'"
         else
           flags_error="invalid float value (${_flags_arg_})"
@@ -771,7 +842,7 @@ _flags_parseGetopt()
         ;;
 
       ${__FLAGS_TYPE_INTEGER})
-        if _flags_validateInteger "${_flags_arg_}"; then
+        if ${__FLAGS_FX_VALID_INT} "${_flags_arg_}"; then
           eval "FLAGS_${_flags_usName_}='${_flags_arg_}'"
         else
           flags_error="invalid integer value (${_flags_arg_})"

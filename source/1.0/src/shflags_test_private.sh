@@ -23,6 +23,11 @@ testColumns()
   assertNotNull "unexpected screen width (${cols})" "${value}"
 }
 
+testExpr()
+{
+  :
+}
+
 testGenOptStr()
 {
   _testGenOptStr '' ''
@@ -93,49 +98,85 @@ testItemInList()
   assertFalse 'empty lists should not match' $?
 }
 
-testValidateBoolean()
+testValidBool()
 {
   # valid values
   for value in ${TH_BOOL_VALID}; do
-    _flags_validateBoolean "${value}"
+    _flags_validBool "${value}"
     assertTrue "valid value (${value}) did not validate" $?
   done
 
   # invalid values
   for value in ${TH_BOOL_INVALID}; do
-    _flags_validateBoolean "${value}"
+    _flags_validBool "${value}"
     assertFalse "invalid value (${value}) validated" $?
   done
 }
 
-testValidateFloat()
+_testValidFloat()
 {
+  fx=$1
+
   # valid values
   for value in ${TH_INT_VALID} ${TH_FLOAT_VALID}; do
-    _flags_validateFloat "${value}"
+    ${fx} "${value}"
     assertTrue "valid value (${value}) did not validate" $?
   done
 
   # invalid values
   for value in ${TH_FLOAT_INVALID}; do
-    _flags_validateFloat "${value}"
+    ${fx} "${value}"
     assertFalse "invalid value (${value}) validated" $?
   done
 }
 
-testValidateInteger()
+testValidFloatBuiltin()
 {
+  # Are we running a shell that can handle a built-in version? The Solaris
+  # Bourne shell for one does not support what we need.
+  if [ "${__FLAGS_FX_VALID_FLOAT}" != '_flags_validFloatBuiltin' ]; then
+    echo 'SKIPPED: this shell does not support the necessary builtins'
+    return
+  fi
+  _testValidFloat _flags_validFloatBuiltin
+}
+
+testValidFloatExpr()
+{
+  _testValidFloat _flags_validFloatExpr
+}
+
+_testValidInt()
+{
+  fx=$1
+
   # valid values
   for value in ${TH_INT_VALID}; do
-    _flags_validateInteger "${value}"
+    ${fx} "${value}"
     assertTrue "valid value (${value}) did not validate" $?
   done
 
   # invalid values
   for value in ${TH_INT_INVALID}; do
-    _flags_validateInteger "${value}"
-    assertFalse "invalid value (${value}) validated" $?
+    ${fx} "${value}"
+    assertFalse "invalid value (${value}) should not validate" $?
   done
+}
+
+testValidIntBuiltin()
+{
+  # Are we running a shell that can handle a built-in version? The Solaris
+  # Bourne shell for one does not support what we need.
+  if [ "${__FLAGS_FX_VALID_INT}" != '_flags_validIntBuiltin' ]; then
+    echo 'SKIPPED: this shell does not support the necessary builtins'
+    return
+  fi
+  _testValidInt _flags_validIntBuiltin
+}
+
+testValidIntExpr()
+{
+  _testValidInt _flags_validIntExpr
 }
 
 #------------------------------------------------------------------------------

@@ -42,6 +42,7 @@ versions_osName()
       fi
       ;;
   esac
+
   echo ${os_name_}
   unset os_name_ os_system_
 }
@@ -90,6 +91,7 @@ versions_osVersion()
       fi
       ;;
   esac
+
   echo ${os_version_}
   unset os_name_ os_release_ os_version_ major_ minor_ sub_
 }
@@ -148,22 +150,22 @@ versions_shell_ksh()
 {
   versions_shell_=$1
 
-  # see if --version gives a result
-  versions_version_=`${versions_shell_} --version 2>&1 \
+  # try a few different ways to figure out the version
+  versions_version_=`${versions_shell_} --version : 2>&1 \
     |sed 's/.*\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\).*/\1/'`
 
-  # --version didn't work... look into the binary
-  if [ $? -ne ${TRUE} ]; then 
+  if [ -z "${versions_version_}" ]; then
     _versions_have_strings
     versions_version_=`strings ${versions_shell_} 2>&1 \
       |grep Version \
       |sed 's/^.*Version \(.*\)$/\1/;s/ s+ \$$//;s/ /-/g'`
-    [ -z "${versions_version_}" ] \
-        && versions_version_=`versions_shell_pdksh ${versions_shell_}`
+  fi
+
+  if [ -z "${versions_version_}" ]; then
+    versions_version_=`versions_shell_pdksh ${versions_shell_}`
   fi
 
   echo ${versions_version_}
-
   unset versions_shell_ versions_version_
 }
 
@@ -179,14 +181,14 @@ versions_shell_zsh()
 {
   versions_shell_=$1
 
-  versions_version_=`${versions_shell_} --version 2>&1 |awk '{print $2}'`
+  # try a few different ways to figure out the version
+  versions_version_=`echo 'echo ${ZSH_VERSION}' |${versions_shell_}`
 
-  if [ $? -ne ${TRUE} ]; then
-    versions_version_=`echo 'echo ${ZSH_VERSION}' |${versions_shell_}`
+  if [ -z "${versions_version_}" ]; then
+    versions_version_=`${versions_shell_} --version 2>&1 |awk '{print $2}'`
   fi
 
   echo ${versions_version_}
-
   unset versions_shell_ versions_version_
 }
 
