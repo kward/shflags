@@ -99,16 +99,17 @@ flags:
   -h  show this help (default: false)
 EOF
   (
-    _flags_columns() { mock_flags_columns "$@"; }
+    _flags_columns() { mock_flags_columns "\$@"; }
     FLAGS_HELP=${help};
     FLAGS -h >"${stdoutF}" 2>"${stderrF}"
   )
   r3turn=$?
   assertTrue 'a call for help should not return an error' ${r3turn}
+
   diff "${expectedF}" "${stderrF}" >/dev/null
-  differed=$?
-  assertTrue 'unexpected help output' ${differed}
-  th_showOutput ${differed} "${stdoutF}" "${stderrF}"
+  r3turn=$?
+  assertTrue 'unexpected help output' ${r3turn}
+  th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
 }
 
 testEnhancedHelpOutput()
@@ -137,9 +138,14 @@ flags:
     (default: 'this_is_a_long_default_value_to_force_alternate_indentation')
   -h,--help:  show this help (default: false)
 EOF
-  ( FLAGS_HELP=${help}; FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
+  (
+    _flags_columns() { mock_flags_columns "\$@"; }
+    FLAGS_HELP=${help};
+    FLAGS -h >"${stdoutF}" 2>"${stderrF}"
+  )
   r3turn=$?
   assertTrue 'a call for help should not return an error' ${r3turn}
+
   diff "${expectedF}" "${stderrF}" >/dev/null
   differed=$?
   assertTrue 'unexpected help output' ${differed}
