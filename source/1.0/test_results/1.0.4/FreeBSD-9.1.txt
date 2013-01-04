@@ -1,0 +1,92 @@
+#------------------------------------------------------------------------------
+# System data
+#
+
+# test run info
+shells="/bin/sh /bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/zsh"
+tests=" shflags_test_defines.sh shflags_test_parsing.sh shflags_test_private.sh shflags_test_public.sh"
+
+# system info
+$ date
+Fri Jan  4 22:15:59 UTC 2013
+$ uname -mprsv
+FreeBSD 9.1-RELEASE FreeBSD 9.1-RELEASE #0: Fri Dec  7 20:50:48 GMT 2012     kirk@freenas:/usr/obj/usr/src/sys/GENERIC  amd64 amd64
+
+
+#------------------------------------------------------------------------------
+# Running the test suite with /bin/sh
+#
+shell name: sh
+shell version: unknown
+
+--- Executing the 'defines' test suite ---
+testFlagsDefine
+testBoolean
+testFloat
+testInteger
+testString
+testShortNameLength
+testFlagNameIsReserved
+
+Ran 7 tests.
+
+OK
+
+--- Executing the 'parsing' test suite ---
+test:WARN Standard version of getopt found. Enhanced tests will be skipped.
+testGetoptStandard
+testGetoptEnhanced
+testValidBoolsShort
+testValidBoolsLong
+
+--- Executing the 'private' test suite ---
+testColumns
+testExpr
+testGenOptStr
+testGetFlagInfo
+testItemInList
+testValidBool
+testValidFloatBuiltin
+testValidFloatExpr
+testValidIntBuiltin
+testValidIntExpr
+
+Ran 10 tests.
+
+OK
+
+--- Executing the 'public' test suite ---
+test:WARN Standard version of getopt found. Enhanced tests will be skipped.
+testHelp
+testStandardHelpOutput
+testEnhancedHelpOutput
+testNoHelp
+
+Ran 4 tests.
+
+OK (skipped=7)
+
+
+#------------------------------------------------------------------------------
+# Running the test suite with /bin/bash
+#
+
+
+#------------------------------------------------------------------------------
+# Running the test suite with /bin/dash
+#
+
+
+#------------------------------------------------------------------------------
+# Running the test suite with /bin/ksh
+#
+
+
+#------------------------------------------------------------------------------
+# Running the test suite with /bin/pdksh
+#
+
+
+#------------------------------------------------------------------------------
+# Running the test suite with /bin/zsh
+#
