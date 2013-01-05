@@ -19,6 +19,9 @@ TRUE=0
 FALSE=1
 ERROR=2
 
+UNAME_R=`uname -r`
+UNAME_S=`uname -s`
+
 __versions_haveStrings=${ERROR}
 
 #------------------------------------------------------------------------------
@@ -28,7 +31,7 @@ __versions_haveStrings=${ERROR}
 versions_osName()
 {
   os_name_='unrecognized'
-  os_system_=`uname -s`
+  os_system_=${UNAME_S}
   case ${os_system_} in
     CYGWIN_NT-*) os_name_='Cygwin' ;;
     Darwin) os_name_='Mac OS X' ;;
@@ -50,8 +53,8 @@ versions_osName()
 versions_osVersion()
 {
   os_version_='unrecognized'
-  os_system_=`uname -s`
-  os_release_=`uname -r`
+  os_system_=${UNAME_S}
+  os_release_=${UNAME_R}
   case ${os_system_} in
     CYGWIN_NT-*)
       os_version_=`expr "${os_release_}" : '\([0-9]*\.[0-9]\.[0-9]*\).*'`
@@ -63,6 +66,8 @@ versions_osVersion()
         8.*) minor_='4' ;;
         9.*) minor_='5' ;;
         10.*) minor_='6' ;;
+        11.*) minor_='7' ;;
+        12.*) minor_='8' ;;
         *) minor_='X'; sub_='X' ;;
       esac
       os_version_="${major_}.${minor_}.${sub_}"
