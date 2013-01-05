@@ -74,7 +74,7 @@ th_showOutput()
       cat "${_th_stderr}" >&2
     fi
     if [ -n "${_th_stdout}" -o -n "${_th_stderr}" ]; then
-      echo '>>> end output' >&2
+      echo '<<< end output' >&2
     fi
   fi
 
