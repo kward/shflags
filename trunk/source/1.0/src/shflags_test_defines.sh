@@ -104,7 +104,7 @@ testBoolean()
 testFloat()
 {
   # test valid defaults
-  for default in -1234.56789 -1.0 0.0 1.0 1234.56789; do
+  for default in ${TH_FLOAT_VALID}; do
     flags_reset
     DEFINE_float floatVal ${default} "float: ${default}" f
     rtrn=$?
@@ -126,7 +126,7 @@ testFloat()
 testInteger()
 {
   # test valid defaults
-  for default in -123456789 -1 0 1 123456789; do
+  for default in ${TH_INT_VALID}; do
     flags_reset
     DEFINE_integer intVal ${default} "integer: ${default}" i
     rtrn=$?
@@ -163,7 +163,12 @@ testInteger()
 testString()
 {
   # test valid defaults
-  for default in -1234.56789 -1.0 0.0 1.0 1234.56789 valid 'also valid'; do
+  for default in \
+      ${TH_BOOL_VALID} \
+      ${TH_FLOAT_VALID} \
+      ${TH_INT_VALID} \
+      'also valid'
+  do
     flags_reset
     DEFINE_string strVal "${default}" "string: ${default}" s
     rtrn=$?
@@ -208,7 +213,7 @@ oneTimeSetUp()
   th_oneTimeSetUp
 }
 
-setUp()
+tearDown()
 {
   flags_reset
 }
