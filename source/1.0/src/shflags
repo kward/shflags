@@ -118,9 +118,11 @@ fi
 # can we use built-ins?
 ( echo "${FLAGS_TRUE#0}"; ) >/dev/null 2>&1
 if [ $? -eq ${FLAGS_TRUE} ]; then
+  __FLAGS_FX_MATH='_flags_mathBuiltin'
   __FLAGS_FX_VALID_FLOAT='_flags_validFloatBuiltin'
   __FLAGS_FX_VALID_INT='_flags_validIntBuiltin'
 else
+  __FLAGS_FX_MATH='_flags_mathExpr'
   __FLAGS_FX_VALID_FLOAT='_flags_validFloatExpr'
   __FLAGS_FX_VALID_INT='_flags_validIntExpr'
 fi
@@ -756,7 +758,7 @@ _flags_parseGetopt()
   # properly give user access to non-flag arguments mixed in between flag
   # arguments. Its usage was replaced by FLAGS_ARGV, and it is being kept only
   # for backwards compatibility reasons.
-  FLAGS_ARGC=`${FLAGS_EXPR_CMD} $# - 1 - ${_flags_argc_}`
+  FLAGS_ARGC=`${__FLAGS_FX_MATH} $# - 1 - ${_flags_argc_}`
 
   # handle options. note options with values must do an additional shift
   while true; do
@@ -881,6 +883,31 @@ _flags_parseGetopt()
   unset _flags_arg_ _flags_len_ _flags_name_ _flags_opt_ _flags_pos_ \
       _flags_strToEval_ _flags_type_ _flags_usName_ _flags_val_
   return ${flags_return}
+}
+
+# Perform some path using built-ins.
+#
+# Args:
+#   $@: string: math expression to evaluate
+# Returns:
+#   string: the result
+_flags_mathBuiltin()
+{
+  # Variable assignment is needed as workaround for Solaris Bourne shell, which
+  # cannot parse a bare $((expression)).
+  _flags_expr_='$(($@))'
+  eval echo ${_flags_expr_}
+}
+
+# Perform some path using expr.
+#
+# Args:
+#   $@: string: math expression to evaluate
+# Returns:
+#   string: the result
+_flags_mathExpr()
+{
+  eval ${FLAGS_EXPR_CMD} $@
 }
 
 #------------------------------------------------------------------------------

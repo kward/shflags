@@ -44,6 +44,8 @@ Issue #22. Fixed broken testGetFlagInfo() test.
 Created alternate validFloat() and validInt() functions that use shell built-ins
 where possible to increase performance and reduce the usage of the expr command.
 
+Added separate built-in and expr functions for doing math.
+
 
 Changes with 1.0.3
 ------------------

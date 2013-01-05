@@ -179,6 +179,33 @@ testValidIntExpr()
   _testValidInt _flags_validIntExpr
 }
 
+_testMath()
+{
+  fx=$1
+
+  assertEquals 2 `${fx} 1 + 1`
+  assertEquals 2 `${fx} '1 + 1'`
+
+  assertNotEquals 3 `${fx} 1 + 1`
+  assertNotEquals 3 `${fx} '1 + 1'`
+}
+
+testMathBuiltin()
+{
+  # Are we running a shell that can handle a built-in version? The Solaris
+  # Bourne shell for one does not support what we need.
+  if [ "${__FLAGS_FX_VALID_INT}" != '_flags_validIntBuiltin' ]; then
+    echo 'SKIPPED: this shell does not support the necessary builtins'
+    return
+  fi
+  _testMath _flags_mathBuiltin
+}
+
+testMathExpr()
+{
+  _testMath _flags_mathExpr
+}
+
 #------------------------------------------------------------------------------
 # suite functions
 #
