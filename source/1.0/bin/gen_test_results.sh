@@ -54,7 +54,7 @@ output=`shlib_relToAbsPath "${output}"`
 # checks
 [ -n "${FLAGS_suite}" ] || die 'suite flag missing'
 
-if [ ! ${FLAGS_dry_run} -a -f "${output}" ]; then
+if [ ${FLAGS_dry_run} -eq ${FLAGS_FALSE} -a -f "${output}" ]; then
   if [ ${FLAGS_force} -eq ${FLAGS_TRUE} ]; then
     rm -f "${output}"
   else
@@ -62,17 +62,17 @@ if [ ! ${FLAGS_dry_run} -a -f "${output}" ]; then
     exit ${FLAGS_ERROR}
   fi
 fi
-if [ ! ${FLAGS_dry_run} ]; then
+if [ ${FLAGS_dry_run} -eq ${FLAGS_FALSE} ]; then
   touch "${output}" 2>/dev/null || die "unable to write to '${output}'"
 fi
 
 # run tests
 (
   cd "${SRC_DIR}";
-  if [ ${FLAGS_dry_run} ]; then
-    ./${FLAGS_suite}
-  else
+  if [ ${FLAGS_dry_run} -eq ${FLAGS_FALSE} ]; then
     ./${FLAGS_suite} |tee "${output}"
+  else
+    ./${FLAGS_suite}
   fi
 )
 
