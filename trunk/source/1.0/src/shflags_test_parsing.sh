@@ -293,8 +293,6 @@ testComplicatedCommandLineStandard()
   rtrn=$?
   assertTrue 'FLAGS returned a non-zero result' ${rtrn}
   assertEquals 'failed int test' 1 ${FLAGS_int}
-  assertEquals 'failed str test' 'two' "${FLAGS_str}"
-  assertEquals 'failed float test' 3 ${FLAGS_float}
   th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 
   eval set -- "${FLAGS_ARGV}"
