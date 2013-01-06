@@ -284,7 +284,10 @@ testFlagsWithEquals()
 
 testComplicatedCommandLineStandard()
 {
-  # note: standard getopt stops parsing after first non-flag argument :-(
+  flags_getoptIsEnh && return
+
+  # Note: standard getopt stops parsing after first non-flag argument, which
+  # results in the remaining flags being treated as arguments instead.
   FLAGS -i 1 non_flag_1 -s 'two' non_flag_2 -f 3 non_flag_3 \
       >"${stdoutF}" 2>"${stderrF}"
   rtrn=$?
@@ -295,7 +298,7 @@ testComplicatedCommandLineStandard()
   th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 
   eval set -- "${FLAGS_ARGV}"
-  assertEquals 'incorrect number of argv values' 3 $#
+  assertEquals 'incorrect number of argv values' 7 $#
 }
 
 testComplicatedCommandLineEnhanced()
