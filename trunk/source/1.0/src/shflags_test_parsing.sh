@@ -32,7 +32,7 @@ testGetoptStandard()
 
 testGetoptEnhanced()
 {
-  flags_getoptIsEnh || startSkipping
+  flags_getoptIsEnh || return
 
   _flags_getoptEnhanced '-b' >"${stdoutF}" 2>"${stderrF}"
   assertTrue "didn't parse valid flag 'b'" $?
@@ -71,7 +71,7 @@ testValidBoolsShort()
 # TODO(kate): separate into multiple functions to reflect correct usage
 testValidBoolsLong()
 {
-  flags_getoptIsEnh || startSkipping
+  flags_getoptIsEnh || return
 
   # Note: the default value of bool is 'false'.
 
@@ -103,7 +103,7 @@ testValidBoolsLong()
 testValidFloats()
 {
   _testValidFloats '-f'
-  flags_getoptIsEnh || startSkipping
+  flags_getoptIsEnh || return
   _testValidFloats '--float'
 }
 
@@ -124,7 +124,7 @@ _testValidFloats()
 testInvalidFloats()
 {
   _testInvalidFloats '-f'
-  flags_getoptIsEnh || startSkipping
+  flags_getoptIsEnh || return
   _testInvalidFloats '--float'
 }
 
@@ -143,7 +143,7 @@ _testInvalidFloats()
 testValidIntegers()
 {
   _testValidIntegers '-i'
-  flags_getoptIsEnh || startSkipping
+  flags_getoptIsEnh || return
   _testValidIntegers '--int'
 }
 
@@ -163,7 +163,7 @@ _testValidIntegers()
 testInvalidIntegers()
 {
   _testInvalidIntegers '-i'
-  flags_getoptIsEnh || startSkipping
+  flags_getoptIsEnh || return
   _testInvalidIntegers '--int'
 }
 
@@ -182,9 +182,10 @@ _testInvalidIntegers()
 testValidStrings()
 {
   _testValidStrings -s single_word
-  flags_getoptIsEnh || startSkipping
-  _testValidStrings --str single_word
-  _testValidStrings --str 'string with spaces'
+  if flags_getoptIsEnh; then
+    _testValidStrings --str single_word
+    _testValidStrings --str 'string with spaces'
+  fi
 }
 
 _testValidStrings()
@@ -209,7 +210,7 @@ _testValidStrings()
 testMultipleFlags()
 {
   _testMultipleFlags '-b' '-i' '-f' '-s'
-  flags_getoptIsEnh || startSkipping
+  flags_getoptIsEnh || return
   _testMultipleFlags '--bool' '--int' '--float' '--str'
 }
 
@@ -263,13 +264,13 @@ testMultipleNonFlagArgs()
 
 testMultipleNonFlagStringArgsWithSpaces()
 {
-  flags_getoptIsEnh || startSkipping
+  flags_getoptIsEnh || return
   _testNonFlagArgs 3 argOne 'arg two' arg3
 }
 
 testFlagsWithEquals()
 {
-  flags_getoptIsEnh || startSkipping
+  flags_getoptIsEnh || return
 
   FLAGS --str='str_flag' 'non_flag' >"${stdoutF}" 2>"${stderrF}"
   assertTrue 'FLAGS returned a non-zero result' $?
@@ -283,23 +284,23 @@ testFlagsWithEquals()
 
 testComplicatedCommandLineStandard()
 {
-  flags_getoptIsStd || startSkipping
-
   # note: standard getopt stops parsing after first non-flag argument :-(
   FLAGS -i 1 non_flag_1 -s 'two' non_flag_2 -f 3 non_flag_3 \
       >"${stdoutF}" 2>"${stderrF}"
   rtrn=$?
   assertTrue 'FLAGS returned a non-zero result' ${rtrn}
   assertEquals 'failed int test' 1 ${FLAGS_int}
+  assertEquals 'failed str test' 'two' "${FLAGS_str}"
+  assertEquals 'failed float test' 3 ${FLAGS_float}
   th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
 
   eval set -- "${FLAGS_ARGV}"
-  assertEquals 'incorrect number of argv values' 7 $#
+  assertEquals 'incorrect number of argv values' 3 $#
 }
 
 testComplicatedCommandLineEnhanced()
 {
-  flags_getoptIsEnh || startSkipping
+  flags_getoptIsEnh || return
 
   FLAGS -i 1 non_flag_1 --str='two' non_flag_2 --float 3 'non flag 3' \
       >"${stdoutF}" 2>"${stderrF}"
