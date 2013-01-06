@@ -8,7 +8,7 @@ tests=" shflags_test_defines.sh shflags_test_parsing.sh shflags_test_private.sh 
 
 # system info
 $ date
-Fri Jan  4 21:54:33 GMT 2013
+Sun Jan  6 22:52:35 GMT 2013
 $ uname -mprsv
 Linux 3.2.0-35-generic #55-Ubuntu SMP Wed Dec 5 17:42:16 UTC 2012 x86_64 x86_64
 
@@ -53,7 +53,7 @@ testComplicatedCommandLineEnhanced
 
 Ran 16 tests.
 
-OK (skipped=3)
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
@@ -66,8 +66,10 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
 
-Ran 10 tests.
+Ran 12 tests.
 
 OK
 
@@ -123,7 +125,7 @@ testComplicatedCommandLineEnhanced
 
 Ran 16 tests.
 
-OK (skipped=3)
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
@@ -136,8 +138,10 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
 
-Ran 10 tests.
+Ran 12 tests.
 
 OK
 
@@ -193,7 +197,7 @@ testComplicatedCommandLineEnhanced
 
 Ran 16 tests.
 
-OK (skipped=3)
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
@@ -206,8 +210,10 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
 
-Ran 10 tests.
+Ran 12 tests.
 
 OK
 
@@ -263,7 +269,7 @@ testComplicatedCommandLineEnhanced
 
 Ran 16 tests.
 
-OK (skipped=3)
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
@@ -276,8 +282,10 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
 
-Ran 10 tests.
+Ran 12 tests.
 
 OK
 
@@ -333,7 +341,7 @@ testComplicatedCommandLineEnhanced
 
 Ran 16 tests.
 
-OK (skipped=3)
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
@@ -346,8 +354,10 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
 
-Ran 10 tests.
+Ran 12 tests.
 
 OK
 
@@ -403,7 +413,7 @@ testComplicatedCommandLineEnhanced
 
 Ran 16 tests.
 
-OK (skipped=3)
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
@@ -416,8 +426,10 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
 
-Ran 10 tests.
+Ran 12 tests.
 
 OK
 
