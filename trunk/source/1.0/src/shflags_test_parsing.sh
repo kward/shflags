@@ -47,23 +47,31 @@ testGetoptEnhanced()
 
 testValidBoolsShort()
 {
-  # flip flag to true
   FLAGS -b >"${stdoutF}" 2>"${stderrF}"
   rtrn=$?
-  assertTrue "FLAGS returned a non-zero result (${rtrn})" ${rtrn}
+  assertTrue "-b) FLAGS returned a non-zero result (${rtrn})" ${rtrn}
   value=${FLAGS_bool:-}
-  assertTrue "boolean was not true (${value})." "${value}"
-  assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
+  assertTrue "-b) boolean was not true (${value})." "${value}"
+  assertFalse '-b) expected no output to STDERR' "[ -s '${stderrF}' ]"
   test ${rtrn} -eq ${FLAGS_TRUE} -a ! -s "${stderrF}"
   th_showOutput $? "${stdoutF}" "${stderrF}"
 
-  # verify that passing the option a second time leaves the flag true
-  FLAGS -b >"${stdoutF}" 2>"${stderrF}"
+  DEFINE_boolean bool2 true '2nd boolean' B
+  FLAGS >"${stdoutF}" 2>"${stderrF}"
   rtrn=$?
-  assertTrue "repeat: FLAGS returned a non-zero result (${rtrn})" ${rtrn}
-  value=${FLAGS_bool:-}
-  assertTrue "repeat: boolean was not true (${value})" ${value}
-  assertFalse 'repeat: expected no output to STDERR' "[ -s '${stderrF}' ]"
+  assertTrue "-B) FLAGS returned a non-zero result (${rtrn})" ${rtrn}
+  value=${FLAGS_bool2:-}
+  assertTrue "-B) boolean was not true (${value})" ${value}
+  assertFalse '-B) expected no output to STDERR' "[ -s '${stderrF}' ]"
+  test ${rtrn} -eq ${FLAGS_TRUE} -a ! -s "${stderrF}"
+  th_showOutput $? "${stdoutF}" "${stderrF}"
+
+  FLAGS -B >"${stdoutF}" 2>"${stderrF}"
+  rtrn=$?
+  assertTrue "-B) FLAGS returned a non-zero result (${rtrn})" ${rtrn}
+  value=${FLAGS_bool2:-}
+  assertFalse "-B) boolean was not false (${value})" ${value}
+  assertFalse '-B) expected no output to STDERR' "[ -s '${stderrF}' ]"
   test ${rtrn} -eq ${FLAGS_TRUE} -a ! -s "${stderrF}"
   th_showOutput $? "${stdoutF}" "${stderrF}"
 }

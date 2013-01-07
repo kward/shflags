@@ -18,12 +18,10 @@
 #
 # DEFINE_string: takes any input, and intreprets it as a string.
 #
-# DEFINE_boolean: typically does not take any argument: say --myflag to set
-#   FLAGS_myflag to true, or --nomyflag to set FLAGS_myflag to false.
-#   Alternately, you can say
-#     --myflag=true  or --myflag=t or --myflag=0  or
-#     --myflag=false or --myflag=f or --myflag=1
-#   Passing an option has the same affect as passing the option once.
+# DEFINE_boolean: does not take any arguments. Say --myflag to set
+#   FLAGS_myflag to true, or --nomyflag to set FLAGS_myflag to false. For short
+#   flags, passing the flag on the command-line negates the default value, i.e.
+#   if the default is true, passing the flag sets the value to false.
 #
 # DEFINE_float: takes an input and intreprets it as a floating point number. As
 #   shell does not support floats per-se, the input is merely validated as
