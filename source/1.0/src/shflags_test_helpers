@@ -28,9 +28,9 @@ TH_SHUNIT=${SHUNIT_INC:-../lib/shunit2}
 TH_BOOL_VALID='true t 0 false f 1'
 TH_BOOL_INVALID='123 123.0 invalid'
 TH_FLOAT_VALID='-1234.0 -1.0 -.123 0.0 0. .123 1.0 1234.0'
-TH_FLOAT_INVALID='true false 1.2.3 -1.2.3'
+TH_FLOAT_INVALID='true false 1.2.3 -1.2.3 ""'
 TH_INT_VALID='-1234 -1 0 1 1234'
-TH_INT_INVALID='true false -1.0 -.123 0.0 .123 1.0'
+TH_INT_INVALID='true false -1.0 -.123 0.0 .123 1.0 ""'
 
 #
 # test helper functions
