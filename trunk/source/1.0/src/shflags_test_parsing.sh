@@ -12,6 +12,12 @@
 # TODO(kward): assert on FLAGS errors
 # TODO(kward): testNonStandardIFS()
 
+# exit immediately if a pipeline or subshell exits with a non-zero status.
+#set -e
+
+# treat unset variables as an error
+set -u
+
 # load test helpers
 . ./shflags_test_helpers
 

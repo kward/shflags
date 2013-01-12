@@ -23,11 +23,6 @@ testColumns()
   assertNotNull "unexpected screen width (${cols})" "${value}"
 }
 
-testExpr()
-{
-  :
-}
-
 testGenOptStr()
 {
   _testGenOptStr '' ''
@@ -132,13 +127,11 @@ _testValidFloat()
 
 testValidFloatBuiltin()
 {
-  # Are we running a shell that can handle a built-in version? The Solaris
-  # Bourne shell for one does not support what we need.
-  if [ "${__FLAGS_FX_VALID_FLOAT}" != '_flags_validFloatBuiltin' ]; then
-    echo 'SKIPPED: this shell does not support the necessary builtins'
-    return
+  if _flags_useBuiltin; then
+    _testValidFloat _flags_validFloatBuiltin
+  else
+    echo 'SKIPPED: this shell does not support the necessary built-ins'
   fi
-  _testValidFloat _flags_validFloatBuiltin
 }
 
 testValidFloatExpr()
@@ -148,62 +141,44 @@ testValidFloatExpr()
 
 _testValidInt()
 {
-  fx=$1
-
   # valid values
   for value in ${TH_INT_VALID}; do
-    ${fx} "${value}"
+    _flags_validInt "${value}"
     assertTrue "valid value (${value}) did not validate" $?
   done
 
   # invalid values
   for value in ${TH_INT_INVALID}; do
-    ${fx} "${value}"
+    _flags_validInt "${value}"
     assertFalse "invalid value (${value}) should not validate" $?
   done
 }
 
 testValidIntBuiltin()
 {
-  # Are we running a shell that can handle a built-in version? The Solaris
-  # Bourne shell for one does not support what we need.
-  if [ "${__FLAGS_FX_VALID_INT}" != '_flags_validIntBuiltin' ]; then
-    echo 'SKIPPED: this shell does not support the necessary builtins'
-    return
+  if _flags_useBuiltin; then
+    _testValidInt
+  else
+    echo 'SKIPPED: this shell does not support the necessary built-ins'
   fi
-  _testValidInt _flags_validIntBuiltin
 }
 
 testValidIntExpr()
 {
-  _testValidInt _flags_validIntExpr
-}
-
-_testMath()
-{
-  fx=$1
-
-  assertEquals 2 `${fx} 1 + 1`
-  assertEquals 2 `${fx} '1 + 1'`
-
-  assertNotEquals 3 `${fx} 1 + 1`
-  assertNotEquals 3 `${fx} '1 + 1'`
+  (
+    _flags_useBuiltin() { return ${FLAGS_FALSE}; }
+    _testValidInt
+  )
 }
 
 testMathBuiltin()
 {
-  # Are we running a shell that can handle a built-in version? The Solaris
-  # Bourne shell for one does not support what we need.
-  if [ "${__FLAGS_FX_VALID_INT}" != '_flags_validIntBuiltin' ]; then
-    echo 'SKIPPED: this shell does not support the necessary builtins'
-    return
+  if _flags_useBuiltin; then
+    assertEquals 2 `_flags_mathBuiltin 1 + 1`
+    assertEquals 2 `_flags_mathBuiltin '1 + 1'`
+  else
+    echo 'SKIPPED: this shell does not support the necessary built-ins'
   fi
-  _testMath _flags_mathBuiltin
-}
-
-testMathExpr()
-{
-  _testMath _flags_mathExpr
 }
 
 #------------------------------------------------------------------------------
@@ -215,7 +190,7 @@ oneTimeSetUp()
   th_oneTimeSetUp
 }
 
-setUp()
+tearDown()
 {
   flags_reset
 }

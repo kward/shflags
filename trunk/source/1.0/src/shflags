@@ -116,13 +116,13 @@ fi
 # can we use built-ins?
 ( echo "${FLAGS_TRUE#0}"; ) >/dev/null 2>&1
 if [ $? -eq ${FLAGS_TRUE} ]; then
+  __FLAGS_USE_BUILTIN=${FLAGS_TRUE}
   __FLAGS_FX_MATH='_flags_mathBuiltin'
   __FLAGS_FX_VALID_FLOAT='_flags_validFloatBuiltin'
-  __FLAGS_FX_VALID_INT='_flags_validIntBuiltin'
 else
-  __FLAGS_FX_MATH='_flags_mathExpr'
+  __FLAGS_USE_BUILTIN=${FLAGS_FALSE}
+  __FLAGS_FX_MATH=${FLAGS_EXPR_CMD}
   __FLAGS_FX_VALID_FLOAT='_flags_validFloatExpr'
-  __FLAGS_FX_VALID_INT='_flags_validIntExpr'
 fi
 
 #
@@ -317,7 +317,7 @@ _flags_define()
         ;;
 
       ${__FLAGS_TYPE_INTEGER})
-        if ${__FLAGS_FX_VALID_INT} "${_flags_default_}"; then
+        if _flags_validInt "${_flags_default_}"; then
           :
         else
           flags_error="invalid default flag value '${_flags_default_}'"
@@ -541,7 +541,6 @@ _flags_validBool()
 #
 # Args:
 #   _flags_float_: float: value to validate
-#   _flags_recursed_: boolean: running recursed
 # Returns:
 #   bool: true if the value is a valid integer
 _flags_validFloatBuiltin()
@@ -550,25 +549,18 @@ _flags_validFloatBuiltin()
   [ -n "$1" ] || return ${flags_return}
   _flags_float_=$1
 
-  _flags_curr_=${_flags_float_#-}  # strip leading negative sign
-
-  # strip leading and trailing integers until only the decimal point remains
-  _flags_last_=${_flags_curr_}
-  _flags_curr_=${_flags_curr_#[0-9]}
-  _flags_curr_=${_flags_curr_%[0-9]}
-  while [ \
-    "${_flags_curr_}" != '.' -a \
-    -n "${_flags_curr_}" -a \
-    "${_flags_curr_}" != "${_flags_last_}" \
-  ]; do
-    _flags_last_=${_flags_curr_}
-    _flags_curr_=${_flags_curr_#[0-9]}
-    _flags_curr_=${_flags_curr_%[0-9]}
-  done
-  [ "${_flags_curr_}" = '.' -o -z "${_flags_curr_}" ] && \
+  if _flags_validInt ${_flags_float_}; then
     flags_return=${FLAGS_TRUE}
+  else
+    _flags_float_whole_=${_flags_float_%.*}
+    _flags_float_fraction_=${_flags_float_#*.}
+    if _flags_validInt ${_flags_float_whole_:-0} -a \
+      _flags_validInt ${_flags_float_fraction_}; then
+      flags_return=${FLAGS_TRUE}
+    fi
+  fi
 
-  unset _flags_curr_ _flags_float_ _flags_last_
+  unset _flags_float_ _flags_float_whole_ _flags_float_fraction_
   return ${flags_return}
 }
 
@@ -580,9 +572,11 @@ _flags_validFloatBuiltin()
 #   bool: true if the value is a valid float
 _flags_validFloatExpr()
 {
+  flags_return=${FLAGS_FALSE}
+  [ -n "$1" ] || return ${flags_return}
   _flags_float_=$1
 
-  if ${__FLAGS_FX_VALID_INT} ${_flags_float_}; then
+  if _flags_validInt "${_flags_float_}"; then
     flags_return=${FLAGS_TRUE}
   else
     flags_return=${FLAGS_TRUE}
@@ -603,55 +597,35 @@ _flags_validFloatExpr()
   return ${flags_return}
 }
 
-# Validate an integer using built-ins.
+# Validate an integer.
 #
 # Args:
 #   _flags_int_: integer: value to validate
-#   _flags_recursed_: boolean: running recursed
 # Returns:
 #   bool: true if the value is a valid integer
-_flags_validIntBuiltin()
+_flags_validInt()
 {
   flags_return=${FLAGS_FALSE}
   [ -n "$1" ] || return ${flags_return}
   _flags_int_=$1
 
-  _flags_curr_=${_flags_int_#-}  # strip leading negative sign
-
-  _flags_last_=${_flags_curr_}
-  _flags_curr_=${_flags_curr_#[0-9]}
-  while [ -n "${_flags_curr_}" -a "${_flags_curr_}" != "${_flags_last_}" ]; do
-    _flags_last_=${_flags_curr_}
-    _flags_curr_=${_flags_curr_#[0-9]}
-  done
-  [ -z "${_flags_curr_}" ] && flags_return=${FLAGS_TRUE}
-
-  unset _flags_curr_ _flags_int_ _flags_last_
-  return ${flags_return}
-}
-
-# Validate an integer using expr.
-#
-# Args:
-#   _flags_int_: interger: value to validate
-# Returns:
-#   bool: true if the value is a valid integer
-_flags_validIntExpr()
-{
-  _flags_int_=$1
-
-  flags_return=${FLAGS_TRUE}
   case ${_flags_int_} in
-    -*)  # negative ints
-      _flags_test_=`${FLAGS_EXPR_CMD} -- "${_flags_int_}" : '\(-[0-9][0-9]*\)'`
-      ;;
-    *)  # positive ints
-      _flags_test_=`${FLAGS_EXPR_CMD} -- "${_flags_int_}" : '\([0-9][0-9]*\)'`
+    -*.*) ;;  # ignore negative floats (we'll invalidate them later)
+    -*)  # strip possible leading negative sign
+      if _flags_useBuiltin; then
+        _flags_int_=${_flags_int_#-}
+      else
+        _flags_int_=`${FLAGS_EXPR_CMD} -- "${_flags_int_}" : '-\([0-9][0-9]*\)'`
+      fi
       ;;
   esac
-  [ "${_flags_test_}" != "${_flags_int_}" ] && flags_return=${FLAGS_FALSE}
 
-  unset _flags_int_ _flags_test_
+  case "${_flags_int_}" in
+    *[!0-9]*) flags_return=${FLAGS_FALSE} ;;
+    *) flags_return=${FLAGS_TRUE} ;;
+  esac
+
+  unset _flags_int_
   return ${flags_return}
 }
 
@@ -842,7 +816,7 @@ _flags_parseGetopt()
         ;;
 
       ${__FLAGS_TYPE_INTEGER})
-        if ${__FLAGS_FX_VALID_INT} "${_flags_arg_}"; then
+        if _flags_validInt "${_flags_arg_}"; then
           eval "FLAGS_${_flags_usName_}='${_flags_arg_}'"
         else
           flags_error="invalid integer value (${_flags_arg_})"
@@ -897,21 +871,20 @@ _flags_mathBuiltin()
   eval echo ${_flags_expr_}
 }
 
-# Perform some path using expr.
+# Use built-in helper function to enable unit testing.
 #
 # Args:
-#   $@: string: math expression to evaluate
+#   None
 # Returns:
-#   string: the result
-_flags_mathExpr()
+#   bool: true if built-ins should be used
+_flags_useBuiltin()
 {
-  eval ${FLAGS_EXPR_CMD} $@
+  return ${__FLAGS_USE_BUILTIN}
 }
 
 #------------------------------------------------------------------------------
 # public functions
-#
-
+# 
 # A basic boolean flag. Boolean flags do not take any arguments, and their
 # value is either 1 (false) or 0 (true). For long flags, the false value is
 # specified on the command line by prepending the word 'no'. With short flags,
