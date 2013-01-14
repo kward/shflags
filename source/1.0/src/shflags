@@ -118,10 +118,8 @@ fi
 ( echo "${FLAGS_TRUE#0}"; ) >/dev/null 2>&1
 if [ $? -eq ${FLAGS_TRUE} ]; then
   __FLAGS_USE_BUILTIN=${FLAGS_TRUE}
-  __FLAGS_FX_VALID_FLOAT='_flags_validFloatBuiltin'
 else
   __FLAGS_USE_BUILTIN=${FLAGS_FALSE}
-  __FLAGS_FX_VALID_FLOAT='_flags_validFloatExpr'
 fi
 
 #
@@ -307,7 +305,7 @@ _flags_define()
         ;;
 
       ${__FLAGS_TYPE_FLOAT})
-        if ${__FLAGS_FX_VALID_FLOAT} "${_flags_default_}"; then
+        if _flags_validFloat "${_flags_default_}"; then
           :
         else
           flags_error="invalid default flag value '${_flags_default_}'"
@@ -536,13 +534,13 @@ _flags_validBool()
   return ${flags_return}
 }
 
-# Validate a float using built-ins.
+# Validate a float.
 #
 # Args:
 #   _flags_float_: float: value to validate
 # Returns:
 #   bool: true if the value is a valid integer
-_flags_validFloatBuiltin()
+_flags_validFloat()
 {
   flags_return=${FLAGS_FALSE}
   [ -n "$1" ] || return ${flags_return}
@@ -550,33 +548,14 @@ _flags_validFloatBuiltin()
 
   if _flags_validInt ${_flags_float_}; then
     flags_return=${FLAGS_TRUE}
-  else
+  elif _flags_useBuiltin; then
     _flags_float_whole_=${_flags_float_%.*}
     _flags_float_fraction_=${_flags_float_#*.}
     if _flags_validInt ${_flags_float_whole_:-0} -a \
       _flags_validInt ${_flags_float_fraction_}; then
       flags_return=${FLAGS_TRUE}
     fi
-  fi
-
-  unset _flags_float_ _flags_float_whole_ _flags_float_fraction_
-  return ${flags_return}
-}
-
-# Validate a float.
-#
-# Args:
-#   _flags__float: float: value to validate
-# Returns:
-#   bool: true if the value is a valid float
-_flags_validFloatExpr()
-{
-  flags_return=${FLAGS_FALSE}
-  [ -n "$1" ] || return ${flags_return}
-  _flags_float_=$1
-
-  if _flags_validInt "${_flags_float_}"; then
-    flags_return=${FLAGS_TRUE}
+    unset _flags_float_whole_ _flags_float_fraction_
   else
     flags_return=${FLAGS_TRUE}
     case ${_flags_float_} in
@@ -590,9 +569,10 @@ _flags_validFloatExpr()
         ;;
     esac
     [ "${_flags_test_}" != "${_flags_float_}" ] && flags_return=${FLAGS_FALSE}
+    unset _flags_test_
   fi
 
-  unset _flags_float_ _flags_test_
+  unset _flags_float_ _flags_float_whole_ _flags_float_fraction_
   return ${flags_return}
 }
 
@@ -729,7 +709,7 @@ _flags_parseGetopt()
   # properly give user access to non-flag arguments mixed in between flag
   # arguments. Its usage was replaced by FLAGS_ARGV, and it is being kept only
   # for backwards compatibility reasons.
-  FLAGS_ARGC=`${_flags_math} $# - 1 - ${_flags_argc_}`
+  FLAGS_ARGC=`_flags_math $# - 1 - ${_flags_argc_}`
 
   # handle options. note options with values must do an additional shift
   while true; do
@@ -817,7 +797,7 @@ _flags_parseGetopt()
         ;;
 
       ${__FLAGS_TYPE_FLOAT})
-        if ${__FLAGS_FX_VALID_FLOAT} "${_flags_arg_}"; then
+        if _flags_validFloat "${_flags_arg_}"; then
           eval "FLAGS_${_flags_usName_}='${_flags_arg_}'"
         else
           flags_error="invalid float value (${_flags_arg_})"
@@ -878,17 +858,20 @@ _flags_parseGetopt()
 #   bool: success of math evaluation
 _flags_math()
 {
-  if _flags_useBuiltin; then
-    eval expr $@
-  else
+  if [ $# -eq 0 ]; then
+    flags_return=${FLAGS_FALSE}
+  elif _flags_useBuiltin; then
     # Variable assignment is needed as workaround for Solaris Bourne shell,
     # which cannot parse a bare $((expression)).
     _flags_expr_='$(($@))'
     eval echo ${_flags_expr_}
+    flags_return=$?
+    unset _flags_expr_
+  else
+    eval expr $@
+    flags_return=$?
   fi
-  flags_return=$?
 
-  unset _flags_expr_
   return ${flags_return}
 }
 
@@ -906,14 +889,12 @@ _flags_strlen()
 
   if [ -z "${_flags_str_}" ]; then
     flags_output=0
-    flags_return=${FLAGS_TRUE}
   elif _flags_useBuiltin; then
     flags_output=${#_flags_str_}
-    flags_return=$?
   else
     flags_output=`${FLAGS_EXPR_CMD} -- "${_flags_str_}" : '.*'`
-    flags_return=$?
   fi
+  flags_return=$?
 
   unset _flags_str_
   echo ${flags_output}
