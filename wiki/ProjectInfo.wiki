@@ -7,7 +7,7 @@ shFlags is a Unix shell library to simplify the handling of command-line flags.
 _Tested Operating Systems_
   * Linux ([http://ubuntu.com/ Ubuntu] 8.04 LTS, 10.04 LTS, 12.04 LTS)
   * [http://www.apple.com/macosx/ Mac OS X] 10.8
-  * [http://www.sun.com/software/solaris/ Solaris] 9, 10, OpenSolaris 2009.06
+  * [http://www.sun.com/software/solaris/ Solaris] 9, 10, !OpenSolaris 2009.06
 
 Tested Shells
   * Bourne Shell (`sh`)
