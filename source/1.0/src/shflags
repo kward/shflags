@@ -62,7 +62,8 @@
 # shFlags
 #
 # Shared attributes:
-#   flags_error: last error message
+#   flags_error:  last error message
+#   flags_output: last function output (rarely valid)
 #   flags_return: last return value
 #
 #   __flags_longNames: list of long names for all flags
@@ -117,11 +118,9 @@ fi
 ( echo "${FLAGS_TRUE#0}"; ) >/dev/null 2>&1
 if [ $? -eq ${FLAGS_TRUE} ]; then
   __FLAGS_USE_BUILTIN=${FLAGS_TRUE}
-  __FLAGS_FX_MATH='_flags_mathBuiltin'
   __FLAGS_FX_VALID_FLOAT='_flags_validFloatBuiltin'
 else
   __FLAGS_USE_BUILTIN=${FLAGS_FALSE}
-  __FLAGS_FX_MATH=${FLAGS_EXPR_CMD}
   __FLAGS_FX_VALID_FLOAT='_flags_validFloatExpr'
 fi
 
@@ -730,7 +729,7 @@ _flags_parseGetopt()
   # properly give user access to non-flag arguments mixed in between flag
   # arguments. Its usage was replaced by FLAGS_ARGV, and it is being kept only
   # for backwards compatibility reasons.
-  FLAGS_ARGC=`${__FLAGS_FX_MATH} $# - 1 - ${_flags_argc_}`
+  FLAGS_ARGC=`${_flags_math} $# - 1 - ${_flags_argc_}`
 
   # handle options. note options with values must do an additional shift
   while true; do
@@ -744,14 +743,22 @@ _flags_parseGetopt()
       --) shift; break ;;  # discontinue option parsing
 
       --*)  # long option
-        _flags_opt_=`${FLAGS_EXPR_CMD} -- "${_flags_opt_}" : '--\(.*\)'`
+        if _flags_useBuiltin; then
+          _flags_opt_=${_flags_opt_#*--}
+        else
+          _flags_opt_=`${FLAGS_EXPR_CMD} -- "${_flags_opt_}" : '--\(.*\)'`
+        fi
         _flags_len_=${__FLAGS_LEN_LONG}
         if _flags_itemInList "${_flags_opt_}" ${__flags_longNames}; then
           _flags_name_=${_flags_opt_}
         else
           # check for negated long boolean version
           if _flags_itemInList "${_flags_opt_}" ${__flags_boolNames}; then
-            _flags_name_=`${FLAGS_EXPR_CMD} -- "${_flags_opt_}" : 'no\(.*\)'`
+            if _flags_useBuiltin; then
+              _flags_name_=${_flags_opt_#*no}
+            else
+              _flags_name_=`${FLAGS_EXPR_CMD} -- "${_flags_opt_}" : 'no\(.*\)'`
+            fi
             _flags_type_=${__FLAGS_TYPE_BOOLEAN}
             _flags_arg_=${__FLAGS_NULL}
           fi
@@ -759,7 +766,11 @@ _flags_parseGetopt()
         ;;
 
       -*)  # short option
-        _flags_opt_=`${FLAGS_EXPR_CMD} -- "${_flags_opt_}" : '-\(.*\)'`
+        if _flags_useBuiltin; then
+          _flags_opt_=${_flags_opt_#*-}
+        else
+          _flags_opt_=`${FLAGS_EXPR_CMD} -- "${_flags_opt_}" : '-\(.*\)'`
+        fi
         _flags_len_=${__FLAGS_LEN_SHORT}
         if _flags_itemInList "${_flags_opt_}" ${__flags_shortNames}; then
           # yes. match short name to long name. note purposeful off-by-one
@@ -861,14 +872,52 @@ _flags_parseGetopt()
 #
 # Args:
 #   $@: string: math expression to evaluate
+# Output:
+#   integer: the result
 # Returns:
-#   string: the result
-_flags_mathBuiltin()
+#   bool: success of math evaluation
+_flags_math()
 {
-  # Variable assignment is needed as workaround for Solaris Bourne shell, which
-  # cannot parse a bare $((expression)).
-  _flags_expr_='$(($@))'
-  eval echo ${_flags_expr_}
+  if _flags_useBuiltin; then
+    eval expr $@
+  else
+    # Variable assignment is needed as workaround for Solaris Bourne shell,
+    # which cannot parse a bare $((expression)).
+    _flags_expr_='$(($@))'
+    eval echo ${_flags_expr_}
+  fi
+  flags_return=$?
+
+  unset _flags_expr_
+  return ${flags_return}
+}
+
+# Cross-platform strlen() implementation.
+#
+# Args:
+#   _flags_str: string: to determine length of
+# Output:
+#   integer: length of string
+# Returns:
+#   bool: success of strlen evaluation
+_flags_strlen()
+{
+  _flags_str_=${1:-}
+
+  if [ -z "${_flags_str_}" ]; then
+    flags_output=0
+    flags_return=${FLAGS_TRUE}
+  elif _flags_useBuiltin; then
+    flags_output=${#_flags_str_}
+    flags_return=$?
+  else
+    flags_output=`${FLAGS_EXPR_CMD} -- "${_flags_str_}" : '.*'`
+    flags_return=$?
+  fi
+
+  unset _flags_str_
+  echo ${flags_output}
+  return ${flags_return}
 }
 
 # Use built-in helper function to enable unit testing.
@@ -1058,8 +1107,10 @@ flags_help()
       flags_defaultStr_="(default: ${flags_defaultStr_})"
 
       flags_helpStr_="  ${flags_flagStr_}  ${flags_help_} ${flags_defaultStr_}"
-      flags_helpStrLen_=`${FLAGS_EXPR_CMD} -- "${flags_helpStr_}" : '.*'`
+      _flags_strlen "${flags_helpStr_}" >/dev/null
+      flags_helpStrLen_=${flags_output}
       flags_columns_=`_flags_columns`
+
       if [ ${flags_helpStrLen_} -lt ${flags_columns_} ]; then
         echo "${flags_helpStr_}" >&2
       else
@@ -1069,7 +1120,9 @@ flags_help()
         flags_emptyStr_="`echo \"x${flags_flagStr_}x\" \
             |awk '{printf "%"length($0)-2"s", ""}'`"
         flags_helpStr_="  ${flags_emptyStr_}  ${flags_defaultStr_}"
-        flags_helpStrLen_=`${FLAGS_EXPR_CMD} -- "${flags_helpStr_}" : '.*'`
+        _flags_strlen "${flags_helpStr_}" >/dev/null
+        flags_helpStrLen_=${flags_output}
+
         if [ ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_STD} \
             -o ${flags_helpStrLen_} -lt ${flags_columns_} ]; then
           # indented to match help string

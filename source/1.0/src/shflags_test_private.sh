@@ -171,14 +171,63 @@ testValidIntExpr()
   )
 }
 
+_testMath()
+{
+  assertEquals 2 `_flags_math 1 + 1`
+  assertEquals 2 `_flags_math '1 + 1'`
+}
+
 testMathBuiltin()
 {
   if _flags_useBuiltin; then
-    assertEquals 2 `_flags_mathBuiltin 1 + 1`
-    assertEquals 2 `_flags_mathBuiltin '1 + 1'`
+    _testMath
   else
     echo 'SKIPPED: this shell does not support the necessary built-ins'
   fi
+}
+
+testMathExpr()
+{
+  (
+    _flags_useBuiltin() { return ${FLAGS_FALSE}; }
+    _testMath
+  )
+}
+
+_testStrlen()
+{
+  len=`_flags_strlen`
+  assertTrue 'missing argument unsuccessful' $?
+  assertEquals 'missing argument' 0 ${len}
+
+  len=`_flags_strlen ''`
+  assertTrue 'empty argument unsuccessful' $?
+  assertEquals 'empty argument' 0 ${len}
+
+  len=`_flags_strlen abc123`
+  assertTrue 'single-word unsuccessful' $?
+  assertEquals 'single-word' 6 ${len}
+
+  len=`_flags_strlen 'This is a test'`
+  assertTrue 'multi-word unsuccessful' $?
+  assertEquals 'multi-word' 14 ${len}
+}
+
+testStrlenBuiltin()
+{
+  if _flags_useBuiltin; then
+    _testStrlen
+  else
+    echo 'SKIPPED: this shell does not support the necessary built-ins'
+  fi
+}
+
+testStrlenExpr()
+{
+  (
+    _flags_useBuiltin() { return ${FLAGS_FALSE}; }
+    _testStrlen
+  )
 }
 
 #------------------------------------------------------------------------------
