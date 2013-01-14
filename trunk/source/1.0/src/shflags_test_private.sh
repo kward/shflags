@@ -110,33 +110,31 @@ testValidBool()
 
 _testValidFloat()
 {
-  fx=$1
-
   # valid values
   for value in ${TH_INT_VALID} ${TH_FLOAT_VALID}; do
-    ${fx} "${value}"
+    _flags_validFloat "${value}"
     assertTrue "valid value (${value}) did not validate" $?
   done
 
   # invalid values
   for value in ${TH_FLOAT_INVALID}; do
-    ${fx} "${value}"
+    _flags_validFloat "${value}"
     assertFalse "invalid value (${value}) validated" $?
   done
 }
 
 testValidFloatBuiltin()
 {
-  if _flags_useBuiltin; then
-    _testValidFloat _flags_validFloatBuiltin
-  else
-    echo 'SKIPPED: this shell does not support the necessary built-ins'
-  fi
+  _flags_useBuiltin || startSkipping
+  _testValidFloat
 }
 
 testValidFloatExpr()
 {
-  _testValidFloat _flags_validFloatExpr
+  (
+    _flags_useBuiltin() { return ${FLAGS_FALSE}; }
+    _testValidFloat
+  )
 }
 
 _testValidInt()
@@ -156,11 +154,8 @@ _testValidInt()
 
 testValidIntBuiltin()
 {
-  if _flags_useBuiltin; then
-    _testValidInt
-  else
-    echo 'SKIPPED: this shell does not support the necessary built-ins'
-  fi
+  _flags_useBuiltin || startSkipping
+  _testValidInt
 }
 
 testValidIntExpr()
@@ -173,17 +168,26 @@ testValidIntExpr()
 
 _testMath()
 {
-  assertEquals 2 `_flags_math 1 + 1`
-  assertEquals 2 `_flags_math '1 + 1'`
+  result=`_flags_math 1 + 1`
+  assertTrue '1+1 failed' $?
+  assertEquals '1+1' 2 ${result}
+
+  result=`_flags_math '1 + 2'`
+  assertTrue '1+2 failed' $?
+  assertEquals '1+2' 3 ${result}
+
+  result=`_flags_math 1 + 2 + 3`
+  assertTrue '1+2+3 failed' $?
+  assertEquals '1+2+3' 6 ${result}
+
+  result=`_flags_math`
+  assertFalse 'missing math succeeded' $?
 }
 
 testMathBuiltin()
 {
-  if _flags_useBuiltin; then
-    _testMath
-  else
-    echo 'SKIPPED: this shell does not support the necessary built-ins'
-  fi
+  _flags_useBuiltin || startSkipping
+  _testMath
 }
 
 testMathExpr()
@@ -197,29 +201,26 @@ testMathExpr()
 _testStrlen()
 {
   len=`_flags_strlen`
-  assertTrue 'missing argument unsuccessful' $?
+  assertTrue 'missing argument failed' $?
   assertEquals 'missing argument' 0 ${len}
 
   len=`_flags_strlen ''`
-  assertTrue 'empty argument unsuccessful' $?
+  assertTrue 'empty argument failed' $?
   assertEquals 'empty argument' 0 ${len}
 
   len=`_flags_strlen abc123`
-  assertTrue 'single-word unsuccessful' $?
+  assertTrue 'single-word failed' $?
   assertEquals 'single-word' 6 ${len}
 
   len=`_flags_strlen 'This is a test'`
-  assertTrue 'multi-word unsuccessful' $?
+  assertTrue 'multi-word failed' $?
   assertEquals 'multi-word' 14 ${len}
 }
 
 testStrlenBuiltin()
 {
-  if _flags_useBuiltin; then
-    _testStrlen
-  else
-    echo 'SKIPPED: this shell does not support the necessary built-ins'
-  fi
+  _flags_useBuiltin || startSkipping
+  _testStrlen
 }
 
 testStrlenExpr()
@@ -237,6 +238,9 @@ testStrlenExpr()
 oneTimeSetUp()
 {
   th_oneTimeSetUp
+
+  _flags_useBuiltin || \
+    th_warn 'Shell built-ins not supported. Some tests will be skipped.'
 }
 
 tearDown()
