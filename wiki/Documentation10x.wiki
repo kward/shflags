@@ -32,12 +32,16 @@ Example: `examples/hello_world.sh`
 # define a 'name' command-line string flag
 DEFINE_string 'name' 'world' 'name to say hello to' 'n'
 
-# parse the command-line
-FLAGS "$@" || exit 1
-eval set -- "${FLAGS_ARGV}"
+main()
+{
+  # say Hello!
+  echo "Hello, ${FLAGS_name}!"
+}
 
-# say Hello!
-echo "Hello, ${FLAGS_name}!"
+# parse the command-line
+FLAGS "$@" || exit $?
+eval set -- "${FLAGS_ARGV}"
+main "$@"
 }}}
 _Don't forget to make the script executable with `chmod +x`._
 
