@@ -60,18 +60,25 @@ all variables are technically global variables in some shells.
 **type**                          **sample**
 global public constant            ``FLAGS_TRUE``
 global private constant           ``__FLAGS_SHELL_FLAGS``
-global public variable            not used
-global private variable           ``__flags_someVariable``
+global public variable            ``flags_variable``
+global private variable           ``__flags_variable``
 global macro                      ``_FLAGS_SOME_MACRO_``
-public function                   ``assertEquals``
-public function, local variable   ``flags_someVariable_``
-private function                  ``_flags_someFunction``
-private function, local variable  ``_flags_someVariable_``
+public function                   ``flags_function``
+public function, local variable   ``flags_variable_``
+private function                  ``_flags_function``
+private function, local variable  ``_flags_variable_``
 ================================  ========================
 
-Where it makes sense, variables can have the first letter of the second and
-later words capitalized. For example, the local variable name for the total
-number of test cases seen might be ``flags_totalTestsSeen_``.
+Where it makes sense to improve readability, variables can have the first
+letter of the second and later words capitalized. For example, the local
+variable name for the help string length is ``flags_helpStrLen_``.
+
+There are three special-case global public variables used. They are used due to
+overcome the limitations of shell scoping or to prevent forking. The three variables are:
+
+  - flags_error
+  - flags_output
+  - flags_return
 
 Local Variable Cleanup
 ----------------------
