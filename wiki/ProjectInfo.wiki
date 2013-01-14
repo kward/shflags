@@ -24,6 +24,7 @@ If you would like to verify the GPG signatures of the releases, please take a lo
 
 === 1.0.x – Stable releases ===
 || *Release* || *Date* ||
+|| 1.0.4 || in development ||
 || [http://shflags.googlecode.com/files/shflags-1.0.3.tgz 1.0.3] || Sat May 10 2009 ||
 || [http://shflags.googlecode.com/files/shflags-1.0.2.tgz 1.0.2] || Mon Nov 17 2008 ||
 || [http://shflags.googlecode.com/files/shflags-1.0.1.tgz 1.0.1] || Fri Jul 11 2008 ||
