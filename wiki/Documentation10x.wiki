@@ -32,16 +32,12 @@ Example: `examples/hello_world.sh`
 # define a 'name' command-line string flag
 DEFINE_string 'name' 'world' 'name to say hello to' 'n'
 
-main()
-{
-  # say Hello!
-  echo "Hello, ${FLAGS_name}!"
-}
-
 # parse the command-line
 FLAGS "$@" || exit $?
 eval set -- "${FLAGS_ARGV}"
-main "$@"
+
+# say Hello!
+echo "Hello, ${FLAGS_name}!"
 }}}
 _Don't forget to make the script executable with `chmod +x`._
 
@@ -55,9 +51,9 @@ So what just happened? Let's go through the script line-by-line.
 
 {{{
 # source shflags
-. ./shflags
+. /path/to/shflags
 }}}
-This line sources the `shflags` library into the current shell environment. It brings in several functions and sets several variables, but you won't actually see output from this line.
+This line sources the `shflags` library (which is located in the fictitious `/path/to` directory) into the current shell environment. It brings in several functions and sets several variables, but you won't actually see any output from this line.
 
 {{{
 # define a 'name' command-line string flag
@@ -73,10 +69,10 @@ Wow. That's a lot. Let's keep going.
 
 {{{
 # parse the command-line
-FLAGS "$@" || exit 1
+FLAGS "$@" || exit $?
 eval set -- "${FLAGS_ARGV}"
 }}}
-Here is where all the magic happens. The call to `FLAGS` with the passing of `"$@"` sends all command-line arguments into the shFlags library for processing. If everything is successful, a return value of 0 (`${FLAGS_TRUE}`) is returned an things continue. If a false value of 1 (`${FLAGS_FALSE}`) or an error value of 2 (`${FLAGS_ERROR}`) is returned, the processing is halted with the `exit 1`. If there are any command-line arguments left over that shFlags didn't know how to process, they get shifted off the stack with the '`shift ${FLAGS_ARGC}`' so the script can handle them itself.
+Here is where all the magic happens. The call to `FLAGS` with the passing of `"$@"` sends all command-line arguments into the shFlags library for processing. If everything is successful, a return value of 0 (`${FLAGS_TRUE}`) is returned an things continue. If a false value of 1 (`${FLAGS_FALSE}`) or an error value of 2 (`${FLAGS_ERROR}`) is returned, the processing is halted, returning that value (the `exit $?`). If there are any command-line arguments left over that shFlags didn't know how to process, they are now present in the *now updated* `$@` variable, which can be used as with any other script.
 
 There is actually a lot that happened with this `FLAGS` call, but the basic action you will be interested in right now is that a `FLAGS_name` variable was defined. As we didn't pass the `-n` flag (or `--name`) on the command-line, the value placed in the variable is 'world', the default value specified when we defined the flag.
 
@@ -117,11 +113,11 @@ Until this section gets written, see the source code in `src/shflags` and the va
 The actual flag parsing step looks deceptively simple, but at the same time confusing.
 
 {{{
-FLAGS "$@" || exit 1
+FLAGS "$@" || exit $?
 eval set -- "${FLAGS_ARGV}"
 }}}
 
-The `FLAGS "$@" || exit 1` takes the command-line arguments `$@` in their unparsed form and passes them to the `FLAGS` function for processing. If `$*` had been used, any spaces in string arguments that were passed would be lost. The double-quotes surrounding the `$@` are also required to maintain the spaces in string arguments. If `FLAGS` returns with a failure (represented by ${FLAGS_ERROR}) the script is exited with an exit code of 1.
+The `FLAGS "$@" || exit $?` takes the command-line arguments `$@` in their unparsed form and passes them to the `FLAGS` function for processing. If `$*` had been used, any spaces in string arguments that were passed would be lost. The double-quotes surrounding the `$@` are also required to maintain the spaces in string arguments. If `FLAGS` returns with a failure (represented by ${FLAGS_ERROR}) the script is exited with an exit code of 1.
 
 The `eval set -- "${FLAGS_ARGV}` replaces the $1, $2, $@, etc. variables with the non-flag values so that your script can process them normally. This is typically useful when you want to pass some flags to your script to alter processing, but you still want to allow non-flag type options to be passed as well.
 
@@ -171,20 +167,26 @@ Example: `examples/debug_output.sh`
 {{{
 #!/bin/sh
 
-# source shflags
+# source shflags library from the current directory
 . ./shflags
-
-debug() { [ ${FLAGS_debug} -eq ${FLAGS_TRUE} ] && echo "DEBUG: $@" >&2; }
 
 # define flags
 DEFINE_boolean 'debug' false 'enable debug mode' 'd'
 
-# parse the command-line
-FLAGS "$@" || exit 1
-eval set -- "${FLAGS_ARGV}"
+debug() {
+  [ ${FLAGS_debug} -eq ${FLAGS_TRUE} ] && echo "DEBUG: $@" >&2
+}
 
-debug 'debug mode enabled'
-echo 'something interesting'
+main()
+{
+  debug 'debug mode enabled'
+  echo 'something interesting'
+}
+
+# parse the command-line
+FLAGS "$@" || exit $?
+eval set -- "${FLAGS_ARGV}"
+main "$@"
 }}}
 
 == Accept flags and options ==
@@ -203,28 +205,32 @@ write_date() { date >"$1"; }
 DEFINE_boolean 'force' false 'force overwriting' 'f'
 FLAGS_HELP="USAGE: $0 [flags] filename"
 
-# parse the command-line
-FLAGS "$@" || exit 1
-eval set -- "${FLAGS_ARGV}"
+main()
+{
+  # check for filename
+  if [ $# -eq 0 ]; then
+    echo 'error: filename missing' >&2
+    flags_help
+    exit 1
+  fi
+  filename=$1
 
-# check for filename
-if [ $# -eq 0 ]; then
-  echo 'error: filename missing' >&2
-  flags_help
-  exit 1
-fi
-filename=$1
-
-if [ ! -f "${filename}" ]; then
-  write_date "${filename}"
-else
-  if [ ${FLAGS_force} -eq ${FLAGS_TRUE} ]; then
+  if [ ! -f "${filename}" ]; then
     write_date "${filename}"
   else
-    echo 'warning: filename exists; not overwriting' >&2
-    exit 2
+    if [ ${FLAGS_force} -eq ${FLAGS_TRUE} ]; then
+      write_date "${filename}"
+    else
+      echo 'warning: filename exists; not overwriting' >&2
+      exit 2
+    fi
   fi
-fi
+}
+
+# parse the command-line
+FLAGS "$@" || exit $?
+eval set -- "${FLAGS_ARGV}"
+main "$@"
 }}}
 
 A test without a filename should fail (notice the custom usage definition line).
