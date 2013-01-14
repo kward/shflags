@@ -156,8 +156,13 @@ versions_shell_ksh()
   versions_shell_=$1
 
   # try a few different ways to figure out the version
-  versions_version_=`${versions_shell_} --version : 2>&1 \
-    |sed 's/.*\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\).*/\1/'`
+  versions_version_=`${versions_shell_} --version : 2>&1`
+  if [ $? -eq 0 ]; then
+    versions_version_=`echo "${versions_version_}" \
+      |sed 's/.*\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\).*/\1/'`
+  else
+    versions_version_=''
+  fi
 
   if [ -z "${versions_version_}" ]; then
     _versions_have_strings
