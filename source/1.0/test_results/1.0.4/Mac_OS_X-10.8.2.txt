@@ -8,7 +8,7 @@ tests=" shflags_test_defines.sh shflags_test_parsing.sh shflags_test_private.sh 
 
 # system info
 $ date
-Tue Jan 15 00:52:58 CET 2013
+Tue Jan 15 01:10:24 CET 2013
 $ uname -mprsv
 Darwin 12.2.0 Darwin Kernel Version 12.2.0: Sat Aug 25 00:48:52 PDT 2012; root:xnu-2050.18.24~1/RELEASE_X86_64 x86_64 i386
 

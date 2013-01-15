@@ -168,15 +168,15 @@ testValidIntExpr()
 
 _testMath()
 {
-  result=`_flags_math 1 + 1`
-  assertTrue '1+1 failed' $?
-  assertEquals '1+1' 2 ${result}
+  result=`_flags_math 1`
+  assertTrue '1 failed' $?
+  assertEquals '1' 1 ${result}
 
   result=`_flags_math '1 + 2'`
   assertTrue '1+2 failed' $?
   assertEquals '1+2' 3 ${result}
 
-  result=`_flags_math 1 + 2 + 3`
+  result=`_flags_math '1 + 2 + 3'`
   assertTrue '1+2+3 failed' $?
   assertEquals '1+2+3' 6 ${result}
 
