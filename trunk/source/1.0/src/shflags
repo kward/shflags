@@ -599,7 +599,7 @@ _flags_validInt()
       ;;
   esac
 
-  case "${_flags_int_}" in
+  case ${_flags_int_} in
     *[!0-9]*) flags_return=${FLAGS_FALSE} ;;
     *) flags_return=${FLAGS_TRUE} ;;
   esac
