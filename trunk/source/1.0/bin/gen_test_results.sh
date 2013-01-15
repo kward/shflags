@@ -52,7 +52,7 @@ output="${FLAGS_output_dir:+${FLAGS_output_dir}/}${FLAGS_output_file}"
 output=`shlib_relToAbsPath "${output}"`
 
 # checks
-[ -n "${FLAGS_suite}" ] || die 'suite flag missing'
+[ -n "${FLAGS_suite:-}" ] || die 'suite flag missing'
 
 if [ ${FLAGS_dry_run} -eq ${FLAGS_FALSE} -a -f "${output}" ]; then
   if [ ${FLAGS_force} -eq ${FLAGS_TRUE} ]; then
