@@ -1,4 +1,4 @@
-# $Id: shflags 185 2013-01-15 00:00:39Z kate.ward@forestent.com $
+# $Id: shflags 189 2013-01-15 00:13:10Z kate.ward@forestent.com $
 # vim:et:ft=sh:sts=2:sw=2
 #
 # Copyright 2008 Kate Ward. All Rights Reserved.
@@ -709,7 +709,7 @@ _flags_parseGetopt()
   # properly give user access to non-flag arguments mixed in between flag
   # arguments. Its usage was replaced by FLAGS_ARGV, and it is being kept only
   # for backwards compatibility reasons.
-  FLAGS_ARGC=`_flags_math $# - 1 - ${_flags_argc_}`
+  FLAGS_ARGC=`_flags_math "$# - 1 - ${_flags_argc_}"`
 
   # handle options. note options with values must do an additional shift
   while true; do
