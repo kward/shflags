@@ -54,31 +54,31 @@ testGetoptEnhanced()
 testValidBoolsShort()
 {
   FLAGS -b >"${stdoutF}" 2>"${stderrF}"
-  rtrn=$?
-  assertTrue "-b) FLAGS returned a non-zero result (${rtrn})" ${rtrn}
+  r3turn=$?
+  assertTrue "-b) FLAGS returned a non-zero result (${r3turn})" ${r3turn}
   value=${FLAGS_bool:-}
   assertTrue "-b) boolean was not true (${value})." "${value}"
   assertFalse '-b) expected no output to STDERR' "[ -s '${stderrF}' ]"
-  test ${rtrn} -eq ${FLAGS_TRUE} -a ! -s "${stderrF}"
+  test ${r3turn} -eq ${FLAGS_TRUE} -a ! -s "${stderrF}"
   th_showOutput $? "${stdoutF}" "${stderrF}"
 
   DEFINE_boolean bool2 true '2nd boolean' B
   FLAGS >"${stdoutF}" 2>"${stderrF}"
-  rtrn=$?
-  assertTrue "-B) FLAGS returned a non-zero result (${rtrn})" ${rtrn}
+  r3turn=$?
+  assertTrue "-B) FLAGS returned a non-zero result (${r3turn})" ${r3turn}
   value=${FLAGS_bool2:-}
   assertTrue "-B) boolean was not true (${value})" ${value}
   assertFalse '-B) expected no output to STDERR' "[ -s '${stderrF}' ]"
-  test ${rtrn} -eq ${FLAGS_TRUE} -a ! -s "${stderrF}"
+  test ${r3turn} -eq ${FLAGS_TRUE} -a ! -s "${stderrF}"
   th_showOutput $? "${stdoutF}" "${stderrF}"
 
   FLAGS -B >"${stdoutF}" 2>"${stderrF}"
-  rtrn=$?
-  assertTrue "-B) FLAGS returned a non-zero result (${rtrn})" ${rtrn}
+  r3turn=$?
+  assertTrue "-B) FLAGS returned a non-zero result (${r3turn})" ${r3turn}
   value=${FLAGS_bool2:-}
   assertFalse "-B) boolean was not false (${value})" ${value}
   assertFalse '-B) expected no output to STDERR' "[ -s '${stderrF}' ]"
-  test ${rtrn} -eq ${FLAGS_TRUE} -a ! -s "${stderrF}"
+  test ${r3turn} -eq ${FLAGS_TRUE} -a ! -s "${stderrF}"
   th_showOutput $? "${stdoutF}" "${stderrF}"
 }
 
@@ -91,27 +91,27 @@ testValidBoolsLong()
 
   # leave flag false
   FLAGS --nobool >"${stdoutF}" 2>"${stderrF}"
-  rtrn=$?
-  assertTrue "FLAGS returned a non-zero result (${rtrn})" ${rtrn}
+  r3turn=$?
+  assertTrue "FLAGS returned a non-zero result (${r3turn})" ${r3turn}
   assertFalse '--noXX flag resulted in true value.' ${FLAGS_bool:-}
   assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
-  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+  th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
 
   # flip flag true
   FLAGS --bool >"${stdoutF}" 2>"${stderrF}"
-  rtrn=$?
-  assertTrue "FLAGS returned a non-zero result (${rtrn})" ${rtrn}
+  r3turn=$?
+  assertTrue "FLAGS returned a non-zero result (${r3turn})" ${r3turn}
   assertTrue '--XX flag resulted in false value.' ${FLAGS_bool:-}
   assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
-  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+  th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
 
   # flip flag back false
   FLAGS --nobool >"${stdoutF}" 2>"${stderrF}"
-  rtrn=$?
-  assertTrue "FLAGS returned a non-zero result (${rtrn})" ${rtrn}
+  r3turn=$?
+  assertTrue "FLAGS returned a non-zero result (${r3turn})" ${r3turn}
   assertFalse '--noXX flag resulted in true value.' ${FLAGS_bool:-}
   assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
-  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+  th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
 }
 
 testValidFloats()
@@ -126,12 +126,12 @@ _testValidFloats()
   flag=$1
   for value in ${TH_FLOAT_VALID}; do
     FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
-    rtrn=$?
-    assertTrue "FLAGS ${flag} ${value} returned non-zero result (${rtrn})" \
-        ${rtrn}
+    r3turn=$?
+    assertTrue "FLAGS ${flag} ${value} returned non-zero result (${r3turn})" \
+        ${r3turn}
     assertEquals "float (${flag} ${value}) test failed." ${value} ${FLAGS_float}
     assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
-    th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+    th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
   done
 }
 
@@ -146,9 +146,13 @@ _testInvalidFloats()
 {
   flag=$1
   for value in ${TH_FLOAT_INVALID}; do
-    ( FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"; )
-    rtrn=$?
-    assertFalse "FLAGS (${value}) returned a zero result" ${rtrn}
+    th_clearReturn
+    (
+      FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
+      echo $? >"${returnF}"
+    )
+    th_queryReturn
+    assertFalse "FLAGS (${value}) returned a zero result" ${th_return}
     assertFalse 'expected no output to STDOUT' "[ -s '${stdoutF}' ]"
     assertTrue 'expected output to STDERR' "[ -s '${stderrF}' ]"
   done
@@ -166,11 +170,11 @@ _testValidIntegers()
   flag=$1
   for value in ${TH_INT_VALID}; do
     FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
-    rtrn=$?
-    assertTrue "FLAGS (${value}) returned a non-zero result (${rtrn})" ${rtrn}
+    r3turn=$?
+    assertTrue "FLAGS (${value}) returned a non-zero result (${r3turn})" ${r3turn}
     assertEquals "integer (${value}) test failed." ${value} ${FLAGS_int}
     assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
-    th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+    th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
   done
 }
 
@@ -185,9 +189,13 @@ _testInvalidIntegers()
 {
   flag=$1
   for value in ${TH_INT_INVALID}; do
-    ( FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"; )
-    rtrn=$?
-    assertFalse "invalid integer (${value}) test returned success." ${rtrn}
+    th_clearReturn
+    (
+      FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
+      echo $? >"${returnF}"
+    )
+    th_queryReturn
+    assertFalse "invalid integer (${value}) test returned success." ${th_return}
     assertFalse 'expected no output to STDOUT' "[ -s '${stdoutF}' ]"
     assertTrue 'expected output to STDERR' "[ -s '${stderrF}' ]"
   done
@@ -208,17 +216,17 @@ _testValidStrings()
   value=$2
 
   FLAGS ${flag} "${value}" >"${stdoutF}" 2>"${stderrF}"
-  rtrn=$?
-  assertTrue "'FLAGS ${flag} ${value}' returned a non-zero result (${rtrn})" \
-      ${rtrn}
+  r3turn=$?
+  assertTrue "'FLAGS ${flag} ${value}' returned a non-zero result (${r3turn})" \
+      ${r3turn}
   assertEquals "string (${value}) test failed." "${value}" "${FLAGS_str}"
-  if [ ${rtrn} -eq ${FLAGS_TRUE} ]; then
+  if [ ${r3turn} -eq ${FLAGS_TRUE} ]; then
     assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
   else
     # validate that an error is thrown for unsupported getopt uses
     assertFatalMsg '.* spaces in options'
   fi
-  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+  th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
 }
 
 testMultipleFlags()
@@ -241,14 +249,14 @@ _testMultipleFlags()
       ${floatFlag} 123.45678 \
       ${strFlag} 'some_string' \
       >"${stdoutF}" 2>"${stderrF}"
-  rtrn=$?
-  assertTrue "use of multple flags returned a non-zero result" ${rtrn}
+  r3turn=$?
+  assertTrue "use of multple flags returned a non-zero result" ${r3turn}
   assertTrue 'boolean test failed.' ${FLAGS_bool}
   assertNotSame 'float test failed.' 0 ${FLAGS_float}
   assertNotSame 'integer test failed.' 0 ${FLAGS_int}
   assertNotSame 'string test failed.' '' ${FLAGS_str}
   assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
-  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+  th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
 }
 
 _testNonFlagArgs()
@@ -257,9 +265,9 @@ _testNonFlagArgs()
   shift
 
   FLAGS "$@" >"${stdoutF}" 2>"${stderrF}"
-  rtrn=$?
-  assertTrue 'parse returned non-zero value.' ${rtrn}
-  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+  r3turn=$?
+  assertTrue 'parse returned non-zero value.' ${r3turn}
+  th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
 
   eval set -- "${FLAGS_ARGV}"
   assertEquals 'wrong count of argv arguments returned.' ${argc} $#
@@ -289,7 +297,7 @@ testFlagsWithEquals()
   FLAGS --str='str_flag' 'non_flag' >"${stdoutF}" 2>"${stderrF}"
   assertTrue 'FLAGS returned a non-zero result' $?
   assertEquals 'string flag not set properly' 'str_flag' "${FLAGS_str}"
-  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+  th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
 
   eval set -- "${FLAGS_ARGV}"
   assertEquals 'wrong count of argv arguments returned.' 1 $#
@@ -304,10 +312,10 @@ testComplicatedCommandLineStandard()
   # results in the remaining flags being treated as arguments instead.
   FLAGS -i 1 non_flag_1 -s 'two' non_flag_2 -f 3 non_flag_3 \
       >"${stdoutF}" 2>"${stderrF}"
-  rtrn=$?
-  assertTrue 'FLAGS returned a non-zero result' ${rtrn}
+  r3turn=$?
+  assertTrue 'FLAGS returned a non-zero result' ${r3turn}
   assertEquals 'failed int test' 1 ${FLAGS_int}
-  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+  th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
 
   eval set -- "${FLAGS_ARGV}"
   assertEquals 'incorrect number of argv values' 7 $#
@@ -319,12 +327,12 @@ testComplicatedCommandLineEnhanced()
 
   FLAGS -i 1 non_flag_1 --str='two' non_flag_2 --float 3 'non flag 3' \
       >"${stdoutF}" 2>"${stderrF}"
-  rtrn=$?
-  assertTrue 'FLAGS returned a non-zero result' ${rtrn}
+  r3turn=$?
+  assertTrue 'FLAGS returned a non-zero result' ${r3turn}
   assertEquals 'failed int test' 1 ${FLAGS_int}
   assertEquals 'failed str test' 'two' "${FLAGS_str}"
   assertEquals 'failed float test' 3 ${FLAGS_float}
-  th_showOutput ${rtrn} "${stdoutF}" "${stderrF}"
+  th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
 
   eval set -- "${FLAGS_ARGV}"
   assertEquals 'incorrect number of argv values' 3 $#

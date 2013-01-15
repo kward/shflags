@@ -54,6 +54,7 @@ th_oneTimeSetUp()
   tmpDir=${SHUNIT_TMPDIR}
   stdoutF="${tmpDir}/stdout"
   stderrF="${tmpDir}/stderr"
+  returnF="${tmpDir}/return"
   expectedF="${tmpDir}/expected"
 }
 
@@ -79,6 +80,19 @@ th_showOutput()
   fi
 
   unset _th_rtrn _th_stdout _th_stderr
+}
+
+# Some shells, zsh on Solaris in particular, return immediately from a sub-shell
+# when a non-zero return value is encountered. To properly catch these values,
+# they are either written to disk, or recognized as an error the file is empty.
+th_clearReturn() { cp /dev/null "${returnF}"; }
+th_queryReturn()
+{
+  if [ -s "${returnF}" ]; then
+    th_return=`cat "${returnF}"`
+  else
+    th_return=${SHUNIT_ERROR}
+  fi
 }
 
 _th_assertMsg()

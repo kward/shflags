@@ -18,53 +18,51 @@
 
 testHelp()
 {
-  #
-  # test short -h option
-  #
+  _testHelp '-h'
+  flags_getoptIsEnh || return
+  _testHelp '--help'
+}
 
-  result=`FLAGS -h 2>&1`
-  r3turn=$?
+_testHelp()
+{
+  flag=$1
+
+  # test default help output
+  th_clearReturn
+  (
+    FLAGS ${flag} >"${stdoutF}" 2>"${stderrF}"
+    echo $? >"${returnF}"
+  )
+  th_queryReturn
   assertTrue \
       'short help request should have returned a true exit code.' \
-      ${r3turn}
-  echo "${result}" |grep -- 'show this help' >/dev/null
+      ${th_return}
+  grep 'show this help' "${stderrF}" >/dev/null
   grepped=$?
   assertTrue \
       'short request for help should have produced some help output.' \
       ${grepped}
-  [ ${grepped} -ne ${FLAGS_TRUE} ] && echo "${result}" >&2
+  [ ${grepped} -ne ${FLAGS_TRUE} ] && th_showOutput
 
   # test proper output when FLAGS_HELP set
-  result=`FLAGS_HELP='this is a test'; FLAGS -h 2>&1`
-  echo "${result}" |grep -- 'this is a test' >/dev/null
+  (
+    FLAGS_HELP='this is a test'
+    FLAGS ${flag} >"${stdoutF}" 2>"${stderrF}"
+  )
+  grep 'this is a test' "${stderrF}" >/dev/null
   grepped=$?
   assertTrue 'setting FLAGS_HELP did not produce expected result' ${grepped}
-  [ ${grepped} -ne ${FLAGS_TRUE} ] && echo "${result}" >&2
+  [ ${grepped} -ne ${FLAGS_TRUE} ] && th_showOutput
 
   # test that "'" chars work in help string
-  DEFINE_boolean b false "help string containing a ' char" b
-  result=`FLAGS -h 2>&1`
-  echo "${result}" |grep -- "help string containing a ' char" >/dev/null
+  (
+    DEFINE_boolean b false "help string containing a ' char" b
+    FLAGS ${flag} >"${stdoutF}" 2>"${stderrF}"
+  )
+  grep "help string containing a ' char" "${stderrF}" >/dev/null
   grepped=$?
   assertTrue "help strings containing apostrophes don't work" ${grepped}
-  [ ${grepped} -ne ${FLAGS_TRUE} ] && echo "${result}" >&2
-
-  #
-  # test long --help option
-  #
-
-  flags_getoptIsEnh || startSkipping
-
-  result=`FLAGS --help 2>&1`
-  r3turn=$?
-  assertTrue \
-      'long help request should have returned a true exit code' \
-      ${r3turn}
-  echo "${result}" |grep -- 'show this help' >/dev/null
-  grepped=$?
-  assertTrue \
-      'long help request should have produced some help output.' \
-      ${grepped}
+  [ ${grepped} -ne ${FLAGS_TRUE} ] && th_showOutput
 }
 
 mock_flags_columns()
@@ -99,7 +97,7 @@ flags:
   -h  show this help (default: false)
 EOF
   (
-    _flags_columns() { mock_flags_columns "\$@"; }
+    _flags_columns() { mock_flags_columns; }
     FLAGS_HELP=${help};
     FLAGS -h >"${stdoutF}" 2>"${stderrF}"
   )
@@ -139,7 +137,7 @@ flags:
   -h,--help:  show this help (default: false)
 EOF
   (
-    _flags_columns() { mock_flags_columns "\$@"; }
+    _flags_columns() { mock_flags_columns; }
     FLAGS_HELP=${help};
     FLAGS -h >"${stdoutF}" 2>"${stderrF}"
   )
