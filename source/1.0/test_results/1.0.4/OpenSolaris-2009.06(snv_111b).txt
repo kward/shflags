@@ -8,9 +8,9 @@ tests=" shflags_test_defines.sh shflags_test_parsing.sh shflags_test_private.sh 
 
 # system info
 $ date
-Sun Jan  6 17:26:59 CET 2013
+Mon Jan 14 23:53:49 GMT 2013
 $ uname -mprsv
-Darwin 11.4.2 Darwin Kernel Version 11.4.2: Thu Aug 23 16:26:45 PDT 2012; root:xnu-1699.32.7~1/RELEASE_I386 i386 i386
+SunOS 5.11 snv_111b i86pc i386
 
 
 #------------------------------------------------------------------------------
@@ -57,7 +57,6 @@ OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -68,8 +67,10 @@ testValidIntBuiltin
 testValidIntExpr
 testMathBuiltin
 testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 12 tests.
+Ran 13 tests.
 
 OK
 
@@ -82,14 +83,14 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=7)
+OK (skipped=5)
 
 
 #------------------------------------------------------------------------------
 # Running the test suite with /bin/bash
 #
 shell name: bash
-shell version: 3.2.48(1)-release
+shell version: 3.2.25(1)-release
 
 --- Executing the 'defines' test suite ---
 testFlagsDefine
@@ -129,7 +130,6 @@ OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -140,8 +140,10 @@ testValidIntBuiltin
 testValidIntExpr
 testMathBuiltin
 testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 12 tests.
+Ran 13 tests.
 
 OK
 
@@ -154,7 +156,7 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=7)
+OK (skipped=5)
 
 
 #------------------------------------------------------------------------------
@@ -166,7 +168,7 @@ OK (skipped=7)
 # Running the test suite with /bin/ksh
 #
 shell name: ksh
-shell version: 1993-12-28
+shell version: unknown
 
 --- Executing the 'defines' test suite ---
 testFlagsDefine
@@ -206,7 +208,6 @@ OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -217,8 +218,10 @@ testValidIntBuiltin
 testValidIntExpr
 testMathBuiltin
 testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 12 tests.
+Ran 13 tests.
 
 OK
 
@@ -231,7 +234,7 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=7)
+OK (skipped=5)
 
 
 #------------------------------------------------------------------------------
@@ -242,70 +245,3 @@ OK (skipped=7)
 #------------------------------------------------------------------------------
 # Running the test suite with /bin/zsh
 #
-shell name: zsh
-shell version: 4.3.11
-
---- Executing the 'defines' test suite ---
-testFlagsDefine
-testBoolean
-testFloat
-testInteger
-testString
-testShortNameLength
-testFlagNameIsReserved
-
-Ran 7 tests.
-
-OK
-
---- Executing the 'parsing' test suite ---
-test:WARN Standard version of getopt found. Enhanced tests will be skipped.
-testGetoptStandard
-testGetoptEnhanced
-testValidBoolsShort
-testValidBoolsLong
-testValidFloats
-testInvalidFloats
-testValidIntegers
-testInvalidIntegers
-testValidStrings
-testMultipleFlags
-testSingleNonFlagArg
-testMultipleNonFlagArgs
-testMultipleNonFlagStringArgsWithSpaces
-testFlagsWithEquals
-testComplicatedCommandLineStandard
-testComplicatedCommandLineEnhanced
-
-Ran 16 tests.
-
-OK
-
---- Executing the 'private' test suite ---
-testColumns
-testExpr
-testGenOptStr
-testGetFlagInfo
-testItemInList
-testValidBool
-testValidFloatBuiltin
-testValidFloatExpr
-testValidIntBuiltin
-testValidIntExpr
-testMathBuiltin
-testMathExpr
-
-Ran 12 tests.
-
-OK
-
---- Executing the 'public' test suite ---
-test:WARN Standard version of getopt found. Enhanced tests will be skipped.
-testHelp
-testStandardHelpOutput
-testEnhancedHelpOutput
-testNoHelp
-
-Ran 4 tests.
-
-OK (skipped=7)

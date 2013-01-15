@@ -8,7 +8,7 @@ tests=" shflags_test_defines.sh shflags_test_parsing.sh shflags_test_private.sh 
 
 # system info
 $ date
-Sun Jan  6 17:07:57 CET 2013
+Tue Jan 15 00:52:58 CET 2013
 $ uname -mprsv
 Darwin 12.2.0 Darwin Kernel Version 12.2.0: Sat Aug 25 00:48:52 PDT 2012; root:xnu-2050.18.24~1/RELEASE_X86_64 x86_64 i386
 
@@ -57,7 +57,6 @@ OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -68,8 +67,10 @@ testValidIntBuiltin
 testValidIntExpr
 testMathBuiltin
 testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 12 tests.
+Ran 13 tests.
 
 OK
 
@@ -82,7 +83,7 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=7)
+OK (skipped=5)
 
 
 #------------------------------------------------------------------------------
@@ -129,7 +130,6 @@ OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -140,8 +140,10 @@ testValidIntBuiltin
 testValidIntExpr
 testMathBuiltin
 testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 12 tests.
+Ran 13 tests.
 
 OK
 
@@ -154,7 +156,7 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=7)
+OK (skipped=5)
 
 
 #------------------------------------------------------------------------------
@@ -166,7 +168,7 @@ OK (skipped=7)
 # Running the test suite with /bin/ksh
 #
 shell name: ksh
-shell version: 2011-02-08
+shell version: JM-93u-2011-02-08-$
 
 --- Executing the 'defines' test suite ---
 testFlagsDefine
@@ -206,7 +208,6 @@ OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -217,8 +218,10 @@ testValidIntBuiltin
 testValidIntExpr
 testMathBuiltin
 testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 12 tests.
+Ran 13 tests.
 
 OK
 
@@ -231,7 +234,7 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=7)
+OK (skipped=5)
 
 
 #------------------------------------------------------------------------------
@@ -283,7 +286,6 @@ OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -294,8 +296,10 @@ testValidIntBuiltin
 testValidIntExpr
 testMathBuiltin
 testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 12 tests.
+Ran 13 tests.
 
 OK
 
@@ -308,4 +312,4 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=7)
+OK (skipped=5)

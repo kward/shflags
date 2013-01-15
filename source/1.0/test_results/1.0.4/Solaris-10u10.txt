@@ -8,7 +8,7 @@ tests=" shflags_test_defines.sh shflags_test_parsing.sh shflags_test_private.sh 
 
 # system info
 $ date
-Fri Jan  4 22:54:16 MET 2013
+Tue Jan 15 00:55:19 MET 2013
 $ uname -mprsv
 SunOS 5.10 Generic_147441-01 i86pc i386
 
@@ -38,24 +38,42 @@ testGetoptStandard
 testGetoptEnhanced
 testValidBoolsShort
 testValidBoolsLong
+testValidFloats
+testInvalidFloats
+testValidIntegers
+testInvalidIntegers
+testValidStrings
+testMultipleFlags
+testSingleNonFlagArg
+testMultipleNonFlagArgs
+testMultipleNonFlagStringArgsWithSpaces
+testFlagsWithEquals
+testComplicatedCommandLineStandard
+testComplicatedCommandLineEnhanced
+
+Ran 16 tests.
+
+OK
 
 --- Executing the 'private' test suite ---
+test:WARN Shell built-ins not supported. Some tests will be skipped.
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
 testValidBool
 testValidFloatBuiltin
-SKIPPED: this shell does not support the necessary builtins
 testValidFloatExpr
 testValidIntBuiltin
-SKIPPED: this shell does not support the necessary builtins
 testValidIntExpr
+testMathBuiltin
+testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 10 tests.
+Ran 13 tests.
 
-OK
+OK (skipped=46)
 
 --- Executing the 'public' test suite ---
 test:WARN Standard version of getopt found. Enhanced tests will be skipped.
@@ -66,7 +84,7 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=7)
+OK (skipped=5)
 
 
 #------------------------------------------------------------------------------
@@ -94,15 +112,25 @@ testGetoptStandard
 testGetoptEnhanced
 testValidBoolsShort
 testValidBoolsLong
-ASSERT:Unknown failure encountered running a test
+testValidFloats
+testInvalidFloats
+testValidIntegers
+testInvalidIntegers
+testValidStrings
+testMultipleFlags
+testSingleNonFlagArg
+testMultipleNonFlagArgs
+testMultipleNonFlagStringArgsWithSpaces
+testFlagsWithEquals
+testComplicatedCommandLineStandard
+testComplicatedCommandLineEnhanced
 
 Ran 16 tests.
 
-FAILED (failures=1,skipped=4)
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -111,8 +139,12 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 10 tests.
+Ran 13 tests.
 
 OK
 
@@ -125,7 +157,7 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=7)
+OK (skipped=5)
 
 
 #------------------------------------------------------------------------------
@@ -158,10 +190,25 @@ testGetoptStandard
 testGetoptEnhanced
 testValidBoolsShort
 testValidBoolsLong
+testValidFloats
+testInvalidFloats
+testValidIntegers
+testInvalidIntegers
+testValidStrings
+testMultipleFlags
+testSingleNonFlagArg
+testMultipleNonFlagArgs
+testMultipleNonFlagStringArgsWithSpaces
+testFlagsWithEquals
+testComplicatedCommandLineStandard
+testComplicatedCommandLineEnhanced
+
+Ran 16 tests.
+
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -170,8 +217,12 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 10 tests.
+Ran 13 tests.
 
 OK
 
@@ -184,7 +235,7 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=7)
+OK (skipped=5)
 
 
 #------------------------------------------------------------------------------
@@ -217,11 +268,25 @@ testGetoptStandard
 testGetoptEnhanced
 testValidBoolsShort
 testValidBoolsLong
-ASSERT:Unknown failure encountered running a test
+testValidFloats
+testInvalidFloats
+testValidIntegers
+testInvalidIntegers
+testValidStrings
+testMultipleFlags
+testSingleNonFlagArg
+testMultipleNonFlagArgs
+testMultipleNonFlagStringArgsWithSpaces
+testFlagsWithEquals
+testComplicatedCommandLineStandard
+testComplicatedCommandLineEnhanced
+
+Ran 16 tests.
+
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -230,8 +295,12 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 10 tests.
+Ran 13 tests.
 
 OK
 
@@ -244,4 +313,4 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=7)
+OK (skipped=5)
