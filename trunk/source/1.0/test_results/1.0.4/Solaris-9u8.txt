@@ -8,7 +8,7 @@ tests=" shflags_test_defines.sh shflags_test_parsing.sh shflags_test_private.sh 
 
 # system info
 $ date
-Mon Jan 14 23:55:30 GMT 2013
+Tue Jan 15 00:09:36 GMT 2013
 $ uname -mprsv
 SunOS 5.9 Generic_118559-11 i86pc i386
 

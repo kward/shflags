@@ -8,7 +8,7 @@ tests=" shflags_test_defines.sh shflags_test_parsing.sh shflags_test_private.sh 
 
 # system info
 $ date
-Mon Jan 14 23:58:49 GMT 2013
+Tue Jan 15 00:09:47 GMT 2013
 $ uname -mprsv
 Linux 3.2.0-35-generic #55-Ubuntu SMP Wed Dec 5 17:42:16 UTC 2012 x86_64 x86_64
 

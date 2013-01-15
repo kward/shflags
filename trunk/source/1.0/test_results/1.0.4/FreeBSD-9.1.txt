@@ -8,7 +8,7 @@ tests=" shflags_test_defines.sh shflags_test_parsing.sh shflags_test_private.sh 
 
 # system info
 $ date
-Fri Jan  4 22:15:59 UTC 2013
+Tue Jan 15 00:08:36 UTC 2013
 $ uname -mprsv
 FreeBSD 9.1-RELEASE FreeBSD 9.1-RELEASE #0: Fri Dec  7 20:50:48 GMT 2012     kirk@freenas:/usr/obj/usr/src/sys/GENERIC  amd64 amd64
 
@@ -38,10 +38,25 @@ testGetoptStandard
 testGetoptEnhanced
 testValidBoolsShort
 testValidBoolsLong
+testValidFloats
+testInvalidFloats
+testValidIntegers
+testInvalidIntegers
+testValidStrings
+testMultipleFlags
+testSingleNonFlagArg
+testMultipleNonFlagArgs
+testMultipleNonFlagStringArgsWithSpaces
+testFlagsWithEquals
+testComplicatedCommandLineStandard
+testComplicatedCommandLineEnhanced
+
+Ran 16 tests.
+
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -50,8 +65,12 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 10 tests.
+Ran 13 tests.
 
 OK
 
@@ -64,7 +83,7 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=7)
+OK (skipped=5)
 
 
 #------------------------------------------------------------------------------
