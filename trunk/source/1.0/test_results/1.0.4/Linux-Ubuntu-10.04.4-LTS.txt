@@ -8,7 +8,7 @@ tests=" shflags_test_defines.sh shflags_test_parsing.sh shflags_test_private.sh 
 
 # system info
 $ date
-Fri Jan  4 21:54:28 UTC 2013
+Mon Jan 14 23:54:30 UTC 2013
 $ uname -mprsv
 Linux 2.6.32-45-server #101-Ubuntu SMP Mon Dec 3 15:54:27 UTC 2012 x86_64 unknown
 
@@ -53,11 +53,10 @@ testComplicatedCommandLineEnhanced
 
 Ran 16 tests.
 
-OK (skipped=3)
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -66,8 +65,12 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 10 tests.
+Ran 13 tests.
 
 OK
 
@@ -123,11 +126,10 @@ testComplicatedCommandLineEnhanced
 
 Ran 16 tests.
 
-OK (skipped=3)
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -136,8 +138,12 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 10 tests.
+Ran 13 tests.
 
 OK
 
@@ -193,11 +199,10 @@ testComplicatedCommandLineEnhanced
 
 Ran 16 tests.
 
-OK (skipped=3)
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -206,8 +211,12 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 10 tests.
+Ran 13 tests.
 
 OK
 
@@ -227,7 +236,7 @@ OK (skipped=2)
 # Running the test suite with /bin/ksh
 #
 shell name: ksh
-shell version: 2009-05-01
+shell version: JM-93t+-2009-05-01-$
 
 --- Executing the 'defines' test suite ---
 testFlagsDefine
@@ -263,11 +272,10 @@ testComplicatedCommandLineEnhanced
 
 Ran 16 tests.
 
-OK (skipped=3)
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -276,8 +284,12 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 10 tests.
+Ran 13 tests.
 
 OK
 
@@ -333,11 +345,10 @@ testComplicatedCommandLineEnhanced
 
 Ran 16 tests.
 
-OK (skipped=3)
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -346,8 +357,12 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 10 tests.
+Ran 13 tests.
 
 OK
 
@@ -403,11 +418,10 @@ testComplicatedCommandLineEnhanced
 
 Ran 16 tests.
 
-OK (skipped=3)
+OK
 
 --- Executing the 'private' test suite ---
 testColumns
-testExpr
 testGenOptStr
 testGetFlagInfo
 testItemInList
@@ -416,8 +430,12 @@ testValidFloatBuiltin
 testValidFloatExpr
 testValidIntBuiltin
 testValidIntExpr
+testMathBuiltin
+testMathExpr
+testStrlenBuiltin
+testStrlenExpr
 
-Ran 10 tests.
+Ran 13 tests.
 
 OK
 
