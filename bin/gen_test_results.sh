@@ -4,11 +4,10 @@
 # This script runs the provided unit tests and sends the output to the
 # appropriate file.
 
-# treat unset variables as an error
+# Treat unset variables as an error.
 set -u
 
-die()
-{
+die() {
   [ $# -gt 0 ] && echo "error: $@" >&2
   exit 1
 }
@@ -16,12 +15,12 @@ die()
 BASE_DIR="`dirname $0`/.."
 LIB_DIR="${BASE_DIR}/lib"
 
-# load libraries
+# Load libraries.
 . ${LIB_DIR}/shflags || die 'unable to load shflags library'
 . ${LIB_DIR}/shlib || die 'unable to load shlib library'
 . ${LIB_DIR}/versions || die 'unable to load versions library'
 
-# redefining BASE_DIR now that we have the shlib functions
+# Redefining BASE_DIR now that we have the shlib functions.
 BASE_DIR=`shlib_relToAbsPath "${BASE_DIR}"`
 BIN_DIR="${BASE_DIR}/bin"
 SRC_DIR="${BASE_DIR}/src"
@@ -29,24 +28,23 @@ SRC_DIR="${BASE_DIR}/src"
 os_name=`versions_osName |sed 's/ /_/g'`
 os_version=`versions_osVersion`
 
-# load external flags
+# Load external flags.
 . ${BIN_DIR}/gen_test_results.flags
 
-# define flags
+# Define flags.
 DEFINE_boolean force false 'force overwrite' f
 DEFINE_string output_dir "`pwd`" 'output dir' d
 DEFINE_string output_file "${os_name}-${os_version}.txt" 'output file' o
 DEFINE_boolean dry_run false "supress logging to a file" n
 
-main()
-{
-  # determine output filename
+main() {
+  # Determine output filename.
   output="${FLAGS_output_dir:+${FLAGS_output_dir}/}${FLAGS_output_file}"
   output=`shlib_relToAbsPath "${output}"`
-  
-  # checks
+
+  # Checks.
   [ -n "${FLAGS_suite:-}" ] || die 'suite flag missing'
-  
+
   if [ ${FLAGS_dry_run} -eq ${FLAGS_FALSE} -a -f "${output}" ]; then
     if [ ${FLAGS_force} -eq ${FLAGS_TRUE} ]; then
       rm -f "${output}"
@@ -58,8 +56,8 @@ main()
   if [ ${FLAGS_dry_run} -eq ${FLAGS_FALSE} ]; then
     touch "${output}" 2>/dev/null || die "unable to write to '${output}'"
   fi
-  
-  # run tests
+
+  # Run tests.
   (
     cd "${SRC_DIR}";
     if [ ${FLAGS_dry_run} -eq ${FLAGS_FALSE} ]; then
@@ -68,7 +66,7 @@ main()
       ./${FLAGS_suite}
     fi
   )
-  
+
   if [ ! ${FLAGS_dry_run} ]; then
     echo >&2
     echo "output written to '${output}'" >&2
