@@ -1,11 +1,5 @@
 #! /bin/sh
-# $Id$
 # vim:et:ft=sh:sts=2:sw=2
-#
-# Copyright 2008 Kate Ward. All Rights Reserved.
-# Released under the LGPL (GNU Lesser General Public License)
-#
-# Author: kate.ward@forestent.com (Kate Ward)
 #
 # shFlags unit test for the flag definition methods
 #

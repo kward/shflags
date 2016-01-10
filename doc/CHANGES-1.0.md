@@ -1,7 +1,7 @@
-Changes in shFlags 1.0.x
-========================
+Changes in shFlags
+==================
 
-Changes with 1.0.4
+Changes with 1.2.0
 ------------------
 
 Changed from the LGPL v2.1 license to the Apache v2.0 license so that others can
@@ -21,7 +21,7 @@ values like other flags.
 Changed `_flags_fatal()` to exit with `FLAGS_ERROR` immediately.
 
 Fixed issue #11. When help is requested, the help flag is no longer prefixed
-with [no].
+with '[no]'.
 
 Upgraded shUnit2 to 2.1.6.
 

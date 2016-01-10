@@ -1,8 +1,7 @@
-# $Id$
 # vim:et:ft=sh:sts=2:sw=2
 #
-# Copyright 2008 Kate Ward. All Rights Reserved.
-# Released under the LGPL (GNU Lesser General Public License)
+# Copyright 2008-2016 Kate Ward. All Rights Reserved.
+# Released under the Apache License 2.0.
 #
 # shFlags -- Advanced command-line flag library for Unix shell scripts.
 # http://code.google.com/p/shflags/
@@ -84,7 +83,7 @@
 
 # return if FLAGS already loaded
 [ -n "${FLAGS_VERSION:-}" ] && return 0
-FLAGS_VERSION='1.0.4'
+FLAGS_VERSION='1.2.0'
 
 # return values that scripts can use
 FLAGS_TRUE=0

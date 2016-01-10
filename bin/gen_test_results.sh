@@ -1,15 +1,8 @@
 #! /bin/sh
-# $Id$
 # vim:et:ft=sh:sts=2:sw=2
-#
-# Copyright 2008 Kate Ward. All Rights Reserved.
-# Released under the LGPL (GNU Lesser General Public License)
-#
-# Author: kate.ward@forestent.com (Kate Ward)
 #
 # This script runs the provided unit tests and sends the output to the
 # appropriate file.
-#
 
 # treat unset variables as an error
 set -u

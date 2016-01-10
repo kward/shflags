@@ -1,10 +1,5 @@
 #!/bin/sh
 #
-# Copyright 2008 Kate Ward. All Rights Reserved.
-# Released under the LGPL (GNU Lesser General Public License)
-#
-# Author: kate.ward@forestent.com (Kate Ward)
-#
 # This is the proverbial 'Hello, world!' script to demonstrate the most basic
 # functionality of shFlags.
 #

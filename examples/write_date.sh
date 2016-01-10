@@ -1,10 +1,5 @@
 #!/bin/sh
 #
-# Copyright 2008 Kate Ward. All Rights Reserved.
-# Released under the LGPL (GNU Lesser General Public License)
-#
-# Author: kate.ward@forestent.com (Kate Ward)
-#
 # This script takes a filename as input and writes the current date to the
 # file. If the file already exists, it will not be overwritten unless the '-f'
 # (or '--force') flag is given.
