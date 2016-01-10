@@ -7,4 +7,4 @@ possible to work across a wide array of Unix variants. It is also tested with
 [shUnit2](https://github.com/kward/shunit2) to maintain code quality.
 
 If you'd like to use shFlags, feel free to read the documentation.
-https://github.com/kward/shflags/wiki/Documentation10x
+https://github.com/kward/shflags/wiki/Documentation12x
