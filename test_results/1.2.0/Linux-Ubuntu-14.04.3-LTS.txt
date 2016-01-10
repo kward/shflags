@@ -8,9 +8,9 @@ tests=" shflags_test_defines.sh shflags_test_parsing.sh shflags_test_private.sh 
 
 # system info
 $ date
-Sun Jan 10 19:09:43 CET 2016
+Sun Jan 10 19:09:28 CET 2016
 $ uname -mprsv
-Darwin 15.3.0 Darwin Kernel Version 15.3.0: Thu Dec 10 18:20:09 PST 2015; root:xnu-3248.30.4~2/RELEASE_X86_64 x86_64 i386
+Linux 4.2.0-22-generic #27~14.04.1-Ubuntu SMP Fri Dec 18 10:57:53 UTC 2015 x86_64 x86_64
 
 
 #------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ Ran 7 tests.
 OK
 
 --- Executing the 'parsing' test suite ---
-test:WARN Standard version of getopt found. Enhanced tests will be skipped.
+test:WARN Enhanced version of getopt found. Standard tests will be skipped.
 testGetoptStandard
 testGetoptEnhanced
 testValidBoolsShort
@@ -75,7 +75,7 @@ Ran 13 tests.
 OK
 
 --- Executing the 'public' test suite ---
-test:WARN Standard version of getopt found. Enhanced tests will be skipped.
+test:WARN Enhanced version of getopt found. Standard tests will be skipped.
 testHelp
 testStandardHelpOutput
 testEnhancedHelpOutput
@@ -83,14 +83,14 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=5)
+OK (skipped=2)
 
 
 #------------------------------------------------------------------------------
 # Running the test suite with /bin/bash
 #
 shell name: bash
-shell version: 3.2.57(1)-release
+shell version: 4.3.11(1)-release
 
 --- Executing the 'defines' test suite ---
 testFlagsDefine
@@ -106,7 +106,7 @@ Ran 7 tests.
 OK
 
 --- Executing the 'parsing' test suite ---
-test:WARN Standard version of getopt found. Enhanced tests will be skipped.
+test:WARN Enhanced version of getopt found. Standard tests will be skipped.
 testGetoptStandard
 testGetoptEnhanced
 testValidBoolsShort
@@ -148,7 +148,7 @@ Ran 13 tests.
 OK
 
 --- Executing the 'public' test suite ---
-test:WARN Standard version of getopt found. Enhanced tests will be skipped.
+test:WARN Enhanced version of getopt found. Standard tests will be skipped.
 testHelp
 testStandardHelpOutput
 testEnhancedHelpOutput
@@ -156,12 +156,80 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=5)
+OK (skipped=2)
 
 
 #------------------------------------------------------------------------------
 # Running the test suite with /bin/dash
 #
+shell name: dash
+shell version: 0.5.7-4ubuntu1
+
+--- Executing the 'defines' test suite ---
+testFlagsDefine
+testBoolean
+testFloat
+testInteger
+testString
+testShortNameLength
+testFlagNameIsReserved
+
+Ran 7 tests.
+
+OK
+
+--- Executing the 'parsing' test suite ---
+test:WARN Enhanced version of getopt found. Standard tests will be skipped.
+testGetoptStandard
+testGetoptEnhanced
+testValidBoolsShort
+testValidBoolsLong
+testValidFloats
+testInvalidFloats
+testValidIntegers
+testInvalidIntegers
+testValidStrings
+testMultipleFlags
+testSingleNonFlagArg
+testMultipleNonFlagArgs
+testMultipleNonFlagStringArgsWithSpaces
+testFlagsWithEquals
+testComplicatedCommandLineStandard
+testComplicatedCommandLineEnhanced
+
+Ran 16 tests.
+
+OK
+
+--- Executing the 'private' test suite ---
+testColumns
+testGenOptStr
+testGetFlagInfo
+testItemInList
+testValidBool
+testValidFloatBuiltin
+testValidFloatExpr
+testValidIntBuiltin
+testValidIntExpr
+testMathBuiltin
+testMathExpr
+testStrlenBuiltin
+testStrlenExpr
+
+Ran 13 tests.
+
+OK
+
+--- Executing the 'public' test suite ---
+test:WARN Enhanced version of getopt found. Standard tests will be skipped.
+testHelp
+testStandardHelpOutput
+testEnhancedHelpOutput
+testNoHelp
+
+Ran 4 tests.
+
+OK (skipped=2)
 
 
 #------------------------------------------------------------------------------
@@ -184,7 +252,7 @@ Ran 7 tests.
 OK
 
 --- Executing the 'parsing' test suite ---
-test:WARN Standard version of getopt found. Enhanced tests will be skipped.
+test:WARN Enhanced version of getopt found. Standard tests will be skipped.
 testGetoptStandard
 testGetoptEnhanced
 testValidBoolsShort
@@ -226,7 +294,7 @@ Ran 13 tests.
 OK
 
 --- Executing the 'public' test suite ---
-test:WARN Standard version of getopt found. Enhanced tests will be skipped.
+test:WARN Enhanced version of getopt found. Standard tests will be skipped.
 testHelp
 testStandardHelpOutput
 testEnhancedHelpOutput
@@ -234,19 +302,14 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=5)
+OK (skipped=2)
 
 
 #------------------------------------------------------------------------------
 # Running the test suite with /bin/pdksh
 #
-
-
-#------------------------------------------------------------------------------
-# Running the test suite with /bin/zsh
-#
-shell name: zsh
-shell version: 5.0.8
+shell name: pdksh
+shell version: unknown
 
 --- Executing the 'defines' test suite ---
 testFlagsDefine
@@ -262,7 +325,7 @@ Ran 7 tests.
 OK
 
 --- Executing the 'parsing' test suite ---
-test:WARN Standard version of getopt found. Enhanced tests will be skipped.
+test:WARN Enhanced version of getopt found. Standard tests will be skipped.
 testGetoptStandard
 testGetoptEnhanced
 testValidBoolsShort
@@ -304,7 +367,7 @@ Ran 13 tests.
 OK
 
 --- Executing the 'public' test suite ---
-test:WARN Standard version of getopt found. Enhanced tests will be skipped.
+test:WARN Enhanced version of getopt found. Standard tests will be skipped.
 testHelp
 testStandardHelpOutput
 testEnhancedHelpOutput
@@ -312,4 +375,77 @@ testNoHelp
 
 Ran 4 tests.
 
-OK (skipped=5)
+OK (skipped=2)
+
+
+#------------------------------------------------------------------------------
+# Running the test suite with /bin/zsh
+#
+shell name: zsh
+shell version: 5.0.2
+
+--- Executing the 'defines' test suite ---
+testFlagsDefine
+testBoolean
+testFloat
+testInteger
+testString
+testShortNameLength
+testFlagNameIsReserved
+
+Ran 7 tests.
+
+OK
+
+--- Executing the 'parsing' test suite ---
+test:WARN Enhanced version of getopt found. Standard tests will be skipped.
+testGetoptStandard
+testGetoptEnhanced
+testValidBoolsShort
+testValidBoolsLong
+testValidFloats
+testInvalidFloats
+testValidIntegers
+testInvalidIntegers
+testValidStrings
+testMultipleFlags
+testSingleNonFlagArg
+testMultipleNonFlagArgs
+testMultipleNonFlagStringArgsWithSpaces
+testFlagsWithEquals
+testComplicatedCommandLineStandard
+testComplicatedCommandLineEnhanced
+
+Ran 16 tests.
+
+OK
+
+--- Executing the 'private' test suite ---
+testColumns
+testGenOptStr
+testGetFlagInfo
+testItemInList
+testValidBool
+testValidFloatBuiltin
+testValidFloatExpr
+testValidIntBuiltin
+testValidIntExpr
+testMathBuiltin
+testMathExpr
+testStrlenBuiltin
+testStrlenExpr
+
+Ran 13 tests.
+
+OK
+
+--- Executing the 'public' test suite ---
+test:WARN Enhanced version of getopt found. Standard tests will be skipped.
+testHelp
+testStandardHelpOutput
+testEnhancedHelpOutput
+testNoHelp
+
+Ran 4 tests.
+
+OK (skipped=2)
