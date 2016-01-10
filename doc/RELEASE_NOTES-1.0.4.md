@@ -3,8 +3,9 @@
 Preface
 =======
 
-Copyright 2008-2009 Kate Ward. All Rights Reserved.
+Copyright 2008-2016 Kate Ward. All Rights Reserved.
 Released under the Apache License.
+
 Author: kate.ward@forestent.com (Kate Ward)
 
 This document covers any known issues and workarounds for the stated release of
