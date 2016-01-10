@@ -2,8 +2,8 @@
 # $Id$
 # vim:et:ft=sh:sts=2:sw=2
 #
-# Copyright 2008 Kate Ward. All Rights Reserved.
-# Released under the LGPL (GNU Lesser General Public License)
+# Copyright 2008-2016 Kate Ward. All Rights Reserved.
+# Released under the Apache License.
 #
 # Author: kate.ward@forestent.com (Kate Ward)
 #
@@ -68,6 +68,8 @@ versions_osVersion()
         10.*) minor_='6' ;;
         11.*) minor_='7' ;;
         12.*) minor_='8' ;;
+        13.*) minor_='9' ;;
+        15.*) minor_='10' ;;
         *) minor_='X'; sub_='X' ;;
       esac
       os_version_="${major_}.${minor_}.${sub_}"
