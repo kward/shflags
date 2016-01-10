@@ -1,12 +1,8 @@
-# shFlags.sh 1.0.4 Release Notes
+# shFlags 1.2.0 Release Notes
+# https://github.com/kward/shflags
 
 Preface
 =======
-
-Copyright 2008-2016 Kate Ward. All Rights Reserved.
-Released under the Apache License.
-
-Author: kate.ward@forestent.com (Kate Ward)
 
 This document covers any known issues and workarounds for the stated release of
 shFlags.
@@ -21,8 +17,8 @@ Please see the `CHANGES-1.0.txt` file for a complete list of changes.
 Major changes
 -------------
 
-Changed from the LGPL v2.1 license to the Apache v2.0 license so that others can
-include the library or make changes without needing to release the modified
+Changed from the LGPL v2.1 license to the Apache v2.0 license so that others
+can include the library or make changes without needing to release the modified
 source code as well.
 
 Obsolete items

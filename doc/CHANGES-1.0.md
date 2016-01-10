@@ -4,8 +4,8 @@ Changes in shFlags
 Changes with 1.2.0
 ------------------
 
-Changed from the LGPL v2.1 license to the Apache v2.0 license so that others can
-include the library or make changes without needing to release the modified
+Changed from the LGPL v2.1 license to the Apache v2.0 license so that others
+can include the library or make changes without needing to release the modified
 source code as well.
 
 Moved documentation to Markdown.
