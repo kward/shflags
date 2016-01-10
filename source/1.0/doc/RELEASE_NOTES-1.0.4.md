@@ -1,11 +1,10 @@
-------------------------------
-shFlags.sh 1.0.4 Release Notes
-------------------------------
+# shFlags.sh 1.0.4 Release Notes
 
 Preface
 =======
+
 Copyright 2008-2009 Kate Ward. All Rights Reserved.
-Released under the LGPL (GNU Lesser General Public License)
+Released under the Apache License.
 Author: kate.ward@forestent.com (Kate Ward)
 
 This document covers any known issues and workarounds for the stated release of
@@ -16,18 +15,24 @@ Release info
 
 This is a minor bug fix release.
 
-Please see the CHANGES-1.0.txt file for a complete list of changes.
+Please see the `CHANGES-1.0.txt` file for a complete list of changes.
 
 Major changes
 -------------
 
+Changed from the LGPL v2.1 license to the Apache v2.0 license so that others can
+include the library or make changes without needing to release the modified
+source code as well.
+
 Obsolete items
 --------------
+
+None
 
 Bug fixes
 ---------
 
-Issue #10 - Changed the internal usage of the ``expn`` command to fix issues
+Issue #10 - Changed the internal usage of the `expn` command to fix issues
 under FreeBSD.
 
 General info
@@ -43,39 +48,34 @@ the tester that the supported functionality is not present, but an additional
 test is present to verify that shFlags properly caught the limitation and
 presented the user with an appropriate error message.
 
-shFlags tries to support both the standard and enhanced versions of ``getopt``.
+shFlags tries to support both the standard and enhanced versions of `getopt`.
 As each responds differently, and not everything is supported on the standard
 version, some unit tests will be skipped (i.e. ASSERTS will not be thrown) when
-the standard version of ``getopt`` is detected. The reason being that there is
+the standard version of `getopt` is detected. The reason being that there is
 no point testing for functionality that is positively known not to exist. A
 tally of skipped tests will be kept for later reference.
 
 Standard vs Enhanced getopt
 ---------------------------
 
-Here is a matrix of the supported features of the various **getopt** variants.
+Here is a matrix of the supported features of the various `getopt` variants.
 
-+=========================================+=====+=====+
 | Feature                                 | std | enh |
-+-----------------------------------------+-----+-----+
+|-----------------------------------------|-----|-----|
 | short option names                      |  Y  |  Y  |
 | long option names                       |  N  |  Y  |
 | spaces in string options                |  N  |  Y  |
 | intermixing of flag and non-flag values |  N  |  Y  |
-+=========================================+=====+=====+
 
 Known Issues
 ------------
 
-The **getopt** version provided by default with all versions of Mac OS X (up to
-and including 10.5.6) and Solaris (up to and including Solaris 10 and
+The `getopt` version provided by default with all versions of Mac OS X (up to
+and including 10.10.2) and Solaris (up to and including Solaris 10 and
 OpenSolaris) is the standard version.
 
 Workarounds
 -----------
-
-The Zsh shell requires the ``shwordsplit`` option to be set and the special
-``FLAGS_PARENT`` variable must be defined. See ``src/shflags_test_helpers`` to
+The Zsh shell requires the `shwordsplit` option to be set and the special
+`FLAGS_PARENT` variable must be defined. See `src/shflags_test_helpers` to
 see how the unit tests do this.
-
-.. vim:fileencoding=latin1:ft=rst:spell:tw=80
