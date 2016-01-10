@@ -1,5 +1,5 @@
 # shFlags 1.2.0 Release Notes
-# https://github.com/kward/shflags
+https://github.com/kward/shflags
 
 Preface
 =======
