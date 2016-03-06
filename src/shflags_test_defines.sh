@@ -71,7 +71,7 @@ testBoolean()
         "DEFINE_boolean() call with default of '${default}' failed." \
         "${FLAGS_boolVal:-}"
     assertTrue \
-        "DEFINE_boolean() call with default of '${default}' returned faliure." \
+        "DEFINE_boolean() call with default of '${default}' returned failure." \
         ${rtrn}
   done
 
@@ -84,7 +84,7 @@ testBoolean()
         "DEFINE_boolean() call with default of '${default}' failed." \
         "${FLAGS_boolVal:-}"
     assertTrue \
-        "DEFINE_boolean() call with default of '${default}' returned faliure." \
+        "DEFINE_boolean() call with default of '${default}' returned failure." \
         ${rtrn}
   done
 
@@ -105,7 +105,7 @@ testFloat()
     assertSame "DEFINE_float() call with valid default failed." \
         ${default} "${FLAGS_floatVal:-}"
     assertTrue \
-        "DEFINE_float() call with valid default of '${default}' returned faliure." \
+        "DEFINE_float() call with valid default of '${default}' returned failure." \
         ${rtrn}
   done
 
@@ -170,7 +170,7 @@ testString()
         "DEFINE_string() call with valid default failed." \
         "${default}" "${FLAGS_strVal:-}"
     assertTrue \
-        "DEFINE_string() call with valid default of '${default}' returned faliure." \
+        "DEFINE_string() call with valid default of '${default}' returned failure." \
         ${rtrn}
   done
 
