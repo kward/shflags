@@ -78,7 +78,7 @@ testItemInList()
   assertTrue 'unable to find trailing string (test)' $?
 
   _flags_itemInList 'abc' ${list}
-  assertFalse 'found nonexistant string (abc)' $?
+  assertFalse 'found nonexistent string (abc)' $?
 
   _flags_itemInList '' ${list}
   assertFalse 'empty strings should not match' $?
