@@ -94,7 +94,7 @@ for shell in ${shells}; do
 # Running the test suite with ${shell}
 #
 EOF
-  # check for existance of shell
+  # check for existence of shell
   if [ ! -x ${shell} ]; then
     th_warn "unable to run tests with the ${shell} shell"
     continue
