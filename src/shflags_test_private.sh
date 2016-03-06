@@ -68,16 +68,25 @@ testItemInList()
 {
   list='this is a test'
 
-  _flags_itemInList 'is' ${list}
+  _flags_itemInList 'this' ${list}
   assertTrue 'unable to find leading string (this)' $?
 
   _flags_itemInList 'is' ${list}
   assertTrue 'unable to find string (is)' $?
 
-  _flags_itemInList 'is' ${list}
+  _flags_itemInList 'test' ${list}
   assertTrue 'unable to find trailing string (test)' $?
 
-  _flags_itemInList 'abc' ${list}
+  _flags_itemInList 'te' ${list}
+  assertFalse 'found nonexistant string (te)' $?
+
+  _flags_itemInList 'es' ${list}
+  assertFalse 'found nonexistant string (es)' $?
+
+  _flags_itemInList 'st' ${list}
+  assertFalse 'found nonexistant string (st)' $?
+
+    _flags_itemInList 'abc' ${list}
   assertFalse 'found nonexistant string (abc)' $?
 
   _flags_itemInList '' ${list}
