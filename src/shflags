@@ -200,6 +200,7 @@ __flags_boolNames=' '  # boolean flag names
 __flags_longNames=' '  # long flag names
 __flags_shortNames=' '  # short flag names
 __flags_definedNames=' ' # defined flag names (used for validation)
+__flags_nonegateNames=' '
 
 __flags_columns=''  # screen width in columns
 __flags_opts=''  # temporary storage for parsed getopt flags
@@ -248,7 +249,8 @@ _flags_define()
   _flags_short_=${5:-${__FLAGS_NULL}}
 
   _flags_return_=${FLAGS_TRUE}
-  _flags_usName_=`_flags_underscoreName ${_flags_name_}`
+  _flags_usName_=`_flags_removeExclamationName ${_flags_name_}`
+  _flags_usName_=`_flags_underscoreName ${_flags_usName_}`
 
   # check whether the flag name is reserved
   _flags_itemInList ${_flags_usName_} "${__FLAGS_RESERVED_LIST}"
@@ -297,6 +299,8 @@ _flags_define()
             true|t|0) _flags_default_=${FLAGS_TRUE} ;;
             false|f|1) _flags_default_=${FLAGS_FALSE} ;;
           esac
+          _flags_isNegate ${_flags_name_}
+          _flags_isNegate_=$?
         else
           flags_error="invalid default flag value '${_flags_default_}'"
           _flags_return_=${FLAGS_ERROR}
@@ -341,14 +345,28 @@ _flags_define()
 
     # append flag names to name lists
     __flags_shortNames="${__flags_shortNames}${_flags_short_} "
-    __flags_longNames="${__flags_longNames}${_flags_name_} "
-    [ ${_flags_type_} -eq ${__FLAGS_TYPE_BOOLEAN} ] && \
+    __flags_longNames="${__flags_longNames}`_flags_removeExclamationName ${_flags_name_}` "
+    if [ ${_flags_type_} -eq ${__FLAGS_TYPE_BOOLEAN} \
+      -a  ${_flags_isNegate_} -eq ${FLAGS_TRUE} ]; then
         __flags_boolNames="${__flags_boolNames}no${_flags_name_} "
+    fi
 
     # append flag names to defined names for later validation checks
     __flags_definedNames="${__flags_definedNames}${_flags_usName_} "
-    [ ${_flags_type_} -eq ${__FLAGS_TYPE_BOOLEAN} ] && \
+    if [ ${_flags_type_} -eq ${__FLAGS_TYPE_BOOLEAN} ]; then
+      if [ ${_flags_isNegate_} -eq ${FLAGS_TRUE} ]; then
         __flags_definedNames="${__flags_definedNames}no${_flags_usName_} "
+      fi
+    fi
+
+    # append flag names to nonegateNames names for later validation checks
+    __flags_definedNames="${__flags_definedNames}${_flags_usName_} "
+    if [ ${_flags_type_} -eq ${__FLAGS_TYPE_BOOLEAN} ]; then
+      if [ ${_flags_isNegate_} -eq ${FLAGS_FALSE} ]; then
+        __flags_nonegateNames="${__flags_nonegateNames}`_flags_removeExclamationName ${_flags_name_}` "
+      fi
+    fi
+
   fi
 
   flags_return=${_flags_return_}
@@ -369,6 +387,33 @@ _flags_underscoreName()
   echo $1 |tr '-' '_'
 }
 
+# Strip potential exclamation mark
+#
+# Args:
+#   unnamed: string: log flag name
+# Output:
+#   string: exclamation stripped from name
+_flags_removeExclamationName()
+{
+  echo $1 |sed 's/!$//'
+}
+
+# Check if a flag ends in an exclamation mark,
+#  if it does, there will not be a negate option
+# Args:
+#   unnamed: string: flag name
+# return:
+#   boolean
+_flags_isNegate()
+{
+  case $1 in
+    *!) flags_return=${FLAGS_FALSE} ;;
+    *) flags_return=${FLAGS_TRUE} ;;
+  esac
+  return ${flags_return}
+}
+
+
 # Return valid getopt options using currently defined list of long options.
 #
 # This function builds a proper getopt option string for short (and long)
@@ -387,7 +432,8 @@ _flags_genOptStr()
   _flags_opts_=''
 
   for _flags_name_ in ${__flags_longNames}; do
-    _flags_usName_=`_flags_underscoreName ${_flags_name_}`
+    _flags_usName_=`_flags_removeExclamationName ${_flags_name_}`
+    _flags_usName_=`_flags_underscoreName ${_flags_usName_}`
     _flags_type_=`_flags_getFlagInfo ${_flags_usName_} ${__FLAGS_INFO_TYPE}`
     [ $? -eq ${FLAGS_TRUE} ] || _flags_fatal 'call to _flags_type_ failed'
     case ${_flags_optStrType_} in
@@ -403,7 +449,7 @@ _flags_genOptStr()
         ;;
 
       ${__FLAGS_OPTSTR_LONG})
-        _flags_opts_="${_flags_opts_:+${_flags_opts_},}${_flags_name_}"
+        _flags_opts_="${_flags_opts_:+${_flags_opts_},}`_flags_removeExclamationName ${_flags_name_}`"
         # getopt needs a trailing ':' to indicate a required argument
         [ ${_flags_type_} -ne ${__FLAGS_TYPE_BOOLEAN} ] && \
             _flags_opts_="${_flags_opts_}:"
@@ -771,7 +817,8 @@ _flags_parseGetopt()
     fi
 
     # set new flag value
-    _flags_usName_=`_flags_underscoreName ${_flags_name_}`
+    _flags_usName_=`_flags_removeExclamationName ${_flags_name_}`
+    _flags_usName_=`_flags_underscoreName ${_flags_usName_}`
     [ ${_flags_type_} -eq ${__FLAGS_TYPE_NONE} ] && \
         _flags_type_=`_flags_getFlagInfo \
             "${_flags_usName_}" ${__FLAGS_INFO_TYPE}`
@@ -944,7 +991,7 @@ FLAGS()
 {
   # define a standard 'help' flag if one isn't already defined
   [ -z "${__flags_help_type:-}" ] && \
-      DEFINE_boolean 'help' false 'show this help' 'h'
+      DEFINE_boolean 'help!' false 'show this help' 'h'
 
   # parse options
   if [ $# -gt 0 ]; then
@@ -1066,9 +1113,12 @@ flags_help()
         [ "${flags_short_}" != "${__FLAGS_NULL}" ] && \
             flags_flagStr_="${flags_flagStr_},"
         # add [no] to long boolean flag names, except the 'help' flag
-        [ ${flags_type_} -eq ${__FLAGS_TYPE_BOOLEAN} \
-          -a "${flags_usName_}" != 'help' ] && \
-            flags_boolStr_='[no]'
+        if [ ${flags_type_} -eq ${__FLAGS_TYPE_BOOLEAN} ]; then
+          _flags_itemInList "${flags_name_}" ${__flags_nonegateNames}
+           if [ $? -eq ${FLAGS_FALSE} ]; then
+              flags_boolStr_='[no]'
+           fi
+        fi
         flags_flagStr_="${flags_flagStr_}--${flags_boolStr_}${flags_name_}:"
       fi
 
@@ -1131,7 +1181,8 @@ flags_help()
 flags_reset()
 {
   for flags_name_ in ${__flags_longNames}; do
-    flags_usName_=`_flags_underscoreName ${flags_name_}`
+    flags_usName_=`_flags_removeExclamationName ${flags_name_}`
+    flags_usName_=`_flags_underscoreName ${flags_usName_}`
     flags_strToEval_="unset FLAGS_${flags_usName_}"
     for flags_type_ in \
         ${__FLAGS_INFO_DEFAULT} \
