@@ -395,7 +395,18 @@ _flags_underscoreName()
 #   string: exclamation stripped from name
 _flags_removeExclamationName()
 {
-  echo $1 |sed 's/!$//'
+  _flags_opt_=$1
+  if _flags_isNegate "${_flags_opt_}"; then
+    echo ${_flags_opt_}
+  else
+      if _flags_useBuiltin; then
+        echo ${_flags_opt_%!*}
+      else
+        echo ${_flags_opt_}|sed 's/!$//'
+      fi
+  fi
+  unset _flags_opt_
+  return ${FLAGS_TRUE}
 }
 
 # Check if a flag ends in an exclamation mark,
@@ -960,7 +971,7 @@ _flags_useBuiltin()
 
 #------------------------------------------------------------------------------
 # public functions
-# 
+#
 # A basic boolean flag. Boolean flags do not take any arguments, and their
 # value is either 1 (false) or 0 (true). For long flags, the false value is
 # specified on the command line by prepending the word 'no'. With short flags,
