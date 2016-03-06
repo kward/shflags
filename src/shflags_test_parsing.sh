@@ -244,7 +244,7 @@ _testMultipleFlags()
       ${strFlag} 'some_string' \
       >"${stdoutF}" 2>"${stderrF}"
   r3turn=$?
-  assertTrue "use of multple flags returned a non-zero result" ${r3turn}
+  assertTrue "use of multiple flags returned a non-zero result" ${r3turn}
   assertTrue 'boolean test failed.' ${FLAGS_bool}
   assertNotSame 'float test failed.' 0 ${FLAGS_float}
   assertNotSame 'integer test failed.' 0 ${FLAGS_int}
