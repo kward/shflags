@@ -479,14 +479,20 @@ _flags_itemInList() {
   _flags_str_=$1
   shift
 
-  echo " ${*:-} " |grep " ${_flags_str_} " >/dev/null
+  if _flags_useBuiltin; then
+    _flags_params_=" ${*:-} "
+    test "${_flags_params_#*" ${_flags_str_} "}" != "${_flags_params_}"
+  else
+    echo " ${*:-} " |grep " ${_flags_str_} " >/dev/null
+  fi
+
   if [ $? -eq 0 ]; then
     flags_return=${FLAGS_TRUE}
   else
     flags_return=${FLAGS_FALSE}
   fi
 
-  unset _flags_str_
+  unset _flags_str_ _flags_params_
   return ${flags_return}
 }
 
