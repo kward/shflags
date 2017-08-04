@@ -15,18 +15,18 @@
 # a name, default value, help-string, and optional 'short' name (one-letter
 # name).  Some flags have other arguments, which are described with the flag.
 #
-# DEFINE_string: takes any input, and intreprets it as a string.
+# DEFINE_string: takes any input, and interprets it as a string.
 #
 # DEFINE_boolean: does not take any arguments. Say --myflag to set
 #   FLAGS_myflag to true, or --nomyflag to set FLAGS_myflag to false. For short
 #   flags, passing the flag on the command-line negates the default value, i.e.
 #   if the default is true, passing the flag sets the value to false.
 #
-# DEFINE_float: takes an input and intreprets it as a floating point number. As
+# DEFINE_float: takes an input and interprets it as a floating point number. As
 #   shell does not support floats per-se, the input is merely validated as
 #   being a valid floating point value.
 #
-# DEFINE_integer: takes an input and intreprets it as an integer.
+# DEFINE_integer: takes an input and interprets it as an integer.
 #
 # SPECIAL FLAGS: There are a few flags that have special meaning:
 #   --help (or -?)  prints a list of all the flags in a human-readable fashion
@@ -830,7 +830,7 @@ _flags_parseGetopt()
       fi
     fi
 
-    # shift the option and non-boolean arguements out.
+    # shift the option and non-boolean arguments out.
     shift
     [ ${_flags_type_} != ${__FLAGS_TYPE_BOOLEAN} ] && shift
   done
@@ -913,7 +913,7 @@ _flags_useBuiltin()
 
 #------------------------------------------------------------------------------
 # public functions
-# 
+#
 # A basic boolean flag. Boolean flags do not take any arguments, and their
 # value is either 1 (false) or 0 (true). For long flags, the false value is
 # specified on the command line by prepending the word 'no'. With short flags,
