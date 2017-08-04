@@ -11,7 +11,6 @@
 #
 
 testHelp() {
-  flags_setLoggingLevel ${FLAGS_LEVEL_DEBUG}
   _testHelp '-h'
   flags_getoptIsEnh || return
   _testHelp '--help'
