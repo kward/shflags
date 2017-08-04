@@ -1,13 +1,13 @@
 #! /bin/sh
 # vim:et:ft=sh:sts=2:sw=2
 #
-# shFlags unit test for the public functions
+# shFlags unit test for the public functions.
 
 # load test helpers
 . ./shflags_test_helpers
 
 #------------------------------------------------------------------------------
-# suite tests
+# Suite tests.
 #
 
 testHelp()
@@ -155,26 +155,36 @@ testNoHelp()
   assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
 }
 
+testLoggingLevel() {
+  # Check that the default logging level is set properly.
+  got=$(flags_loggingLevel) want=${__FLAGS_LEVEL_DEFAULT}
+  assertTrue "Unexpected default logging level = ${got}, want ${want}" "[ ${got} -eq ${want} ]"
+
+  # Override the logging level, and check again.
+  flags_setLoggingLevel ${FLAGS_LEVEL_FATAL}
+  flags_setLoggingLevel ${FLAGS_LEVEL_INFO}
+  got=$(flags_loggingLevel) want=${FLAGS_LEVEL_INFO}
+  assertTrue "Unexpected configured logging level = ${got}, want ${want}" "[ ${got} -eq ${want} ]"
+}
+
 #------------------------------------------------------------------------------
-# suite functions
+# Suite functions.
 #
 
-oneTimeSetUp()
-{
+oneTimeSetUp() {
   th_oneTimeSetUp
 
   if flags_getoptIsStd; then
     th_warn 'Standard version of getopt found. Enhanced tests will be skipped.'
-  else
-    th_warn 'Enhanced version of getopt found. Standard tests will be skipped.'
+    return
   fi
+  th_warn 'Enhanced version of getopt found. Standard tests will be skipped.'
 }
 
-setUp()
-{
+setUp() {
   flags_reset
 }
 
-# load and run shUnit2
+# Load and run shUnit2.
 [ -n "${ZSH_VERSION:-}" ] && SHUNIT_PARENT=$0
 . ${TH_SHUNIT}

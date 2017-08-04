@@ -14,7 +14,7 @@
 #
 # FLAG TYPES: This is a list of the DEFINE_*'s that you can do.  All flags take
 # a name, default value, help-string, and optional 'short' name (one-letter
-# name).  Some flags have other arguments, which are described with the flag.
+# name). Some flags have other arguments, which are described with the flag.
 #
 # DEFINE_string: takes any input, and interprets it as a string.
 #
@@ -91,7 +91,15 @@ FLAGS_TRUE=0
 FLAGS_FALSE=1
 FLAGS_ERROR=2
 
-# determine some reasonable command defaults
+# Logging levels.
+FLAGS_LEVEL_DEBUG=0
+FLAGS_LEVEL_INFO=1
+FLAGS_LEVEL_WARN=2
+FLAGS_LEVEL_ERROR=3
+FLAGS_LEVEL_FATAL=4
+__FLAGS_LEVEL_DEFAULT=${FLAGS_LEVEL_WARN}
+
+# Determine some reasonable command defaults.
 __FLAGS_UNAME_S=`uname -s`
 case "${__FLAGS_UNAME_S}" in
   BSD) __FLAGS_EXPR_CMD='gexpr' ;;
@@ -121,6 +129,7 @@ if [ $? -eq ${FLAGS_TRUE} ]; then
 else
   __FLAGS_USE_BUILTIN=${FLAGS_FALSE}
 fi
+
 
 #
 # constants
@@ -193,27 +202,64 @@ done
 unset __flags_const __flags_constants
 
 #
-# internal variables
+# Internal variables.
 #
 
-# space separated lists
-__flags_boolNames=' '  # boolean flag names
-__flags_longNames=' '  # long flag names
-__flags_shortNames=' '  # short flag names
-__flags_definedNames=' ' # defined flag names (used for validation)
+# Space separated lists.
+__flags_boolNames=' '     # Boolean flag names.
+__flags_longNames=' '     # Long flag names.
+__flags_shortNames=' '    # Short flag names.
+__flags_definedNames=' '  # Defined flag names (used for validation).
 
-__flags_columns=''  # screen width in columns
-__flags_opts=''  # temporary storage for parsed getopt flags
+__flags_columns=''  # Screen width in columns.
+__flags_level=0     # Default logging level.
+__flags_opts=''     # Temporary storage for parsed getopt flags.
 
 #------------------------------------------------------------------------------
-# private functions
+# Private functions.
 #
 
-# logging functions
-_flags_debug() { echo "flags:DEBUG $@" >&2; }
-_flags_warn() { echo "flags:WARN $@" >&2; }
-_flags_error() { echo "flags:ERROR $@" >&2; }
-_flags_fatal() { echo "flags:FATAL $@" >&2; exit ${FLAGS_ERROR}; }
+# Logging functions.
+_flags_debug() {
+  [ ${__flags_level} -le ${FLAGS_LEVEL_DEBUG} ] || return
+  echo "flags:DEBUG $@" >&2
+}
+_flags_info() {
+  [ ${__flags_level} -le ${FLAGS_LEVEL_INFO} ] || return
+  echo "flags:INFO $@" >&2
+}
+_flags_warn() {
+  [ ${__flags_level} -le ${FLAGS_LEVEL_WARN} ] || return
+  echo "flags:WARN $@" >&2
+}
+_flags_error() {
+  [ ${__flags_level} -le ${FLAGS_LEVEL_ERROR} ] || return
+  echo "flags:ERROR $@" >&2
+}
+_flags_fatal() {
+  [ ${__flags_level} -le ${FLAGS_LEVEL_FATAL} ] || return
+  echo "flags:FATAL $@" >&2
+  exit ${FLAGS_ERROR}
+}
+
+# Get the logging level.
+flags_loggingLevel() { echo ${__flags_level}; }
+
+# Set the logging level.
+#
+# Args:
+#   _flags_level_: integer: new logging level
+# Returns:
+#   nothing
+flags_setLoggingLevel() {
+  [ $# -ne 1 ] && _flags_fatal "flags_setLevel(): logging level missing"
+  _flags_level_=$1
+  [ ${_flags_level_} -ge ${FLAGS_LEVEL_DEBUG} \
+    -a ${_flags_level_} -le ${FLAGS_LEVEL_FATAL} ] \
+      || _flags_fatal "Invalid logging level '${_flags_level_}' specified."
+  __flags_level=$1
+  unset _flags_level_
+}
 
 # Define a flag.
 #
@@ -226,11 +272,11 @@ _flags_fatal() { echo "flags:FATAL $@" >&2; exit ${FLAGS_ERROR}; }
 #   __flags_flagname_type - the type of flag (one of __FLAGS_TYPE_*)
 #
 # Args:
-#   _flags__type: integer: internal type of flag (__FLAGS_TYPE_*)
-#   _flags__name: string: long flag name
-#   _flags__default: default flag value
-#   _flags__help: string: help string
-#   _flags__short: string: (optional) short flag name
+#   _flags_type_: integer: internal type of flag (__FLAGS_TYPE_*)
+#   _flags_name_: string: long flag name
+#   _flags_default_: default flag value
+#   _flags_help_: string: help string
+#   _flags_short_: string: (optional) short flag name
 # Returns:
 #   integer: success of operation, or error
 _flags_define()
@@ -247,6 +293,10 @@ _flags_define()
   _flags_default_=$3
   _flags_help_=$4
   _flags_short_=${5:-${__FLAGS_NULL}}
+
+  _flags_debug "type:${_flags_type_} name:${_flags_name_}" \
+      "default:'${_flags_default_}' help:'${_flags_help_}'" \
+      "short:${_flags_short_}"
 
   _flags_return_=${FLAGS_TRUE}
   _flags_usName_=`_flags_underscoreName ${_flags_name_}`
@@ -332,7 +382,7 @@ _flags_define()
   fi
 
   if [ ${_flags_return_} -eq ${FLAGS_TRUE} ]; then
-    # store flag information
+    # Store flag information.
     eval "FLAGS_${_flags_usName_}='${_flags_default_}'"
     eval "__flags_${_flags_usName_}_${__FLAGS_INFO_TYPE}=${_flags_type_}"
     eval "__flags_${_flags_usName_}_${__FLAGS_INFO_DEFAULT}=\
@@ -437,7 +487,7 @@ _flags_getFlagInfo()
   _flags_infoVar_="__flags_${_flags_gFI_usName_}_${_flags_gFI_info_}"
   _flags_strToEval_="_flags_infoValue_=\"\${${_flags_infoVar_}:-}\""
   eval "${_flags_strToEval_}"
-  if [ -n "${_flags_infoValue_}" ]; then
+  if [ -n "${_flags_infoValue_+x}" ]; then
     flags_return=${FLAGS_TRUE}
   else
     # see if the _flags_gFI_usName_ variable is a string as strings can be
@@ -1146,11 +1196,21 @@ flags_reset()
     eval ${flags_strToEval_}
   done
 
-  # reset internal variables
+  # Reset internal variables.
   __flags_boolNames=' '
   __flags_longNames=' '
   __flags_shortNames=' '
   __flags_definedNames=' '
 
+  # Reset logging level back to default.
+  flags_setLoggingLevel ${__FLAGS_LEVEL_DEFAULT}
+
   unset flags_name_ flags_type_ flags_strToEval_ flags_usName_
 }
+
+#
+# Initialization
+#
+
+# Set the default logging level.
+flags_setLoggingLevel ${__FLAGS_LEVEL_DEFAULT}
