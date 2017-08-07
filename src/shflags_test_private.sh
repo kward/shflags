@@ -64,24 +64,20 @@ testGetFlagInfo()
   assertErrorMsg 'missing flag info variable'
 }
 
-testItemInList()
-{
+testItemInList() {
   list='this is a test'
 
-  _flags_itemInList 'is' ${list}
-  assertTrue 'unable to find leading string (this)' $?
-
-  _flags_itemInList 'is' ${list}
-  assertTrue 'unable to find string (is)' $?
-
-  _flags_itemInList 'is' ${list}
-  assertTrue 'unable to find trailing string (test)' $?
-
-  _flags_itemInList 'abc' ${list}
-  assertFalse 'found nonexistent string (abc)' $?
-
-  _flags_itemInList '' ${list}
-  assertFalse 'empty strings should not match' $?
+  while read desc item want; do
+    _flags_itemInList "${item}" ${list}
+    got=$?
+    assertEquals "${desc}: itemInList(${item})" ${got} ${want}
+  done <<EOF
+lead_item     this  ${FLAGS_TRUE}
+middle_item   is    ${FLAGS_TRUE}
+last_item     test  ${FLAGS_TRUE}
+missing_item  asdf  ${FLAGS_FALSE}
+empty_item    ''    ${FLAGS_FALSE}
+EOF
 
   _flags_itemInList 'blah' ''
   assertFalse 'empty lists should not match' $?
