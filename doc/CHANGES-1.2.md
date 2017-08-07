@@ -1,6 +1,69 @@
 Changes in shFlags
 ==================
 
+Changes with 1.2.1
+------------------
+
+Fixed issue #28. DEFINE_boolean misbehaves when help-string is empty.
+
+Fixed issue #25. Fix some typos.
+
+
+Changes with 1.2.0
+------------------
+
+Changed from the LGPL v2.1 license to the Apache v2.0 license so that others
+can include the library or make changes without needing to release the modified
+source code as well.
+
+Moved documentation to Markdown.
+
+Migrated the code to GitHub as code.google.com is turning down.
+
+Fixed issue #10. Usage of `expr` under FreeBSD 7.2 (FreeNAS 0.7.1) and FreeBSD
+8.0 that was causing many unit tests to fail.
+
+Fixed issue where booleans were sometimes mis-configured to require additional
+values like other flags.
+
+Changed `_flags_fatal()` to exit with `FLAGS_ERROR` immediately.
+
+Fixed issue #11. When help is requested, the help flag is no longer prefixed
+with '[no]'.
+
+Upgraded shUnit2 to 2.1.6.
+
+Fixed issue #12. Requesting help shouldn't be considered an error.
+
+Added the ability to override the use of the OS default `getopt` command by
+defining the `FLAGS_GETOPT_CMD` variable.
+
+Updated `gen_test_results.sh` and versions from shUnit2 source.
+
+Fixed issues# 13, 14. Added support for dashes ('-') in long flag names. The
+defined flag will still be declared with underscores ('_') due to shell
+limitations, so only one of a dashed flag name or an underscored flag name are
+allowed, not both.
+
+Issue #20. Updated LGPL v2.1 license from
+http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt.
+
+Issue #15. Use `gexpr` instead of `expr` on BSD variants.
+
+Minor tweaks to make run on FreeBSD 9.1.
+
+Fixed issue in `shflags_test_public.sh` where screens >80 columns were causing a
+test to fail.
+
+Issue #22. Fixed broken testGetFlagInfo() test.
+
+Created alternate `validFloat()` and `validInt()` functions that use shell
+built-ins where possible to increase performance and reduce the usage of the
+`expr` command.
+
+Added separate built-in and `expr` functions for doing math.
+
+
 Changes with 1.0.3
 ------------------
 
