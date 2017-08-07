@@ -25,6 +25,8 @@ BASE_DIR=`shlib_relToAbsPath "${BASE_DIR}"`
 BIN_DIR="${BASE_DIR}/bin"
 SRC_DIR="${BASE_DIR}/src"
 
+__GEN_TEST_RESULTS_BACKUP_EXT='~'
+
 os_name=`versions_osName |sed 's/ /_/g'`
 os_version=`versions_osVersion`
 
@@ -33,9 +35,10 @@ os_version=`versions_osVersion`
 
 # Define flags.
 DEFINE_boolean force false 'force overwrite' f
+DEFINE_boolean backup false 'backup old output file' b
 DEFINE_string output_dir "`pwd`" 'output dir' d
 DEFINE_string output_file "${os_name}-${os_version}.txt" 'output file' o
-DEFINE_boolean dry_run false "supress logging to a file" n
+DEFINE_boolean dry_run false "suppress logging to a file" n
 
 main() {
   # Determine output filename.
@@ -45,15 +48,19 @@ main() {
   # Checks.
   [ -n "${FLAGS_suite:-}" ] || die 'suite flag missing'
 
-  if [ ${FLAGS_dry_run} -eq ${FLAGS_FALSE} -a -f "${output}" ]; then
-    if [ ${FLAGS_force} -eq ${FLAGS_TRUE} ]; then
+  if [ ${FLAGS_dry_run} -eq ${FLAGS_FALSE} ]; then
+    if [ -f "${output}" -a ${FLAGS_backup} -eq ${FLAGS_TRUE} ]; then
+      old="${output}" new="${output}${__GEN_TEST_RESULTS_BACKUP_EXT}"
+      echo "backing up '${old}' to '${new}'"
+      mv "${old}" "${new}"
+    fi
+    if [ -f "${output}" -a ${FLAGS_force} -eq ${FLAGS_TRUE} ]; then
       rm -f "${output}"
-    else
+    fi
+    if [ -f "${output}" ]; then
       echo "not overwriting '${output}'" >&2
       exit ${FLAGS_ERROR}
     fi
-  fi
-  if [ ${FLAGS_dry_run} -eq ${FLAGS_FALSE} ]; then
     touch "${output}" 2>/dev/null || die "unable to write to '${output}'"
   fi
 
