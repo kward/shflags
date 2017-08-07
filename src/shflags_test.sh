@@ -16,18 +16,17 @@ for test in ${PREFIX}[a-z]*.sh; do
   TESTS="${TESTS} ${test}"
 done
 
-# load libraries
+# Load libraries.
 . ../lib/versions
 . ./shflags_test_helpers
 
-usage()
-{
+usage() {
   echo "usage: ${MY_NAME} [-e key=val ...] [-s shell(s)] [-t test(s)]"
 }
 
 env=''
 
-# process command line flags
+# Process command line flags.
 while getopts 'e:hs:t:' opt; do
   case ${opt} in
     e)  # set an environment variable
@@ -49,11 +48,11 @@ while getopts 'e:hs:t:' opt; do
 done
 shift `expr ${OPTIND} - 1`
 
-# fill shells and/or tests
+# Fill shells and/or tests.
 shells=${shells:-${SHELLS}}
 tests=${tests:-${TESTS}}
 
-# error checking
+# Error checking.
 if [ -z "${tests}" ]; then
   th_error 'no tests found to run; exiting'
   exit 1
@@ -73,18 +72,12 @@ for key in ${env}; do
 done
 echo
 
-# output system data
-echo "# system info"
-echo "$ date"
-date
-
+# Output system data.
+echo "# System info."
 echo "$ uname -mprsv"
 uname -mprsv
 
-#
-# run tests
-#
-
+# Run tests.
 for shell in ${shells}; do
   echo
 
@@ -94,7 +87,7 @@ for shell in ${shells}; do
 # Running the test suite with ${shell}
 #
 EOF
-  # check for existence of shell
+  # Check for existence of shell.
   if [ ! -x ${shell} ]; then
     th_warn "unable to run tests with the ${shell} shell"
     continue
@@ -106,7 +99,7 @@ EOF
   echo "shell name: ${shell_name}"
   echo "shell version: ${shell_version}"
 
-  # execute the tests
+  # Execute the tests.
   for suite in ${tests}; do
     suiteName=`expr "${suite}" : "${PREFIX}\(.*\).sh"`
     echo
