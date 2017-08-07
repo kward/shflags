@@ -24,17 +24,29 @@ UNAME_S=`uname -s`
 
 __versions_haveStrings=${ERROR}
 
-#------------------------------------------------------------------------------
-# functions
-#
-
-versions_osName()
-{
+versions_osName() {
   os_name_='unrecognized'
   os_system_=${UNAME_S}
+  os_release_=${UNAME_R}
   case ${os_system_} in
     CYGWIN_NT-*) os_name_='Cygwin' ;;
-    Darwin) os_name_='Mac OS X' ;;
+    Darwin)
+      os_name_=`/usr/bin/sw_vers -productName`
+      os_version_=`versions_osVersion`
+      case ${os_version_} in
+        10.4|10.4.[0-9]*) os_name_='Mac OS X Tiger' ;;
+        10.5|10.5.[0-9]*) os_name_='Mac OS X Leopard' ;;
+        10.6|10.6.[0-9]*) os_name_='Mac OS X Snow Leopard' ;;
+        10.7|10.7.[0-9]*) os_name_='Mac OS X Lion' ;;
+        10.8|10.8.[0-9]*) os_name_='Mac OS X Mountain Lion' ;;
+        10.9|10.9.[0-9]*) os_name_='Mac OS X Mavericks' ;;
+        10.10|10.10.[0-9]*) os_name_='Mac OS X Yousemite' ;;
+        10.11|10.11.[0-9]*) os_name_='Mac OS X El Capitan' ;;
+        10.12|10.12.[0-9]*) os_name_='macOS Sierra' ;;
+        10.13|10.13.[0-9]*) os_name_='macOS High Sierra' ;;
+        *) os_name_='macOS' ;;
+      esac
+      ;;
     FreeBSD) os_name_='FreeBSD' ;;
     Linux) os_name_='Linux' ;;
     SunOS)
@@ -47,11 +59,10 @@ versions_osName()
   esac
 
   echo ${os_name_}
-  unset os_name_ os_system_
+  unset os_name_ os_system_ os_release_ os_version_
 }
 
-versions_osVersion()
-{
+versions_osVersion() {
   os_version_='unrecognized'
   os_system_=${UNAME_S}
   os_release_=${UNAME_R}
@@ -60,19 +71,7 @@ versions_osVersion()
       os_version_=`expr "${os_release_}" : '\([0-9]*\.[0-9]\.[0-9]*\).*'`
       ;;
     Darwin)
-      major_='10'
-      sub_=`echo ${os_release_} |sed 's/^[0-9]*\.\([0-9]*\)\.[0-9]*$/\1/'`
-      case ${os_release_} in
-        8.*) minor_='4' ;;
-        9.*) minor_='5' ;;
-        10.*) minor_='6' ;;
-        11.*) minor_='7' ;;
-        12.*) minor_='8' ;;
-        13.*) minor_='9' ;;
-        15.*) minor_='10' ;;
-        *) minor_='X'; sub_='X' ;;
-      esac
-      os_version_="${major_}.${minor_}.${sub_}"
+      os_version_=`/usr/bin/sw_vers -productVersion`
       ;;
     FreeBSD)
       os_version_=`expr "${os_release_}" : '\([0-9]*\.[0-9]*\)-.*'`
@@ -100,11 +99,10 @@ versions_osVersion()
   esac
 
   echo ${os_version_}
-  unset os_name_ os_release_ os_version_ major_ minor_ sub_
+  unset os_name_ os_release_ os_version_ major_ minor_
 }
 
-versions_shellVersion()
-{
+versions_shellVersion() {
   shell_=$1
 
   if [ ! -x "${shell_}" ]; then
@@ -140,21 +138,18 @@ versions_shellVersion()
   unset shell_ version_
 }
 
-versions_shell_bash()
-{
+versions_shell_bash() {
   $1 --version 2>&1 |grep 'GNU bash' |sed 's/.*version \([^ ]*\).*/\1/'
 }
 
-versions_shell_dash()
-{
+versions_shell_dash() {
   eval dpkg >/dev/null 2>&1
   [ $? -eq 127 ] && return  # return if dpkg not found
 
   dpkg -l |grep ' dash ' |awk '{print $3}'
 }
 
-versions_shell_ksh()
-{
+versions_shell_ksh() {
   versions_shell_=$1
 
   # try a few different ways to figure out the version
@@ -181,16 +176,14 @@ versions_shell_ksh()
   unset versions_shell_ versions_version_
 }
 
-versions_shell_pdksh()
-{
+versions_shell_pdksh() {
   _versions_have_strings
   strings $1 2>&1 \
   |grep 'PD KSH' \
   |sed -e 's/.*PD KSH \(.*\)/\1/;s/ /-/g'
 }
 
-versions_shell_zsh()
-{
+versions_shell_zsh() {
   versions_shell_=$1
 
   # try a few different ways to figure out the version
@@ -205,8 +198,7 @@ versions_shell_zsh()
 }
 
 # Determine if the 'strings' binary installed.
-_versions_have_strings()
-{
+_versions_have_strings() {
   [ ${__versions_haveStrings} -ne ${ERROR} ] && return
   eval strings /dev/null >/dev/null 2>&1
   if [ $? -eq 0 ]; then
@@ -217,13 +209,8 @@ _versions_have_strings()
   fi
 }
 
-#------------------------------------------------------------------------------
-# main
-#
-
-versions_main()
-{
-  # treat unset variables as an error
+versions_main() {
+  # Treat unset variables as an error.
   set -u
 
   os_name=`versions_osName`
