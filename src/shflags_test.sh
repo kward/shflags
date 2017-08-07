@@ -60,22 +60,22 @@ fi
 
 cat <<EOF
 #------------------------------------------------------------------------------
-# System data
+# System data.
 #
 
-# test run info
-shells="${shells}"
-tests="${tests}"
+$ uname -mprsv
+`uname -mprsv`
+
+OS Name: `versions_osName`
+OS Version: `versions_osVersion`
+
+### Test run info.
+shells: ${shells}
+tests: ${tests}
 EOF
 for key in ${env}; do
   eval "echo \"${key}=\$${key}\""
 done
-echo
-
-# Output system data.
-echo "# System info."
-echo "$ uname -mprsv"
-uname -mprsv
 
 # Run tests.
 for shell in ${shells}; do
@@ -84,7 +84,7 @@ for shell in ${shells}; do
   cat <<EOF
 
 #------------------------------------------------------------------------------
-# Running the test suite with ${shell}
+# Running the test suite with ${shell}.
 #
 EOF
   # Check for existence of shell.
@@ -103,7 +103,7 @@ EOF
   for suite in ${tests}; do
     suiteName=`expr "${suite}" : "${PREFIX}\(.*\).sh"`
     echo
-    echo "--- Executing the '${suiteName}' test suite ---"
+    echo "--- Executing the '${suiteName}' test suite. ---"
     ( exec ${shell} ./${suite} 2>&1; )
   done
 done
