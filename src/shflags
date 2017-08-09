@@ -957,10 +957,7 @@ _flags_strlen()
 #   None
 # Returns:
 #   bool: true if built-ins should be used
-_flags_useBuiltin()
-{
-  return ${__FLAGS_USE_BUILTIN}
-}
+_flags_useBuiltin() { return ${__FLAGS_USE_BUILTIN}; }
 
 #------------------------------------------------------------------------------
 # public functions
