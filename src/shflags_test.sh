@@ -10,7 +10,7 @@ MY_NAME=`basename $0`
 MY_PATH=`dirname $0`
 
 PREFIX='shflags_test_'
-SHELLS='/bin/sh /bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/zsh'
+SHELLS='/bin/sh ash /bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/zsh'
 TESTS=''
 for test in ${PREFIX}[a-z]*.sh; do
   TESTS="${TESTS} ${test}"
@@ -87,13 +87,28 @@ for shell in ${shells}; do
 # Running the test suite with ${shell}.
 #
 EOF
+
   # Check for existence of shell.
-  if [ ! -x ${shell} ]; then
-    th_warn "unable to run tests with the ${shell} shell"
+  shell_bin=${shell}
+  shell_name=''
+  shell_present=${FALSE}
+  case ${shell} in
+    ash)
+      shell_bin=`which busybox`
+      [ $? -eq ${TRUE} ] && shell_present=${TRUE}
+      shell_bin="${shell_bin} ash"
+      shell_name=${shell}
+      ;;
+    *)
+      [ -x "${shell_bin}" ] && shell_present=${TRUE}
+      shell_name=`basename ${shell}`
+      ;;
+  esac
+  if [ ${shell_present} -eq ${FALSE} ]; then
+    th_warn "unable to run tests with the ${shell_name} shell"
     continue
   fi
 
-  shell_name=`basename ${shell}`
   shell_version=`versions_shellVersion "${shell}"`
 
   echo "shell name: ${shell_name}"
@@ -104,6 +119,6 @@ EOF
     suiteName=`expr "${suite}" : "${PREFIX}\(.*\).sh"`
     echo
     echo "--- Executing the '${suiteName}' test suite. ---"
-    ( exec ${shell} ./${suite} 2>&1; )
+    ( exec ${shell_bin} ./${suite} 2>&1; )
   done
 done
