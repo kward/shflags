@@ -13,7 +13,7 @@
 
 ARGV0=`basename "$0"`
 LSB_RELEASE='/etc/lsb-release'
-VERSIONS_SHELLS="/bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/sh /bin/zsh"
+VERSIONS_SHELLS="ash /bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/sh /bin/zsh"
 
 TRUE=0
 FALSE=1
@@ -105,9 +105,18 @@ versions_osVersion() {
 versions_shellVersion() {
   shell_=$1
 
-  if [ ! -x "${shell_}" ]; then
+  shell_present_=${FALSE}
+  case "${shell_}" in
+    ash)
+      [ -x '/bin/busybox' ] && shell_present_=${TRUE}
+      ;;
+    *)
+      [ -x "${shell_}" ] && shell_present_=${TRUE}
+      ;;
+  esac
+  if [ ${shell_present_} -eq ${FALSE} ]; then
     echo 'not installed'
-    return
+    return ${FALSE}
   fi
 
   version_=''
@@ -121,6 +130,7 @@ versions_shellVersion() {
       ## pdksh is covered in versions_shell_ksh()
       #[ -z "${version_}" ] && version_=`versions_shell_zsh ${shell_}`
       ;;
+    ash) version_=`versions_shell_ash ${shell_}` ;;
     */bash) version_=`versions_shell_bash ${shell_}` ;;
     */dash)
       # simply assuming Ubuntu Linux until somebody comes up with a better
@@ -136,6 +146,11 @@ versions_shellVersion() {
 
   echo ${version_:-unknown}
   unset shell_ version_
+}
+
+# The ash shell is included in BusyBox.
+versions_shell_ash() {
+  busybox --help |head -1 |sed 's/BusyBox v\([0-9.]*\) .*/\1/'
 }
 
 versions_shell_bash() {
