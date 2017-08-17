@@ -530,12 +530,10 @@ _flags_itemInList() {
   _flags_str_=$1
   shift
 
-  echo " ${*:-} " |grep " ${_flags_str_} " >/dev/null
-  if [ $? -eq 0 ]; then
-    flags_return=${FLAGS_TRUE}
-  else
-    flags_return=${FLAGS_FALSE}
-  fi
+  case " ${*:-} " in
+    *\ ${_flags_str_}\ *) flags_return=${FLAGS_TRUE} ;;
+    *) flags_return=${FLAGS_FALSE} ;;
+  esac
 
   unset _flags_str_
   return ${flags_return}
