@@ -4,6 +4,12 @@ Changes in shFlags
 Changes with 1.2.1
 ------------------
 
+Fixed issue #43. Added support for BusyBox ash shell.
+
+Fixed issues #26, #27. Re-factored `_flags_itemInList()` to use built-ins.
+
+Fixed issue #31. Documented newline support in FLAGS_HELP.
+
 Fixed issue #28. DEFINE_boolean misbehaves when help-string is empty.
 
 Fixed issue #25. Fix some typos.
@@ -18,7 +24,7 @@ source code as well.
 
 Moved documentation to Markdown.
 
-Migrated the code to GitHub as code.google.com is turning down.
+Migrated the code to GitHub as http://code.google.com/ is turning down.
 
 Fixed issue #10. Usage of `expr` under FreeBSD 7.2 (FreeNAS 0.7.1) and FreeBSD
 8.0 that was causing many unit tests to fail.
