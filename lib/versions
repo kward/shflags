@@ -9,7 +9,7 @@
 #
 # This library provides reusable functions that determine actual names and
 # versions of installed shells and the OS. The library can also be run as a
-# script if set execuatable.
+# script if set executable.
 
 ARGV0=`basename "$0"`
 LSB_RELEASE='/etc/lsb-release'
