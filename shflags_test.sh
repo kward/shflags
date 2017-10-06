@@ -17,7 +17,7 @@ for test in ${PREFIX}[a-z]*.sh; do
 done
 
 # Load libraries.
-. ../lib/versions
+. lib/versions
 . ./shflags_test_helpers
 
 usage() {

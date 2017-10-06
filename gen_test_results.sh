@@ -3,6 +3,12 @@
 #
 # This script runs the provided unit tests and sends the output to the
 # appropriate file.
+#
+# Copyright 2016-2017 Kate Ward. All Rights Reserved.
+# Released under the Apache 2.0 license.
+#
+# Author: kate.ward@forestent.com (Kate Ward)
+# https://github.com/kward/shflags
 
 # Treat unset variables as an error.
 set -u
@@ -12,7 +18,7 @@ die() {
   exit 1
 }
 
-BASE_DIR="`dirname $0`/.."
+BASE_DIR="`dirname $0`"
 LIB_DIR="${BASE_DIR}/lib"
 
 # Load libraries.
@@ -22,7 +28,6 @@ LIB_DIR="${BASE_DIR}/lib"
 
 # Redefining BASE_DIR now that we have the shlib functions.
 BASE_DIR=`shlib_relToAbsPath "${BASE_DIR}"`
-BIN_DIR="${BASE_DIR}/bin"
 SRC_DIR="${BASE_DIR}/src"
 
 __GEN_TEST_RESULTS_BACKUP_EXT='~'
@@ -31,12 +36,12 @@ os_name=`versions_osName |sed 's/ /_/g'`
 os_version=`versions_osVersion`
 
 # Load external flags.
-. ${BIN_DIR}/gen_test_results.flags
+. ${BASE_DIR}/gen_test_results.flags
 
 # Define flags.
 DEFINE_boolean force false 'force overwrite' f
 DEFINE_boolean backup false 'backup old output file' b
-DEFINE_string output_dir "`pwd`" 'output dir' d
+DEFINE_string output_dir "${TMPDIR}" 'output dir' d
 DEFINE_string output_file "${os_name}-${os_version}.txt" 'output file' o
 DEFINE_boolean dry_run false "suppress logging to a file" n
 

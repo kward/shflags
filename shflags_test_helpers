@@ -16,8 +16,8 @@ TH_MY_NAME=`basename "$0"`
 # path to shFlags library. can be overridden by setting SHFLAGS_INC
 TH_SHFLAGS=${SHFLAGS_INC:-./shflags}
 
-# path to shUnit2 library. can be overridden by setting SHUNIT_INC
-TH_SHUNIT=${SHUNIT_INC:-../lib/shunit2}
+# Path to shUnit2 library. Can be overridden by setting SHUNIT_INC.
+export TH_SHUNIT=${SHUNIT_INC:-lib/shunit2}
 
 TH_BOOL_VALID='true t 0 false f 1'
 TH_BOOL_INVALID='123 123.0 invalid'
