@@ -74,7 +74,7 @@ testStandardHelpOutput() {
   cat >"${expectedF}" <<EOF
 ${help}
 flags:
-  -f   (default: false)
+  -f  (default: false)
   -h  show this help (default: false)
 EOF
   (
@@ -83,7 +83,7 @@ EOF
     FLAGS -h >"${stdoutF}" 2>"${stderrF}"
   )
   r3turn=$?
-  assertTrue 'a call for help should not return an error' ${r3turn}
+  assertTrue "FLAGS -h return: want ${FLAGS_TRUE}, got ${r3turn}" ${r3turn}
 
   diff "${expectedF}" "${stderrF}" >/dev/null
   r3turn=$?
@@ -100,7 +100,7 @@ testEnhancedHelpOutput() {
   cat >"${expectedF}" <<EOF
 ${help}
 flags:
-  -f,--[no]force:   (default: false)
+  -f,--[no]force:  (default: false)
   -h,--help:  show this help (default: false)
 EOF
   (

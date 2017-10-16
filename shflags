@@ -299,7 +299,7 @@ _flags_define()
   _flags_type_=$1
   _flags_name_=$2
   _flags_default_=$3
-  _flags_help_=$4
+  _flags_help_=${4:-§}  # Special value '§' indicates no help string provided.
   _flags_short_=${5:-${__FLAGS_NULL}}
 
   _flags_debug "type:${_flags_type_} name:${_flags_name_}" \
@@ -492,10 +492,16 @@ _flags_getFlagInfo()
   _flags_gFI_usName_=$1
   _flags_gFI_info_=$2
 
+  # Example: given argument usName (underscored flag name) of 'my_flag', and
+  # argument info of 'help', set the _flags_infoValue_ variable to the value of
+  # ${__flags_my_flag_help}, and see if it is non-empty.
   _flags_infoVar_="__flags_${_flags_gFI_usName_}_${_flags_gFI_info_}"
   _flags_strToEval_="_flags_infoValue_=\"\${${_flags_infoVar_}:-}\""
   eval "${_flags_strToEval_}"
-  if [ -n "${_flags_infoValue_+x}" ]; then
+  if [ -n "${_flags_infoValue_}" ]; then
+    # Special value '§' indicates no help string provided.
+    [ "${_flags_gFI_info_}" = ${__FLAGS_INFO_HELP} \
+        -a "${_flags_infoValue_}" = '§' ] && _flags_infoValue_=''
     flags_return=${FLAGS_TRUE}
   else
     # see if the _flags_gFI_usName_ variable is a string as strings can be
@@ -506,6 +512,9 @@ _flags_getFlagInfo()
     # Because it doesn't (it will evaluate to an empty string) the logic will
     # try to find the _type variable of the _type variable, and so on. Not so
     # good ;-)
+    #
+    # Example cont.: set the _flags_typeValue_ variable to the value of
+    # ${__flags_my_flag_type}, and see if it equals '4'.
     _flags_typeVar_="__flags_${_flags_gFI_usName_}_${__FLAGS_INFO_TYPE}"
     _flags_strToEval_="_flags_typeValue_=\"\${${_flags_typeVar_}:-}\""
     eval "${_flags_strToEval_}"
@@ -881,7 +890,7 @@ _flags_parseGetopt()
       if [ ${FLAGS_help} -eq ${FLAGS_TRUE} ]; then
         flags_help
         flags_error='help requested'
-        flags_return=${FLAGS_FALSE}
+        flags_return=${FLAGS_TRUE}
         break
       fi
     fi
@@ -1138,7 +1147,7 @@ flags_help()
       esac
       flags_defaultStr_="(default: ${flags_defaultStr_})"
 
-      flags_helpStr_="  ${flags_flagStr_}  ${flags_help_} ${flags_defaultStr_}"
+      flags_helpStr_="  ${flags_flagStr_}  ${flags_help_:+${flags_help_} }${flags_defaultStr_}"
       _flags_strlen "${flags_helpStr_}" >/dev/null
       flags_helpStrLen_=${flags_output}
       flags_columns_=`_flags_columns`
