@@ -8,3 +8,5 @@ possible to work across a wide array of Unix variants. It is also tested with
 
 If you'd like to use shFlags, feel free to read the documentation.
 https://github.com/kward/shflags/wiki/Documentation12x
+
+[![Travis CI](https://travis-ci.org/kward/shflags.png?branch=master)](https://travis-ci.org/kward/shflags)
