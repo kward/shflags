@@ -489,9 +489,8 @@ _flags_genOptStr()
 #   string: value of dereferenced flag variable
 # Returns:
 #   integer: one of FLAGS_{TRUE|FALSE|ERROR}
-_flags_getFlagInfo()
-{
-  # note: adding gFI to variable names to prevent naming conflicts with calling
+_flags_getFlagInfo() {
+  # Note: adding gFI to variable names to prevent naming conflicts with calling
   # functions
   _flags_gFI_usName_=$1
   _flags_gFI_info_=$2
@@ -502,9 +501,9 @@ _flags_getFlagInfo()
   if [ -n "${_flags_infoValue_+x}" ]; then
     flags_return=${FLAGS_TRUE}
   else
-    # see if the _flags_gFI_usName_ variable is a string as strings can be
+    # See if the _flags_gFI_usName_ variable is a string as strings can be
     # empty...
-    # note: the DRY principle would say to have this function call itself for
+    # Note: the DRY principle would say to have this function call itself for
     # the next three lines, but doing so results in an infinite loop as an
     # invalid _flags_name_ will also not have the associated _type variable.
     # Because it doesn't (it will evaluate to an empty string) the logic will
@@ -996,13 +995,12 @@ DEFINE_string()  { _flags_define ${__FLAGS_TYPE_STRING} "$@"; }
 #   unnamed: list: command-line flags to parse
 # Returns:
 #   integer: success of operation, or error
-FLAGS()
-{
-  # define a standard 'help' flag if one isn't already defined
+FLAGS() {
+  # Define a standard 'help' flag if one isn't already defined.
   [ -z "${__flags_help_type:-}" ] && \
       DEFINE_boolean 'help' false 'show this help' 'h'
 
-  # parse options
+  # Parse options.
   if [ $# -gt 0 ]; then
     if [ ${__FLAGS_GETOPT_VERS} -ne ${__FLAGS_GETOPT_VERS_ENH} ]; then
       _flags_getoptStandard "$@"
@@ -1011,7 +1009,7 @@ FLAGS()
     fi
     flags_return=$?
   else
-    # nothing passed; won't bother running getopt
+    # Nothing passed; won't bother running getopt.
     __flags_opts='--'
     flags_return=${FLAGS_TRUE}
   fi
