@@ -23,5 +23,4 @@ matrix:
       script:
         # Run the source through ShellCheck (http://www.shellcheck.net).
         - shellcheck gen_test_report.sh *_test.sh
-        #- shellcheck shflags
-        - shellcheck -s sh shflags_test_helpers
+        - shellcheck -s sh shflags shflags_test_helpers

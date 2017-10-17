@@ -1,8 +1,17 @@
-Changes in shFlags
-==================
+# Changes in shFlags
 
-Changes with 1.2.1
-------------------
+## Changes with 1.2.2
+
+Ran all scripts through [ShellCheck](http://www.shellcheck.net/).
+
+Replaced shflags_test.sh with test_runner from https://github.com/kward/shlib.
+
+Fixed issue #45. Empty help string causes `shflags_test_issue_28.sh` to fail.
+
+Restructured code to be more GitHub like.
+
+
+## Changes with 1.2.1
 
 Fixed issue #43. Added support for BusyBox ash shell.
 
@@ -15,8 +24,7 @@ Fixed issue #28. DEFINE_boolean misbehaves when help-string is empty.
 Fixed issue #25. Fix some typos.
 
 
-Changes with 1.2.0
-------------------
+## Changes with 1.2.0
 
 Changed from the LGPL v2.1 license to the Apache v2.0 license so that others
 can include the library or make changes without needing to release the modified
@@ -46,10 +54,11 @@ defining the `FLAGS_GETOPT_CMD` variable.
 
 Updated `gen_test_results.sh` and versions from shUnit2 source.
 
-Fixed issues# 13, 14. Added support for dashes ('-') in long flag names. The
-defined flag will still be declared with underscores ('_') due to shell
+Fixed issues# 13, 14. Added support for dashes '-' in long flag names. The
+defined flag will still be declared with underscores '\_' due to shell
 limitations, so only one of a dashed flag name or an underscored flag name are
 allowed, not both.
+(Backslash on \_ to prevent Markdown formatting.)
 
 Issue #20. Updated LGPL v2.1 license from
 http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt.
@@ -70,8 +79,7 @@ built-ins where possible to increase performance and reduce the usage of the
 Added separate built-in and `expr` functions for doing math.
 
 
-Changes with 1.0.3
-------------------
+## Changes with 1.0.3
 
 MAJOR CHANGE! `FLAGS_ARGC` is now obsolete, and is replaced by
 `FLAGS_ARGV`. See below for more info.
@@ -82,7 +90,8 @@ available because the value returned by `FLAGS_ARGC` was wrong. The
 `FLAGS_ARGC` value is now obsolete, but will be maintained for backwards
 compatibility. The new method of getting the non-flag arguments is by executing
 `eval set -- "${FLAGS_ARGV}"` after the `FLAGS` call. The arguments will
-then be available using the standard shell $#, $@, $*, $1, etc. variables.
+then be available using the standard shell $#, $@, $\*, $1, etc. variables.
+(Backslash on \* to prevent Markdown formatting.)
 
 Due to above fix for issue# 7, there is now proper support for mixing flags
 with non-flag arguments on the command-line. Previously, all non-flag arguments
@@ -112,11 +121,10 @@ Added the OS version to OS release for Solaris.
 Fixed `flags_reset()` so it unsets the default value environment vars.
 
 
-Changes with 1.0.2
-------------------
+## Changes with 1.0.2
 
-FLAGS_PARENT no longer transforms into a constant so that it can be defined at
-run time in scripts.
+${FLAGS_PARENT} no longer transforms into a constant so that it can be defined
+at run time in scripts.
 
 Added warning about short flags being unsupported when there are problems
 parsing the options with `getopt`.
@@ -144,8 +152,7 @@ Issue# 2: Passing the `--nohelp` option no longer gives help output.
 Issue# 3: Added support for screen width detection.
 
 
-Changes with 1.0.1
-------------------
+## Changes with 1.0.1
 
 Fixed bug where the help output added '[no]' to all flag names
 
@@ -163,7 +170,6 @@ library cannot be used until functions are called from the main code. This
 required the 'help' flag definition to be moved inside the FLAGS command.
 
 
-Changes with 1.0.0
-------------------
+## Changes with 1.0.0
 
 This is the first official release, so everything is new.
