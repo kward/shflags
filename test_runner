@@ -1,28 +1,29 @@
 #! /bin/sh
 # vim:et:ft=sh:sts=2:sw=2
 #
-# shFlags unit test suite runner.
+# Unit test suite runner.
+#
+# Copyright 2008-2017 Kate Ward. All Rights Reserved.
+# Released under the Apache 2.0 license.
+#
+# Author: kate.ward@forestent.com (Kate Ward)
+# https://github.com/kward/shunit2
 #
 # This script runs all the unit tests that can be found, and generates a nice
 # report of the tests.
 
-MY_NAME=`basename $0`
-MY_PATH=`dirname $0`
+BASENAME=`basename "$0"`
+SHELLS="${SHELLS:-/bin/sh ash /bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/zsh}"
+TESTS=`echo *_test.sh`
 
-PREFIX='shflags_test_'
-SHELLS='/bin/sh ash /bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/zsh'
-TESTS=''
-for test in ${PREFIX}[a-z]*.sh; do
-  TESTS="${TESTS} ${test}"
-done
-
-# Load libraries.
-. lib/versions
-. ./shflags_test_helpers
+die() { [ $# -gt 0 ] && echo $@ >&2; exit 1; }
 
 usage() {
-  echo "usage: ${MY_NAME} [-e key=val ...] [-s shell(s)] [-t test(s)]"
+  echo "usage: ${BASENAME} [-e key=val ...] [-s shell(s)] [-t test(s)]"
 }
+
+# Load libraries.
+. ${LIB_DIR:-lib}/versions || die 'Unable to load versions library.'
 
 env=''
 
@@ -116,7 +117,7 @@ EOF
 
   # Execute the tests.
   for suite in ${tests}; do
-    suiteName=`expr "${suite}" : "${PREFIX}\(.*\).sh"`
+    suiteName=`expr "${suite}" : "${TESTS_PREFIX}\(.*\).sh"`
     echo
     echo "--- Executing the '${suiteName}' test suite. ---"
     ( exec ${shell_bin} ./${suite} 2>&1; )
