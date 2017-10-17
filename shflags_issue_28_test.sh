@@ -2,13 +2,25 @@
 # vim:et:ft=sh:sts=2:sw=2
 #
 # shFlags unit test for https://github.com/kward/shflags/issues/28.
+#
+# Copyright 2008-2017 Kate Ward. All Rights Reserved.
+# Released under the Apache 2.0 license.
+#
+# Author: kate.ward@forestent.com (Kate Ward)
+# https://github.com/kward/shflags
+#
+### ShellCheck (http://www.shellcheck.net/)
+# Disable source following.
+#   shellcheck disable=SC1090,SC1091
+
+# These variables will be overridden by the test helpers.
+expectedF="${TMPDIR:-/tmp}/expected"
+returnF="${TMPDIR:-/tmp}/return"
+stdoutF="${TMPDIR:-/tmp}/STDOUT"
+stderrF="${TMPDIR:-/tmp}/STDERR"
 
 # Load test helpers.
 . ./shflags_test_helpers
-
-#------------------------------------------------------------------------------
-# Suite tests.
-#
 
 testHelp() {
   _testHelp '-h'
@@ -19,42 +31,43 @@ testHelp() {
 _testHelp() {
   flag=$1
 
-  # test default help output
+  # Test default help output.
   th_clearReturn
   (
-    FLAGS ${flag} >"${stdoutF}" 2>"${stderrF}"
+    FLAGS "${flag}" >"${stdoutF}" 2>"${stderrF}"
     echo $? >"${returnF}"
   )
   th_queryReturn
+  # shellcheck disable=SC2154
   assertTrue \
       'short help request should have returned a true exit code.' \
-      ${th_return}
+      "${th_return}"
   grep 'show this help' "${stderrF}" >/dev/null
   grepped=$?
   assertTrue \
       'short request for help should have produced some help output.' \
       ${grepped}
-  [ ${grepped} -ne ${FLAGS_TRUE} ] && th_showOutput
+  [ ${grepped} -ne "${FLAGS_TRUE}" ] && th_showOutput
 
-  # test proper output when FLAGS_HELP set
+  # Test proper output when FLAGS_HELP set.
   (
     FLAGS_HELP='this is a test'
-    FLAGS ${flag} >"${stdoutF}" 2>"${stderrF}"
+    FLAGS "${flag}" >"${stdoutF}" 2>"${stderrF}"
   )
   grep 'this is a test' "${stderrF}" >/dev/null
   grepped=$?
   assertTrue 'setting FLAGS_HELP did not produce expected result' ${grepped}
-  [ ${grepped} -ne ${FLAGS_TRUE} ] && th_showOutput
+  [ ${grepped} -ne "${FLAGS_TRUE}" ] && th_showOutput
 
   # test that "'" chars work in help string
   (
     DEFINE_boolean b false "help string containing a ' char" b
-    FLAGS ${flag} >"${stdoutF}" 2>"${stderrF}"
+    FLAGS "${flag}" >"${stdoutF}" 2>"${stderrF}"
   )
   grep "help string containing a ' char" "${stderrF}" >/dev/null
   grepped=$?
   assertTrue "help strings containing apostrophes don't work" ${grepped}
-  [ ${grepped} -ne ${FLAGS_TRUE} ] && th_showOutput
+  [ ${grepped} -ne "${FLAGS_TRUE}" ] && th_showOutput
 }
 
 mock_flags_columns() {
@@ -105,6 +118,7 @@ flags:
 EOF
   (
     _flags_columns() { mock_flags_columns; }
+    # shellcheck disable=SC2034
     FLAGS_HELP=${help};
     FLAGS -h >"${stdoutF}" 2>"${stderrF}"
   )
@@ -116,10 +130,6 @@ EOF
   assertTrue 'unexpected help output' ${differed}
   th_showOutput ${differed} "${stdoutF}" "${stderrF}"
 }
-
-#------------------------------------------------------------------------------
-# Suite functions.
-#
 
 oneTimeSetUp() {
   th_oneTimeSetUp
@@ -136,5 +146,6 @@ setUp() {
 }
 
 # Load and run shUnit2.
+# shellcheck disable=SC2034
 [ -n "${ZSH_VERSION:-}" ] && SHUNIT_PARENT=$0
-. ${TH_SHUNIT}
+. "${TH_SHUNIT}"
