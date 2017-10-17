@@ -4,8 +4,8 @@ env:
   - SHUNIT_COLOR='always'
 
 script:
-  # Run shFlags unit tests.
-  - ./shflags_test.sh
+  # Execute the unit tests.
+  - ./test_runner
 
 os:
   - linux
