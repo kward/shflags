@@ -22,6 +22,6 @@ matrix:
     - os: linux
       script:
         # Run the source through ShellCheck (http://www.shellcheck.net).
-        - shellcheck gen_test_report.sh shflags_defines_test.sh shflags_issue_28_test.sh shflags_parsing_test.sh
+        - shellcheck gen_test_report.sh shflags_defines_test.sh shflags_issue_28_test.sh shflags_parsing_test.sh shflags_public_test.sh
         #- shellcheck shflags *_test.sh
         #- shellcheck -s sh shflags_test_helpers
