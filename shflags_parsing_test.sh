@@ -145,8 +145,7 @@ _testInvalidFloats()
       FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
       echo $? >"${returnF}"
     )
-    th_queryReturn
-    assertFalse "FLAGS (${value}) returned a zero result" ${th_return}
+    assertFalse "FLAGS (${value}) returned a zero result" "$(th_queryReturn)"
     assertFalse 'expected no output to STDOUT' "[ -s '${stdoutF}' ]"
     assertTrue 'expected output to STDERR' "[ -s '${stderrF}' ]"
   done
@@ -188,8 +187,7 @@ _testInvalidIntegers()
       FLAGS ${flag} ${value} >"${stdoutF}" 2>"${stderrF}"
       echo $? >"${returnF}"
     )
-    th_queryReturn
-    assertFalse "invalid integer (${value}) test returned success." ${th_return}
+    assertFalse "invalid integer (${value}) test returned success." "$(th_queryReturn)"
     assertFalse 'expected no output to STDOUT' "[ -s '${stdoutF}' ]"
     assertTrue 'expected output to STDERR' "[ -s '${stderrF}' ]"
   done

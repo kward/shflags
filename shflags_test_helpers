@@ -80,13 +80,13 @@ th_showOutput()
 # when a non-zero return value is encountered. To properly catch these values,
 # they are either written to disk, or recognized as an error the file is empty.
 th_clearReturn() { cp /dev/null "${returnF}"; }
-th_queryReturn()
-{
+th_queryReturn() {
   if [ -s "${returnF}" ]; then
-    th_return=`cat "${returnF}"`
-  else
-    th_return=${SHUNIT_ERROR}
+    cat "${returnF}"
+    return $?
   fi
+  echo ${SHUNIT_ERROR}
+  return ${SHUNIT_ERROR}
 }
 
 _th_assertMsg()

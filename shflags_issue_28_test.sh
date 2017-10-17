@@ -37,11 +37,9 @@ _testHelp() {
     FLAGS "${flag}" >"${stdoutF}" 2>"${stderrF}"
     echo $? >"${returnF}"
   )
-  th_queryReturn
-  # shellcheck disable=SC2154
   assertTrue \
       'short help request should have returned a true exit code.' \
-      "${th_return}"
+      "$(th_queryReturn)"
   grep 'show this help' "${stderrF}" >/dev/null
   grepped=$?
   assertTrue \
