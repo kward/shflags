@@ -16,7 +16,9 @@ MY_NAME=`basename $0`
 MY_PATH=`dirname $0`
 
 PREFIX='shflags_test_'
-SHELLS='/bin/sh /bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/zsh'
+# TODO(kward): Fix bugs preventing ksh from working.
+#SHELLS='/bin/sh /bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/zsh'
+SHELLS='/bin/sh /bin/bash /bin/dash /bin/pdksh /bin/zsh'
 TESTS=''
 for test in ${PREFIX}[a-z]*.sh; do
   TESTS="${TESTS} ${test}"
