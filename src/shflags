@@ -508,10 +508,10 @@ _flags_validateFloat()
     flags_return=${FLAGS_TRUE}
     case ${_flags_float_} in
       -*)  # negative floats
-        _flags_test_=`expr "${_flags_float_}" : '\(-[0-9][0-9]*\.[0-9][0-9]*\)'`
+        _flags_test_=`expr "${_flags_float_}" : '\(-[0-9]*\.[0-9]*\)'`
         ;;
       *)  # positive floats
-        _flags_test_=`expr "${_flags_float_}" : '\([0-9][0-9]*\.[0-9][0-9]*\)'`
+        _flags_test_=`expr "${_flags_float_}" : '\([0-9]*\.[0-9]*\)'`
         ;;
     esac
     [ "${_flags_test_}" != "${_flags_float_}" ] && flags_return=${FLAGS_FALSE}
