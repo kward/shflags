@@ -81,7 +81,7 @@ flags:
   -b  test boolean (default: false)
   -i  test integer (default: 0)
   -s  test string (default: '')
-  -D  testing of a long description to force wrap of default value (default: 'blah')
+  -D  testing of a long description to force wrap of default value(default: 'blah')
   -F  testing of long default value
       (default: 'this_is_a_long_default_value_to_force_alternate_indentation')
   -h  show this help (default: false)
@@ -110,14 +110,18 @@ testEnhancedHelpOutput()
   cat >"${expectedF}" <<EOF
 ${help}
 flags:
-  -b,--[no]test_bool:  test boolean (default: false)
-  -i,--test_int:  test integer (default: 0)
-  -s,--test_str:  test string (default: '')
+  -b,--[no]test_bool:  test boolean
+    (default: false)
+  -i,--test_int:  test integer
+    (default: 0)
+  -s,--test_str:  test string
+    (default: '')
   -D,--long_desc:  testing of a long description to force wrap of default value
-                   (default: 'blah')
+    (default: 'blah')
   -F,--long_default:  testing of long default value
     (default: 'this_is_a_long_default_value_to_force_alternate_indentation')
-  -h,--[no]help:  show this help (default: false)
+  -h,--[no]help:  show this help
+    (default: false)
 EOF
   ( FLAGS_HELP=${help}; FLAGS -h >"${stdoutF}" 2>"${stderrF}" )
   diff "${expectedF}" "${stderrF}" >/dev/null
