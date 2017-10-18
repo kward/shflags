@@ -1,4 +1,3 @@
-# $Id$
 # vim:et:ft=sh:sts=2:sw=2
 #
 # Copyright 2008 Kate Ward. All Rights Reserved.
@@ -46,15 +45,14 @@ th_fatal() { echo "test:FATAL $@" >&2; }
 
 th_oneTimeSetUp()
 {
-  # load shFlags
+  # Load shFlags.
   [ -n "${ZSH_VERSION:-}" ] && FLAGS_PARENT=$0
   . ${TH_SHFLAGS}
 
-  # these files will be cleaned up automatically by shUnit2
-  tmpDir=${shunit_tmpDir}
-  stdoutF="${tmpDir}/stdout"
-  stderrF="${tmpDir}/stderr"
-  expectedF="${tmpDir}/expected"
+  # These files will be cleaned up automatically by shUnit2.
+  stdoutF="${SHUNIT_TMPDIR}/stdout"
+  stderrF="${SHUNIT_TMPDIR}/stderr"
+  expectedF="${SHUNIT_TMPDIR}/expected"
 }
 
 th_showOutput()
