@@ -1,0 +1,18 @@
+language: bash
+
+env:
+  - SHUNIT_COLOR='always'
+
+script:
+  # Execute the unit tests.
+  - cd src && ./shflags_test.sh
+
+os:
+  - linux
+  - osx
+
+addons:
+  apt:
+    packages:
+      #- ksh
+      - zsh
