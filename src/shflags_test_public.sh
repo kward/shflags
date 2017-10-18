@@ -81,8 +81,7 @@ flags:
   -b  test boolean (default: false)
   -i  test integer (default: 0)
   -s  test string (default: '')
-  -D  testing of a long description to force wrap of default value
-      (default: 'blah')
+  -D  testing of a long description to force wrap of default value (default: 'blah')
   -F  testing of long default value
       (default: 'this_is_a_long_default_value_to_force_alternate_indentation')
   -h  show this help (default: false)
