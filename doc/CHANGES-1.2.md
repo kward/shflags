@@ -4,16 +4,20 @@
 
 Ran all scripts through [ShellCheck](http://www.shellcheck.net/).
 
-Replaced shflags_test.sh with test_runner from https://github.com/kward/shlib.
+Replaced `shflags_test.sh` with `test_runner` from
+https://github.com/kward/shlib.
 
 Fixed issue #45. Empty help string causes `shflags_test_issue_28.sh` to fail.
+
+Continuous integration testing setup with
+[Travis CI](https://travis-ci.org/kward/shflags).
 
 Restructured code to be more GitHub like.
 
 
 ## Changes with 1.2.1
 
-Fixed issue #43. Added support for BusyBox ash shell.
+Fixed issue #43. Added support for BusyBox `ash` shell.
 
 Fixed issues #26, #27. Re-factored `_flags_itemInList()` to use built-ins.
 
