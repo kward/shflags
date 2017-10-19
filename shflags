@@ -561,24 +561,23 @@ _flags_itemInList() {
 #
 # Output:
 #   integer: width in columns of the current screen.
-_flags_columns()
-{
+_flags_columns() {
   if [ -z "${__flags_columns}" ]; then
-    # Determine the value and store it.
     if eval stty size >/dev/null 2>&1; then
       # stty size worked :-)
       # shellcheck disable=SC2046
       set -- `stty size`
-      __flags_columns=$2
-    elif eval tput cols >/dev/null 2>&1; then
-      # shellcheck disable=SC2046
-      set -- `tput cols`
-      __flags_columns=$1
-    else
-      __flags_columns=80  # Default terminal width.
+      __flags_columns="${2:-}"
     fi
   fi
-  echo ${__flags_columns}
+  if [ -z "${__flags_columns}" ]; then
+   if eval tput cols >/dev/null 2>&1; then
+      # shellcheck disable=SC2046
+      set -- `tput cols`
+      __flags_columns="${1:-}"
+    fi
+  fi
+  echo "${__flags_columns:-80}"
 }
 
 # Validate a boolean.

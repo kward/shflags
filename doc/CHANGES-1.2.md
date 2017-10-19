@@ -1,5 +1,12 @@
 # Changes in shFlags
 
+## Changes with 1.2.3
+
+Fixed bug in `_flags_columns()` where `stty size` sometimes gave unexpected output, causing the function to not work.
+
+Replaced `test_runner` with upstream from https://github.com/kward/shlib.
+
+
 ## Changes with 1.2.2
 
 Ran all scripts through [ShellCheck](http://www.shellcheck.net/).
