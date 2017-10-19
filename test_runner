@@ -140,6 +140,8 @@ EOF
     suiteName=$(expr "${suite}" : "${TESTS_PREFIX}\(.*\).sh")
     echo
     echo "--- Executing the '${suiteName}' test suite. ---"
-    ( exec "${shell_bin}" "./${suite}" 2>&1; )
+    # ${shell_bin} needs word splitting.
+    #   shellcheck disable=SC2086
+    ( exec ${shell_bin} "./${suite}" 2>&1; )
   done
 done
