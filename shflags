@@ -82,6 +82,7 @@
 # Notes:
 # - lists of strings are space separated, and a null value is the '~' char.
 #
+### ShellCheck (http://www.shellcheck.net/)
 # $() are not fully portable (POSIX != portable).
 #   shellcheck disable=SC2006
 # [ p -a q ] are well defined enough (vs [ p ] && [ q ]).
@@ -89,7 +90,7 @@
 
 # Return if FLAGS already loaded.
 [ -n "${FLAGS_VERSION:-}" ] && return 0
-FLAGS_VERSION='1.2.2'
+FLAGS_VERSION='1.2.2pre'
 
 # Return values that scripts can use.
 FLAGS_TRUE=0
@@ -311,23 +312,23 @@ _flags_define() {
   _flags_return_=${FLAGS_TRUE}
   _flags_usName_="`_flags_underscoreName "${_flags_name_}"`"
 
-  # check whether the flag name is reserved
+  # Check whether the flag name is reserved.
   _flags_itemInList "${_flags_usName_}" "${__FLAGS_RESERVED_LIST}"
   if [ $? -eq ${FLAGS_TRUE} ]; then
     flags_error="flag name (${_flags_name_}) is reserved"
     _flags_return_=${FLAGS_ERROR}
   fi
 
-  # require short option for getopt that don't support long options
+  # Require short option for getopt that don't support long options.
   if [ ${_flags_return_} -eq ${FLAGS_TRUE} \
-      -a ${__FLAGS_GETOPT_VERS} -ne ${__FLAGS_GETOPT_VERS_ENH} \
+      -a "${__FLAGS_GETOPT_VERS}" -ne "${__FLAGS_GETOPT_VERS_ENH}" \
       -a "${_flags_short_}" = "${__FLAGS_NULL}" ]
   then
     flags_error="short flag required for (${_flags_name_}) on this platform"
     _flags_return_=${FLAGS_ERROR}
   fi
 
-  # check for existing long name definition
+  # Check for existing long name definition.
   if [ ${_flags_return_} -eq ${FLAGS_TRUE} ]; then
     if _flags_itemInList "${_flags_usName_}" "${__flags_definedNames}"; then
       flags_error="definition for ([no]${_flags_name_}) already exists"
@@ -336,7 +337,7 @@ _flags_define() {
     fi
   fi
 
-  # check for existing short name definition
+  # Check for existing short name definition.
   if [ ${_flags_return_} -eq ${FLAGS_TRUE} \
       -a "${_flags_short_}" != "${__FLAGS_NULL}" ]
   then
@@ -347,8 +348,8 @@ _flags_define() {
     fi
   fi
 
-  # handle default value. note, on several occasions the 'if' portion of an
-  # if/then/else contains just a ':' which does nothing. a binary reversal via
+  # Handle default value. Note, on several occasions the 'if' portion of an
+  # if/then/else contains just a ':' which does nothing. A binary reversal via
   # '!' is not done because it does not work on all shells.
   if [ ${_flags_return_} -eq ${FLAGS_TRUE} ]; then
     case ${_flags_type_} in
@@ -382,7 +383,7 @@ _flags_define() {
         fi
         ;;
 
-      ${__FLAGS_TYPE_STRING}) ;;  # everything in shell is a valid string
+      ${__FLAGS_TYPE_STRING}) ;;  # Everything in shell is a valid string.
 
       *)
         flags_error="unrecognized flag type '${_flags_type_}'"
@@ -406,7 +407,7 @@ _flags_define() {
     [ "${_flags_type_}" -eq "${__FLAGS_TYPE_BOOLEAN}" ] && \
         __flags_boolNames="${__flags_boolNames}no${_flags_name_} "
 
-    # append flag names to defined names for later validation checks
+    # Append flag names to defined names for later validation checks.
     __flags_definedNames="${__flags_definedNames}${_flags_usName_} "
     [ "${_flags_type_}" -eq "${__FLAGS_TYPE_BOOLEAN}" ] && \
         __flags_definedNames="${__flags_definedNames}no${_flags_usName_} "
@@ -455,7 +456,7 @@ _flags_genOptStr() {
             "${_flags_usName_}" "${__FLAGS_INFO_SHORT}"`"
         if [ "${_flags_shortName_}" != "${__FLAGS_NULL}" ]; then
           _flags_opts_="${_flags_opts_}${_flags_shortName_}"
-          # getopt needs a trailing ':' to indicate a required argument
+          # getopt needs a trailing ':' to indicate a required argument.
           [ "${_flags_type_}" -ne "${__FLAGS_TYPE_BOOLEAN}" ] && \
               _flags_opts_="${_flags_opts_}:"
         fi
@@ -623,11 +624,11 @@ _flags_validFloat() {
   else
     flags_return=${FLAGS_TRUE}
     case ${_flags_float_} in
-      -*)  # negative floats
+      -*)  # Negative floats.
         _flags_test_=`${FLAGS_EXPR_CMD} "${_flags_float_}" :\
             '\(-[0-9]*\.[0-9]*\)'`
         ;;
-      *)  # positive floats
+      *)  # Positive floats.
         _flags_test_=`${FLAGS_EXPR_CMD} "${_flags_float_}" :\
             '\([0-9]*\.[0-9]*\)'`
         ;;
@@ -652,8 +653,8 @@ _flags_validInt() {
   _flags_int_=$1
 
   case ${_flags_int_} in
-    -*.*) ;;  # ignore negative floats (we'll invalidate them later)
-    -*)  # strip possible leading negative sign
+    -*.*) ;;  # Ignore negative floats (we'll invalidate them later).
+    -*)  # Strip possible leading negative sign.
       if _flags_useBuiltin; then
         _flags_int_=${_flags_int_#-}
       else
@@ -684,9 +685,9 @@ _flags_getoptStandard() {
   flags_return=${FLAGS_TRUE}
   _flags_shortOpts_=`_flags_genOptStr ${__FLAGS_OPTSTR_SHORT}`
 
-  # check for spaces in passed options
+  # Check for spaces in passed options.
   for _flags_opt_ in "$@"; do
-    # note: the silliness with the x's is purely for ksh93 on Ubuntu 6.06
+    # Note: the silliness with the x's is purely for ksh93 on Ubuntu 6.06.
     _flags_match_=`echo "x${_flags_opt_}x" |sed 's/ //g'`
     if [ "${_flags_match_}" != "x${_flags_opt_}x" ]; then
       flags_error='the available getopt does not support spaces in options'
@@ -757,12 +758,12 @@ _flags_parseGetopt() {
 
   flags_return=${FLAGS_TRUE}
 
-  if [ ${__FLAGS_GETOPT_VERS} -ne ${__FLAGS_GETOPT_VERS_ENH} ]; then
+  if [ "${__FLAGS_GETOPT_VERS}" -ne "${__FLAGS_GETOPT_VERS_ENH}" ]; then
     # The @$ must be unquoted as it needs to be re-split.
     #   shellcheck disable=SC2068
     set -- $@
   else
-    # note the quotes around the `$@' -- they are essential!
+    # Note the quotes around the `$@' -- they are essential!
     eval set -- "$@"
   fi
 
@@ -781,11 +782,11 @@ _flags_parseGetopt() {
     _flags_type_=${__FLAGS_TYPE_NONE}
     _flags_name_=''
 
-    # determine long flag name
+    # Determine long flag name.
     case "${_flags_opt_}" in
-      --) shift; break ;;  # discontinue option parsing
+      --) shift; break ;;  # Discontinue option parsing.
 
-      --*)  # long option
+      --*)  # Long option.
         if _flags_useBuiltin; then
           _flags_opt_=${_flags_opt_#*--}
         else
@@ -1009,7 +1010,7 @@ FLAGS() {
 
   # Parse options.
   if [ $# -gt 0 ]; then
-    if [ ${__FLAGS_GETOPT_VERS} -ne ${__FLAGS_GETOPT_VERS_ENH} ]; then
+    if [ "${__FLAGS_GETOPT_VERS}" -ne "${__FLAGS_GETOPT_VERS_ENH}" ]; then
       _flags_getoptStandard "$@"
     else
       _flags_getoptEnhanced "$@"
@@ -1072,7 +1073,7 @@ flags_getoptInfo() {
 # Returns:
 #   bool: true if getopt is the enhanced version
 flags_getoptIsEnh() {
-  test ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_ENH}
+  test "${__FLAGS_GETOPT_VERS}" -eq "${__FLAGS_GETOPT_VERS_ENH}"
 }
 
 # Returns whether the detected getopt version is the standard version.
@@ -1082,7 +1083,7 @@ flags_getoptIsEnh() {
 # Returns:
 #   bool: true if getopt is the standard version
 flags_getoptIsStd() {
-  test ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_STD}
+  test "${__FLAGS_GETOPT_VERS}" -eq "${__FLAGS_GETOPT_VERS_STD}"
 }
 
 # This is effectively a 'usage()' function. It prints usage information and
@@ -1119,7 +1120,7 @@ flags_help() {
       [ "${flags_short_}" != "${__FLAGS_NULL}" ] && \
           flags_flagStr_="-${flags_short_}"
 
-      if [ ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_ENH} ]; then
+      if [ "${__FLAGS_GETOPT_VERS}" -eq "${__FLAGS_GETOPT_VERS_ENH}" ]; then
         [ "${flags_short_}" != "${__FLAGS_NULL}" ] && \
             flags_flagStr_="${flags_flagStr_},"
         # add [no] to long boolean flag names, except the 'help' flag
@@ -1160,7 +1161,7 @@ flags_help() {
         _flags_strlen "${flags_helpStr_}" >/dev/null
         flags_helpStrLen_=${flags_output}
 
-        if [ ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_STD} \
+        if [ "${__FLAGS_GETOPT_VERS}" -eq "${__FLAGS_GETOPT_VERS_STD}" \
             -o "${flags_helpStrLen_}" -lt "${flags_columns_}" ]; then
           # indented to match help string
           echo "${flags_helpStr_}" >&2
