@@ -775,7 +775,7 @@ _flags_parseGetopt() {
   FLAGS_ARGC=`_flags_math "$# - 1 - ${_flags_argc_}"`
   export FLAGS_ARGC
 
-  # handle options. note options with values must do an additional shift
+  # Handle options. note options with values must do an additional shift.
   while true; do
     _flags_opt_=$1
     _flags_arg_=${2:-}
@@ -1042,11 +1042,11 @@ FLAGS() {
 # Returns:
 #   nothing
 flags_getoptInfo() {
-  # platform info
+  # Platform info.
   _flags_debug "uname -a: `uname -a`"
   _flags_debug "PATH: ${PATH}"
 
-  # shell info
+  # Shell info.
   if [ -n "${BASH_VERSION:-}" ]; then
     _flags_debug 'shell: bash'
     _flags_debug "BASH_VERSION: ${BASH_VERSION}"
@@ -1055,7 +1055,7 @@ flags_getoptInfo() {
     _flags_debug "ZSH_VERSION: ${ZSH_VERSION}"
   fi
 
-  # getopt info
+  # getopt info.
   ${FLAGS_GETOPT_CMD} >/dev/null
   _flags_getoptReturn=$?
   _flags_debug "getopt return: ${_flags_getoptReturn}"
@@ -1123,7 +1123,7 @@ flags_help() {
       if [ "${__FLAGS_GETOPT_VERS}" -eq "${__FLAGS_GETOPT_VERS_ENH}" ]; then
         [ "${flags_short_}" != "${__FLAGS_NULL}" ] && \
             flags_flagStr_="${flags_flagStr_},"
-        # add [no] to long boolean flag names, except the 'help' flag
+        # Add [no] to long boolean flag names, except the 'help' flag.
         [ "${flags_type_}" -eq ${__FLAGS_TYPE_BOOLEAN} \
           -a "${flags_usName_}" != 'help' ] && \
             flags_boolStr_='[no]'
@@ -1153,7 +1153,7 @@ flags_help() {
         echo "${flags_helpStr_}" >&2
       else
         echo "  ${flags_flagStr_}  ${flags_help_}" >&2
-        # note: the silliness with the x's is purely for ksh93 on Ubuntu 6.06
+        # Note: the silliness with the x's is purely for ksh93 on Ubuntu 6.06
         # because it doesn't like empty strings when used in this manner.
         flags_emptyStr_="`echo \"x${flags_flagStr_}x\" \
             |awk '{printf "%"length($0)-2"s", ""}'`"
@@ -1163,11 +1163,11 @@ flags_help() {
 
         if [ "${__FLAGS_GETOPT_VERS}" -eq "${__FLAGS_GETOPT_VERS_STD}" \
             -o "${flags_helpStrLen_}" -lt "${flags_columns_}" ]; then
-          # indented to match help string
+          # Indented to match help string.
           echo "${flags_helpStr_}" >&2
         else
-          # indented four from left to allow for longer defaults as long flag
-          # names might be used too, making things too long
+          # Indented four from left to allow for longer defaults as long flag
+          # names might be used too, making things too long.
           echo "    ${flags_defaultStr_}" >&2
         fi
       fi
