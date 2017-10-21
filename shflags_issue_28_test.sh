@@ -37,8 +37,8 @@ _testHelp() {
     FLAGS "${flag}" >"${stdoutF}" 2>"${stderrF}"
     echo $? >"${returnF}"
   )
-  assertTrue \
-      'short help request should have returned a true exit code.' \
+  assertFalse \
+      'short help request should have returned a false exit code.' \
       "$(th_queryReturn)"
   grep 'show this help' "${stderrF}" >/dev/null
   grepped=$?
@@ -93,9 +93,6 @@ EOF
     FLAGS_HELP=${help};
     FLAGS -h >"${stdoutF}" 2>"${stderrF}"
   )
-  r3turn=$?
-  assertTrue "FLAGS -h return: want ${FLAGS_TRUE}, got ${r3turn}" ${r3turn}
-
   diff "${expectedF}" "${stderrF}" >/dev/null
   r3turn=$?
   assertTrue 'unexpected help output' ${r3turn}
@@ -120,9 +117,6 @@ EOF
     FLAGS_HELP=${help};
     FLAGS -h >"${stdoutF}" 2>"${stderrF}"
   )
-  r3turn=$?
-  assertTrue 'a call for help should not return an error' ${r3turn}
-
   diff "${expectedF}" "${stderrF}" >/dev/null
   differed=$?
   assertTrue 'unexpected help output' ${differed}

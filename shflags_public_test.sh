@@ -37,8 +37,8 @@ _testHelp() {
     FLAGS "${flag}" >"${stdoutF}" 2>"${stderrF}"
     echo $? >"${returnF}"
   )
-  assertTrue \
-      'short help request should have returned a true exit code.' \
+  assertFalse \
+      'a call for help should return a non-zero exit code.' \
       "$(th_queryReturn)"
   grep 'show this help' "${stderrF}" >/dev/null
   grepped=$?
@@ -102,9 +102,11 @@ EOF
     _flags_columns() { mock_flags_columns; }
     FLAGS_HELP=${help};
     FLAGS -h >"${stdoutF}" 2>"${stderrF}"
+    echo $? >"${returnF}"
   )
-  r3turn=$?
-  assertTrue 'a call for help should not return an error' ${r3turn}
+  assertFalse \
+      'a call for help should return a non-zero exit code.' \
+      "$(th_queryReturn)"
 
   diff "${expectedF}" "${stderrF}" >/dev/null
   r3turn=$?
@@ -142,9 +144,11 @@ EOF
     # shellcheck disable=SC2034
     FLAGS_HELP=${help};
     FLAGS -h >"${stdoutF}" 2>"${stderrF}"
+    echo $? >"${returnF}"
   )
-  r3turn=$?
-  assertTrue 'a call for help should not return an error' ${r3turn}
+  assertFalse \
+      'a call for help should return a non-zero exit code.' \
+      "$(th_queryReturn)"
 
   diff "${expectedF}" "${stderrF}" >/dev/null
   differed=$?
