@@ -31,6 +31,22 @@ testColumns() {
   assertNotNull "unexpected screen width (${cols})" "${value}"
 }
 
+testGetoptVers() {
+  # shellcheck disable=SC2162
+  while read desc mock want; do
+    assertEquals "${desc}" "$(_flags_getopt_vers "${mock}")" "${want}"
+  done <<EOF
+standard mock_getopt_std ${__FLAGS_GETOPT_VERS_STD}
+enhanced mock_getopt_enh ${__FLAGS_GETOPT_VERS_ENH}
+EOF
+}
+
+### The mock_getopt_* commands behave like "getopt -lfoo '' --foo" was called.
+# macOS 10.13.0.
+mock_getopt_std() { echo ' -- --foo'; return 0; }
+# Ubuntu 16.04.3
+mock_getopt_enh() { echo ' --foo --'; return 0; }
+
 testGenOptStr() {
   _testGenOptStr '' ''
 

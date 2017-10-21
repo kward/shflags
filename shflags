@@ -118,7 +118,7 @@ else
   unset _flags_output_
 fi
 
-# Commands a user can override if needed.
+# Commands a user can override if desired.
 FLAGS_EXPR_CMD=${FLAGS_EXPR_CMD:-${__FLAGS_EXPR_CMD}}
 FLAGS_GETOPT_CMD=${FLAGS_GETOPT_CMD:-getopt}
 
@@ -151,24 +151,23 @@ fi
 __FLAGS_RESERVED_LIST=' ARGC ARGV ERROR FALSE GETOPT_CMD HELP PARENT TRUE '
 __FLAGS_RESERVED_LIST="${__FLAGS_RESERVED_LIST} VERSION "
 
-# getopt version.
+# Determined getopt version (standard or enhanced).
 __FLAGS_GETOPT_VERS_STD=0
 __FLAGS_GETOPT_VERS_ENH=1
 
-${FLAGS_GETOPT_CMD} >/dev/null 2>&1
-case $? in
-  0) __FLAGS_GETOPT_VERS=${__FLAGS_GETOPT_VERS_STD} ;;  # bsd getopt
-  1) __FLAGS_GETOPT_VERS=${__FLAGS_GETOPT_VERS_ENH} ;;  # BusyBox getopt.
-  2)
-    # TODO(kward): look into '-T' option to test the internal getopt() version
-    if [ "`${FLAGS_GETOPT_CMD} --version`" = '-- ' ]; then
-      __FLAGS_GETOPT_VERS=${__FLAGS_GETOPT_VERS_STD}
-    else
-      __FLAGS_GETOPT_VERS=${__FLAGS_GETOPT_VERS_ENH}
-    fi
-    ;;
-  *) _flags_fatal 'unable to determine getopt version' ;;
-esac
+# shellcheck disable=SC2120
+_flags_getopt_vers() {
+  _flags_getopt_cmd_=${1:-${FLAGS_GETOPT_CMD}}
+  case "`${_flags_getopt_cmd_} -lfoo '' --foo 2>&1`" in
+    ' -- --foo') echo ${__FLAGS_GETOPT_VERS_STD} ;;
+    ' --foo --') echo ${__FLAGS_GETOPT_VERS_ENH} ;;
+    # Unrecognized output. Assuming standard getopt version.
+    *) echo ${__FLAGS_GETOPT_VERS_STD} ;;
+  esac
+  unset _flags_getopt_cmd_
+}
+# shellcheck disable=SC2119
+__FLAGS_GETOPT_VERS=`_flags_getopt_vers`
 
 # getopt optstring lengths
 __FLAGS_OPTSTR_SHORT=0
