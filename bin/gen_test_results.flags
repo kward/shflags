@@ -1,5 +1,0 @@
-# vim:et:ft=sh:sts=2:sw=2
-#
-# Flag definition overrides for the gen_test_results.sh script.
-
-DEFINE_string suite 'shflags_test.sh' 'unit test suite' s

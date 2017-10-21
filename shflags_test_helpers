@@ -1,0 +1,127 @@
+# vim:et:ft=sh:sts=2:sw=2
+#
+# shFlags unit test common functions
+#
+# Copyright 2008-2017 Kate Ward. All Rights Reserved.
+# Released under the Apache 2.0 license.
+#
+# Author: kate.ward@forestent.com (Kate Ward)
+# https://github.com/kward/shflags
+#
+### ShellCheck (http://www.shellcheck.net/)
+# Disable source following.
+#   shellcheck disable=SC1090,SC1091
+# $() are not fully portable (POSIX != portable).
+#   shellcheck disable=SC2006
+# Disagree with [ p ] && [ q ] vs [ p -a -q ] recommendation.
+#   shellcheck disable=SC2166
+
+# Treat unset variables as an error.
+set -u
+
+# Set shwordsplit for zsh.
+[ -n "${ZSH_VERSION:-}" ] && setopt shwordsplit
+
+# Message functions.
+th_trace() { echo "test:TRACE $*" >&2; }
+th_debug() { echo "test:DEBUG $*" >&2; }
+th_info() { echo "test:INFO $*" >&2; }
+th_warn() { echo "test:WARN $*" >&2; }
+th_error() { echo "test:ERROR $*" >&2; }
+th_fatal() { echo "test:FATAL $*" >&2; exit 1; }
+
+# My name.
+TH_MY_NAME=`basename "$0"` || th_fatal 'Error executing basename.'
+export TH_MY_NAME
+
+# Path to shFlags library. Can be overridden by setting SHFLAGS_INC.
+export TH_SHFLAGS=${SHFLAGS_INC:-./shflags}
+
+# Path to shUnit2 library. Can be overridden by setting SHUNIT_INC.
+export TH_SHUNIT=${SHUNIT_INC:-lib/shunit2}
+
+export TH_BOOL_VALID='true t 0 false f 1'
+export TH_BOOL_INVALID='123 123.0 invalid'
+export TH_FLOAT_VALID='-1234.0 -1.0 -.123 0.0 0. .123 1.0 1234.0'
+export TH_FLOAT_INVALID='true false 1.2.3 -1.2.3 ""'
+export TH_INT_VALID='-1234 -1 0 1 1234'
+export TH_INT_INVALID='true false -1.0 -.123 0.0 .123 1.0 ""'
+
+#
+# Test helper functions.
+#
+
+th_oneTimeSetUp() {
+  # Load shFlags.
+  # shellcheck disable=SC2034
+  [ -n "${ZSH_VERSION:-}" ] && FLAGS_PARENT=$0
+  . "${TH_SHFLAGS}"
+
+  # These files will be cleaned up automatically by shUnit2.
+  export tmpDir=${SHUNIT_TMPDIR}
+  stdoutF="${tmpDir}/stdout" && touch "${stdoutF}"
+  stderrF="${tmpDir}/stderr" && touch "${stderrF}"
+  returnF="${tmpDir}/return" && touch "${returnF}"
+  expectedF="${tmpDir}/expected" && touch "${expectedF}"
+}
+
+th_showOutput() {
+  _th_rtrn=$1
+  _th_stdout=$2
+  _th_stderr=$3
+
+  isSkipping
+  if [ $? -eq "${SHUNIT_FALSE}" -a "${_th_rtrn}" != "${FLAGS_TRUE}" ]; then
+    if [ -n "${_th_stdout}" -a -s "${_th_stdout}" ]; then
+      echo '>>> STDOUT' >&2
+      cat "${_th_stdout}" >&2
+    fi
+    if [ -n "${_th_stderr}" -a -s "${_th_stderr}" ]; then
+      echo '>>> STDERR' >&2
+      cat "${_th_stderr}" >&2
+    fi
+    if [ -n "${_th_stdout}" -o -n "${_th_stderr}" ]; then
+      echo '<<< end output' >&2
+    fi
+  fi
+
+  unset _th_rtrn _th_stdout _th_stderr
+}
+
+# Some shells, zsh on Solaris in particular, return immediately from a sub-shell
+# when a non-zero return value is encountered. To properly catch these values,
+# they are either written to disk, or recognized as an error the file is empty.
+th_clearReturn() { cp /dev/null "${returnF}"; }
+th_queryReturn() {
+  if [ -s "${returnF}" ]; then
+    cat "${returnF}"
+    return $?
+  fi
+  echo "${SHUNIT_ERROR}"
+  return "${SHUNIT_ERROR}"
+}
+
+_th_assertMsg() {
+  _th_alert_type_=$1
+  _th_alert_msg_=$2
+  _th_msg_=$3
+
+  case ${_th_alert_type_} in
+    WARN) _th_alert_str_='a warning' ;;
+    ERROR) _th_alert_str_='an error' ;;
+    FATAL) _th_alert_str_='a fatal' ;;
+  esac
+  [ -z "${_th_alert_msg_}" ] && _th_alert_msg_='.*'
+  [ -n "${_th_msg_}" ] && _th_msg_="(${_th_msg_}) "
+
+  grep -- "^flags:${_th_alert_type_} ${_th_alert_msg_}" "${stderrF}" \
+      >/dev/null
+  assertTrue \
+      "FLAGS ${_th_msg_}failure did not generate ${_th_alert_str_} message" $?
+
+  unset _th_alert_type_ _th_alert_msg_ _th_alert_str_ _th_msg_
+}
+
+assertWarnMsg() { _th_assertMsg 'WARN' "${1:-}" "${2:-}"; }
+assertErrorMsg() { _th_assertMsg 'ERROR' "${1:-}" "${2:-}"; }
+assertFatalMsg() { _th_assertMsg 'FATAL' "${1:-}" "${2:-}"; }
