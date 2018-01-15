@@ -1,5 +1,0 @@
-I'd like to thank these people for their contributisons to shFlags.
-
-Maciej Bliziński <blizinski@google.com>
-Bjarni Einarsson <bre@google.com>
-pvanderdoes [http://code.google.com/u/103206786526099082032/]
