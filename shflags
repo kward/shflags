@@ -427,7 +427,7 @@ _flags_define() {
 # Output:
 #   string: underscored name
 _flags_underscoreName() {
-  echo "$1" |tr '-' '_'
+  echo "$1" |tr z- z_
 }
 
 # Return valid getopt options using currently defined list of long options.

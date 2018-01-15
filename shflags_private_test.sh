@@ -3,8 +3,7 @@
 #
 # shFlags unit tests for the internal functions.
 #
-#
-# Copyright 2008-2017 Kate Ward. All Rights Reserved.
+# Copyright 2008-2018 Kate Ward. All Rights Reserved.
 # Released under the Apache 2.0 license.
 #
 # Author: kate.ward@forestent.com (Kate Ward)
@@ -111,6 +110,18 @@ EOF
 
   _flags_itemInList 'item' ''
   assertFalse 'empty lists should not match' $?
+}
+
+testUnderscoreName() {
+  while read desc name want; do
+    got=`_flags_underscoreName "${name}"`
+    assertEquals "${desc}: underscoreName(${name})" "${got}" "${want}"
+  done <<EOF
+with_dashes        name-with-dashes      name_with_dashes
+with_underscores   name_with_underscores name_with_underscores
+just_alpha_numeric abc123                abc123
+empty              ""                    ""
+EOF
 }
 
 testValidBool() {
