@@ -4,11 +4,11 @@
 # This script runs the provided unit tests and sends the output to the
 # appropriate file.
 #
-# Copyright 2008-2017 Kate Ward. All Rights Reserved.
+# Copyright 2008-2018 Kate Ward. All Rights Reserved.
 # Released under the Apache 2.0 license.
 #
 # Author: kate.ward@forestent.com (Kate Ward)
-# https://github.com/kward/shunit2
+# https://github.com/kward/shflags
 #
 # Source following.
 #   shellcheck disable=SC1090,SC1091
