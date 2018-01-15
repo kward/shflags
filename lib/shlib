@@ -2,7 +2,7 @@
 #
 # Library of shell functions.
 
-# Convert a relative path into it's absolute equivalent.
+# Convert a relative path into its absolute equivalent.
 #
 # This function will automatically prepend the current working directory if the
 # path is not already absolute. It then removes all parent references (../) to
