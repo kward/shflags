@@ -106,9 +106,6 @@ test_partial_te   te      ${FLAGS_FALSE}
 test_partial_es   es      ${FLAGS_FALSE}
 test_partial_st   st      ${FLAGS_FALSE}
 empty_item        ''      ${FLAGS_FALSE}
-glob_star         t*s     ${FLAGS_TRUE}
-glob_star_missing foo*bar ${FLAGS_FALSE}
-glob_question     t??s    ${FLAGS_TRUE}
 EOF
 
   _flags_itemInList 'item' ''
