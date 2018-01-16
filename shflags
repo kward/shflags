@@ -545,7 +545,7 @@ _flags_getFlagInfo() {
 # Returns:
 #   boolean: true if item is in the list
 _flags_itemInList() {
-  _flags_str_=$1
+  _flags_str_="$1"
   shift
 
   case " ${*:-} " in
