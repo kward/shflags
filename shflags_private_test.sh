@@ -116,6 +116,7 @@ EOF
 }
 
 testUnderscoreName() {
+  # shellcheck disable=SC2162
   while read desc name want; do
     got=`_flags_underscoreName "${name}"`
     assertEquals "${desc}: underscoreName(${name})" "${got}" "${want}"
