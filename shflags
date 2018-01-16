@@ -616,6 +616,7 @@ _flags_validFloat() {
   elif _flags_useBuiltin; then
     _flags_float_whole_=${_flags_float_%.*}
     _flags_float_fraction_=${_flags_float_#*.}
+    [ "${_flags_float_whole_}" = '-' ] && _flags_float_whole_='-0'
     if _flags_validInt "${_flags_float_whole_:-0}" -a \
       _flags_validInt "${_flags_float_fraction_}"; then
       flags_return=${FLAGS_TRUE}
@@ -648,28 +649,7 @@ _flags_validFloat() {
 # Returns:
 #   bool: true if the value is a valid integer
 _flags_validInt() {
-  flags_return=${FLAGS_FALSE}
-  [ -n "$1" ] || return ${flags_return}
-  _flags_int_=$1
-
-  case ${_flags_int_} in
-    -*.*) ;;  # Ignore negative floats (we'll invalidate them later).
-    -*)  # Strip possible leading negative sign.
-      if _flags_useBuiltin; then
-        _flags_int_=${_flags_int_#-}
-      else
-        _flags_int_=`${FLAGS_EXPR_CMD} "${_flags_int_}" : '-\([0-9][0-9]*\)'`
-      fi
-      ;;
-  esac
-
-  case ${_flags_int_} in
-    *[!0-9]*) flags_return=${FLAGS_FALSE} ;;
-    *) flags_return=${FLAGS_TRUE} ;;
-  esac
-
-  unset _flags_int_
-  return ${flags_return}
+  expr \( "$1" + '0' \) '=' "$1" >/dev/null 2>&1
 }
 
 # Parse command-line options using the standard getopt.
