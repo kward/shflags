@@ -1,6 +1,12 @@
 # Changes in shFlags
 
-## Changes with 1.2.3
+## Changes with 1.2.3pre
+
+Removed `gen_test_report.sh` as it isn't used anymore.
+
+Minor fix for `_flags_underscoreName()` to insure POSIX compliance.
+
+Cleanup of pre-GitHub cruft.
 
 Fixed bug in `_flags_columns()` where `stty size` sometimes gave unexpected output, causing the function to not work.
 
