@@ -2,7 +2,7 @@
 #
 # shFlags unit test common functions
 #
-# Copyright 2008-2017 Kate Ward. All Rights Reserved.
+# Copyright 2008-2018 Kate Ward. All Rights Reserved.
 # Released under the Apache 2.0 license.
 #
 # Author: kate.ward@forestent.com (Kate Ward)
@@ -66,9 +66,9 @@ th_oneTimeSetUp() {
 }
 
 th_showOutput() {
-  _th_rtrn=$1
-  _th_stdout=$2
-  _th_stderr=$3
+  _th_rtrn="${1:-${returnF}}"
+  _th_stdout="${2:-${stdoutF}}"
+  _th_stderr="${3:-${stderrF}}"
 
   isSkipping
   if [ $? -eq "${SHUNIT_FALSE}" -a "${_th_rtrn}" != "${FLAGS_TRUE}" ]; then
