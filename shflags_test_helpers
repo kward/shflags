@@ -35,17 +35,20 @@ TH_MY_NAME=`basename "$0"` || th_fatal 'Error executing basename.'
 export TH_MY_NAME
 
 # Path to shFlags library. Can be overridden by setting SHFLAGS_INC.
-export TH_SHFLAGS=${SHFLAGS_INC:-./shflags}
+TH_SHFLAGS=${SHFLAGS_INC:-./shflags}; export TH_SHFLAGS
 
 # Path to shUnit2 library. Can be overridden by setting SHUNIT_INC.
-export TH_SHUNIT=${SHUNIT_INC:-lib/shunit2}
+TH_SHUNIT=${SHUNIT_INC:-lib/shunit2}; export TH_SHUNIT
 
-export TH_BOOL_VALID='true t 0 false f 1'
-export TH_BOOL_INVALID='123 123.0 invalid'
-export TH_FLOAT_VALID='-1234.0 -1.0 -.123 0.0 0. .123 1.0 1234.0'
-export TH_FLOAT_INVALID='true false 1.2.3 -1.2.3 ""'
-export TH_INT_VALID='-1234 -1 0 1 1234'
-export TH_INT_INVALID='true false -1.0 -.123 0.0 .123 1.0 ""'
+TH_BOOL_VALID='true t 0 false f 1'
+TH_BOOL_INVALID='123 123.0 invalid'
+export TH_BOOL_VALID TH_BOOL_INVALID
+TH_FLOAT_VALID='-1234.0 -1.0 -.123 0.0 0. .123 1.0 1234.0'
+TH_FLOAT_INVALID='true false 1.2.3 -1.2.3 ""'
+export TH_FLOAT_VALID TH_FLOAT_INVALID
+TH_INT_VALID='-1234 -1 0 1 1234'
+TH_INT_INVALID='true false -1.0 -.123 0.0 .123 1.0 ""'
+export TH_INT_VALID TH_INT_INVALID
 
 #
 # Test helper functions.
@@ -58,7 +61,7 @@ th_oneTimeSetUp() {
   . "${TH_SHFLAGS}"
 
   # These files will be cleaned up automatically by shUnit2.
-  export tmpDir=${SHUNIT_TMPDIR}
+  tmpDir=${SHUNIT_TMPDIR}; export tmpDir
   stdoutF="${tmpDir}/stdout" && touch "${stdoutF}"
   stderrF="${tmpDir}/stderr" && touch "${stderrF}"
   returnF="${tmpDir}/return" && touch "${returnF}"

@@ -69,7 +69,7 @@ _testGenOptStr() {
   short=$1
   long=$2
 
-  result=$(_flags_genOptStr "${__FLAGS_OPTSTR_SHORT}")
+  result=`_flags_genOptStr "${__FLAGS_OPTSTR_SHORT}"`
   assertTrue 'short option string generation failed' $?
   assertEquals "${short}" "${result}"
 

@@ -168,13 +168,13 @@ testNoHelp() {
 
 testLoggingLevel() {
   # Check that the default logging level is set properly.
-  got=$(flags_loggingLevel) want=${__FLAGS_LEVEL_DEFAULT}
+  got=`flags_loggingLevel` want=${__FLAGS_LEVEL_DEFAULT}
   assertTrue "Unexpected default logging level = ${got}, want ${want}" "[ ${got} -eq ${want} ]"
 
   # Override the logging level, and check again.
   flags_setLoggingLevel "${FLAGS_LEVEL_FATAL}"
   flags_setLoggingLevel "${FLAGS_LEVEL_INFO}"
-  got=$(flags_loggingLevel) want=${FLAGS_LEVEL_INFO}
+  got=`flags_loggingLevel` want=${FLAGS_LEVEL_INFO}
   assertTrue "Unexpected configured logging level = ${got}, want ${want}" "[ ${got} -eq ${want} ]"
 }
 
