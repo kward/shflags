@@ -14,7 +14,7 @@
 # $() are not fully portable (POSIX != portable).
 #   shellcheck disable=SC2006
 # Arrays are not available in all shells.
-#   shellcheck disable=SC2090
+#   shellcheck disable=SC2089
 # Disagree with [ p ] && [ q ] vs [ p -a -q ] recommendation.
 #   shellcheck disable=SC2166
 
