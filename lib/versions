@@ -18,7 +18,7 @@
 
 ARGV0=`basename "$0"`
 LSB_RELEASE='/etc/lsb-release'
-VERSIONS_SHELLS="ash /bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/sh /bin/zsh"
+VERSIONS_SHELLS='ash /bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/zsh /bin/sh /usr/xpg4/bin/sh /sbin/sh'
 
 true; TRUE=$?
 false; FALSE=$?
@@ -123,12 +123,8 @@ versions_shellVersion() {
 
   shell_present_=${FALSE}
   case "${shell_}" in
-    ash)
-      [ -x '/bin/busybox' ] && shell_present_=${TRUE}
-      ;;
-    *)
-      [ -x "${shell_}" ] && shell_present_=${TRUE}
-      ;;
+    ash) [ -x '/bin/busybox' ] && shell_present_=${TRUE} ;;
+    *) [ -x "${shell_}" ] && shell_present_=${TRUE} ;;
   esac
   if [ ${shell_present_} -eq ${FALSE} ]; then
     echo 'not installed'
@@ -137,16 +133,19 @@ versions_shellVersion() {
 
   version_=''
   case ${shell_} in
+    /sbin/sh) ;; # SunOS
+    /usr/xpg4/bin/sh)
+      version_=`versions_shell_xpg4 "${shell_}"`
+      ;; # SunOS
     */sh)
-      # TODO(kward): fix this
-      ## This could be one of any number of shells. Try until one fits.
-      #version_=`versions_shell_bash ${shell_}`
-      ## dash cannot be self determined yet.
-      #[ -z "${version_}" ] && version_=`versions_shell_ksh ${shell_}`
-      ## pdksh is covered in versions_shell_ksh().
-      #[ -z "${version_}" ] && version_=`versions_shell_zsh ${shell_}`
-      # TODO(20180115:kward) If ${UNAME_S} is SunOS, recommend implementing:
-      #   $ ln -sf /usr/xpg4/bin/sh /bin/sh
+      # This could be one of any number of shells. Try until one fits.
+      version_=''
+      [ -z "${version_}" ] && version_=`versions_shell_bash "${shell_}"`
+      # dash cannot be self determined yet
+      [ -z "${version_}" ] && version_=`versions_shell_ksh "${shell_}"`
+      # pdksh is covered in versions_shell_ksh()
+      [ -z "${version_}" ] && version_=`versions_shell_xpg4 "${shell_}"`
+      [ -z "${version_}" ] && version_=`versions_shell_zsh "${shell_}"`
       ;;
     ash) version_=`versions_shell_ash "${shell_}"` ;;
     */bash) version_=`versions_shell_bash "${shell_}"` ;;
@@ -171,7 +170,7 @@ versions_shell_ash() {
 }
 
 versions_shell_bash() {
-  $1 --version 2>&1 |grep 'GNU bash' |sed 's/.*version \([^ ]*\).*/\1/'
+  $1 --version : 2>&1 |grep 'GNU bash' |sed 's/.*version \([^ ]*\).*/\1/'
 }
 
 versions_shell_dash() {
@@ -186,9 +185,13 @@ versions_shell_ksh() {
   versions_version_=''
 
   # Try a few different ways to figure out the version.
-  if versions_version_=`${versions_shell_} --version : 2>&1`; then
+  versions_version_=`${versions_shell_} --version : 2>&1`
+  # shellcheck disable=SC2181
+  if [ $? -eq 0 ]; then
     versions_version_=`echo "${versions_version_}" \
       |sed 's/.*\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\).*/\1/'`
+  else
+    versions_version_=''
   fi
   if [ -z "${versions_version_}" ]; then
     _versions_have_strings
@@ -211,15 +214,27 @@ versions_shell_pdksh() {
   |sed -e 's/.*PD KSH \(.*\)/\1/;s/ /-/g'
 }
 
+versions_shell_xpg4() {
+  _versions_have_strings
+  strings "$1" 2>&1 \
+  |grep 'Version' \
+  |sed -e 's/^@(#)Version //'
+}
+
 versions_shell_zsh() {
   versions_shell_=$1
 
   # Try a few different ways to figure out the version.
   # shellcheck disable=SC2016
   versions_version_=`echo 'echo ${ZSH_VERSION}' |${versions_shell_}`
-
   if [ -z "${versions_version_}" ]; then
-    versions_version_=`${versions_shell_} --version 2>&1 |awk '{print $2}'`
+    versions_version_=`${versions_shell_} --version : 2>&1`
+    # shellcheck disable=SC2181
+    if [ $? -eq 0 ]; then
+      versions_version_=`echo "${versions_version_}" |awk '{print $2}'`
+    else
+      versions_version_=''
+    fi
   fi
 
   echo "${versions_version_}"
