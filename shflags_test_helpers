@@ -13,6 +13,8 @@
 #   shellcheck disable=SC1090,SC1091
 # $() are not fully portable (POSIX != portable).
 #   shellcheck disable=SC2006
+# Arrays are not available in all shells.
+#   shellcheck disable=SC2090
 # Disagree with [ p ] && [ q ] vs [ p -a -q ] recommendation.
 #   shellcheck disable=SC2166
 
@@ -40,15 +42,13 @@ TH_SHFLAGS=${SHFLAGS_INC:-./shflags}; export TH_SHFLAGS
 # Path to shUnit2 library. Can be overridden by setting SHUNIT_INC.
 TH_SHUNIT=${SHUNIT_INC:-lib/shunit2}; export TH_SHUNIT
 
-TH_BOOL_VALID='true t 0 false f 1'
-TH_BOOL_INVALID='123 123.0 invalid'
-export TH_BOOL_VALID TH_BOOL_INVALID
+TH_BOOL_VALID='true t 0 false f 1'; export TH_BOOL_VALID
+TH_BOOL_INVALID='123 123.0 invalid'; export TH_BOOL_INVALID
 TH_FLOAT_VALID='-1234.0 -1.0 -.123 0.0 0. .123 1.0 1234.0'
-TH_FLOAT_INVALID='true false 1.2.3 -1.2.3 ""'
-export TH_FLOAT_VALID TH_FLOAT_INVALID
-TH_INT_VALID='-1234 -1 0 1 1234'
-TH_INT_INVALID='true false -1.0 -.123 0.0 .123 1.0 ""'
-export TH_INT_VALID TH_INT_INVALID
+export TH_FLOAT_VALID
+TH_FLOAT_INVALID='true false 1.2.3 -1.2.3 ""'; export TH_FLOAT_INVALID
+TH_INT_VALID='-1234 -1 0 1 1234'; export TH_INT_VALID
+TH_INT_INVALID='true false -1.0 -.123 0.0 .123 1.0 ""'; export TH_INT_INVALID
 
 #
 # Test helper functions.
