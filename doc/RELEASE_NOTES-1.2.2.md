@@ -7,7 +7,6 @@ https://github.com/kward/shflags
 This document covers any known issues and workarounds for the stated release of
 shFlags.
 
-
 ## Release info
 
 This is a minor bug fix release.
@@ -16,9 +15,9 @@ Please see the `CHANGES-1.2.md` file for a complete list of changes.
 
 ### Notable changes
 
-Continuous integration testing setup with
-[Travis CI](https://travis-ci.org/kward/shflags). This helps keep the code in
-a working state by executing the unit tests on every submit.
+Continuous integration testing setup with [Travis
+CI](https://travis-ci.org/kward/shflags). This helps keep the code in a working
+state by executing the unit tests on every submit.
 
 All code run through [ShellCheck](http://www.shellcheck.net/). This is an
 excellent shell linter, and brings consistency to the coding patterns used.
@@ -29,7 +28,6 @@ more appealing to a wider audience.
 ### Notable bug fixes
 
 Fixed issue #45. Empty help string causes `shflags_test_issue_28.sh` to fail.
-
 
 ## General info
 
@@ -42,24 +40,23 @@ the tester that the supported functionality is not present, but an additional
 test is present to verify that shFlags properly caught the limitation and
 presented the user with an appropriate error message.
 
-shFlags tries to support both the standard and enhanced versions of `getopt`.
-As each responds differently, and not everything is supported on the standard
+shFlags tries to support both the standard and enhanced versions of `getopt`. As
+each responds differently, and not everything is supported on the standard
 version, some unit tests will be skipped (i.e. ASSERTS will not be thrown) when
-the standard version of `getopt` is detected. The reason being that there is
-no point testing for functionality that is positively known not to exist. A
-tally of skipped tests will be kept for later reference.
+the standard version of `getopt` is detected. The reason being that there is no
+point testing for functionality that is positively known not to exist. A tally
+of skipped tests will be kept for later reference.
 
 ### Standard vs Enhanced getopt
 
 Here is a matrix of the supported features of the various `getopt` variants.
 
-| Feature                                 | std | enh |
-|-----------------------------------------|-----|-----|
-| short option names                      |  Y  |  Y  |
-| long option names                       |  N  |  Y  |
-| spaces in string options                |  N  |  Y  |
-| intermixing of flag and non-flag values |  N  |  Y  |
-
+Feature                                 | std | enh
+--------------------------------------- | --- | ---
+short option names                      | Y   | Y
+long option names                       | N   | Y
+spaces in string options                | N   | Y
+intermixing of flag and non-flag values | N   | Y
 
 ## Known Issues
 
@@ -70,5 +67,5 @@ OpenSolaris) is the standard version.
 ## Workarounds
 
 The Zsh shell requires the `shwordsplit` option to be set and the special
-`FLAGS_PARENT` variable must be defined. See `src/shflags_test_helpers` to
-see how the unit tests do this.
+`FLAGS_PARENT` variable must be defined. See `src/shflags_test_helpers` to see
+how the unit tests do this.
