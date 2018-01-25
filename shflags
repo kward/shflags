@@ -125,7 +125,57 @@ fi
 FLAGS_EXPR_CMD=${FLAGS_EXPR_CMD:-${__FLAGS_EXPR_CMD}}
 FLAGS_GETOPT_CMD=${FLAGS_GETOPT_CMD:-getopt}
 
-# Specific shell checks.
+#
+# Logging functions.
+#
+
+__flags_level=0 # Default logging level.
+
+_flags_debug() {
+  [ ${__flags_level} -le ${FLAGS_LEVEL_DEBUG} ] || return
+  echo "flags:DEBUG $*" >&2
+}
+_flags_info() {
+  [ ${__flags_level} -le ${FLAGS_LEVEL_INFO} ] || return
+  echo "flags:INFO $*" >&2
+}
+_flags_warn() {
+  [ ${__flags_level} -le ${FLAGS_LEVEL_WARN} ] || return
+  echo "flags:WARN $*" >&2
+}
+_flags_error() {
+  [ ${__flags_level} -le ${FLAGS_LEVEL_ERROR} ] || return
+  echo "flags:ERROR $*" >&2
+}
+_flags_fatal() {
+  [ ${__flags_level} -le ${FLAGS_LEVEL_FATAL} ] || return
+  echo "flags:FATAL $*" >&2
+  exit ${FLAGS_ERROR}
+}
+
+# Get the logging level.
+flags_loggingLevel() { echo ${__flags_level}; }
+
+# Set the logging level.
+#
+# Args:
+#   _flags_level_: integer: new logging level
+# Returns:
+#   nothing
+flags_setLoggingLevel() {
+  [ $# -ne 1 ] && _flags_fatal "flags_setLevel(): logging level missing"
+  _flags_level_=$1
+  [ "${_flags_level_}" -ge "${FLAGS_LEVEL_DEBUG}" \
+    -a "${_flags_level_}" -le "${FLAGS_LEVEL_FATAL}" ] \
+      || _flags_fatal "Invalid logging level '${_flags_level_}' specified."
+  __flags_level=$1
+  unset _flags_level_
+}
+
+#
+# Shell checks.
+#
+
 if [ -n "${ZSH_VERSION:-}" ]; then
   setopt |grep "^shwordsplit$" >/dev/null
   if [ $? -ne ${FLAGS_TRUE} ]; then
@@ -144,7 +194,6 @@ if [ $? -eq ${FLAGS_TRUE} ]; then
 else
   __FLAGS_USE_BUILTIN=${FLAGS_FALSE}
 fi
-
 
 #
 # Constants.
@@ -226,54 +275,7 @@ __flags_shortNames=' '    # Short flag names.
 __flags_definedNames=' '  # Defined flag names (used for validation).
 
 __flags_columns=''  # Screen width in columns.
-__flags_level=0     # Default logging level.
 __flags_opts=''     # Temporary storage for parsed getopt flags.
-
-#------------------------------------------------------------------------------
-# Private functions.
-#
-
-# Logging functions.
-_flags_debug() {
-  [ ${__flags_level} -le ${FLAGS_LEVEL_DEBUG} ] || return
-  echo "flags:DEBUG $*" >&2
-}
-_flags_info() {
-  [ ${__flags_level} -le ${FLAGS_LEVEL_INFO} ] || return
-  echo "flags:INFO $*" >&2
-}
-_flags_warn() {
-  [ ${__flags_level} -le ${FLAGS_LEVEL_WARN} ] || return
-  echo "flags:WARN $*" >&2
-}
-_flags_error() {
-  [ ${__flags_level} -le ${FLAGS_LEVEL_ERROR} ] || return
-  echo "flags:ERROR $*" >&2
-}
-_flags_fatal() {
-  [ ${__flags_level} -le ${FLAGS_LEVEL_FATAL} ] || return
-  echo "flags:FATAL $*" >&2
-  exit ${FLAGS_ERROR}
-}
-
-# Get the logging level.
-flags_loggingLevel() { echo ${__flags_level}; }
-
-# Set the logging level.
-#
-# Args:
-#   _flags_level_: integer: new logging level
-# Returns:
-#   nothing
-flags_setLoggingLevel() {
-  [ $# -ne 1 ] && _flags_fatal "flags_setLevel(): logging level missing"
-  _flags_level_=$1
-  [ "${_flags_level_}" -ge "${FLAGS_LEVEL_DEBUG}" \
-    -a "${_flags_level_}" -le "${FLAGS_LEVEL_FATAL}" ] \
-      || _flags_fatal "Invalid logging level '${_flags_level_}' specified."
-  __flags_level=$1
-  unset _flags_level_
-}
 
 # Define a flag.
 #
