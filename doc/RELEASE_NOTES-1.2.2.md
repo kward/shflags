@@ -15,9 +15,10 @@ Please see the `CHANGES-1.2.md` file for a complete list of changes.
 
 ### Notable changes
 
-Continuous integration testing setup with [Travis
-CI](https://travis-ci.org/kward/shflags). This helps keep the code in a working
-state by executing the unit tests on every submit.
+Continuous integration testing setup with [Travis CI][travis-ci]. This helps
+keep the code in a working state by executing the unit tests on every submit.
+
+[travis-ci]: https://travis-ci.org/kward/shflags
 
 All code run through [ShellCheck](http://www.shellcheck.net/). This is an
 excellent shell linter, and brings consistency to the coding patterns used.
