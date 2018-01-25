@@ -20,35 +20,35 @@
 # $ ./write_date.sh -f now.out
 # $ cat now.out
 
-# source shflags
-. ../src/shflags
+# Prevent overwriting files with redirection operators.
+set -C >/dev/null 2>&1
 
-# configure shflags
+# Source shFlags.
+. ../shflags || ( echo "fatal: unable to source shflags" >&2; exit 64; )
+
+# Configure shFlags.
 DEFINE_boolean 'force' false 'force overwriting' 'f'
 FLAGS_HELP="USAGE: $0 [flags] filename"
 
-
-write_date()
-{
-  date >"$1"
+write_date() {
+	date >"$1"
 }
 
-die()
-{
+die() {
   [ $# -gt 0 ] && echo "error: $@" >&2
   flags_help
   exit 1
 }
 
-
-# parse the command-line
+# Parse the command-line.
 FLAGS "$@" || exit 1
 eval set -- "${FLAGS_ARGV}"
 
-# check for filename
+# Check for filename.
 [ $# -gt 0 ] || die 'filename missing'
 filename=$1
 
-[ -f "${filename}" -a ${FLAGS_force} -eq ${FLAGS_FALSE} ] \
-    && die 'filename exists; not overwriting'
+[ -f "${filename}" -a ${FLAGS_force} -eq ${FLAGS_FALSE} ] && \
+    die "output file \"${filename}\" exists, not overwriting"
+
 write_date "${filename}"
