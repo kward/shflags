@@ -1,23 +1,21 @@
-Changes in shFlags
-==================
+# Changes in shFlags
 
-Changes with 1.0.3
-------------------
+## Changes with 1.0.3
 
-MAJOR CHANGE! `FLAGS_ARGC` is now obsolete, and is replaced by
-`FLAGS_ARGV`. See below for more info.
+MAJOR CHANGE! `FLAGS_ARGC` is now obsolete, and is replaced by `FLAGS_ARGV`. See
+below for more info.
 
 Fixed issue# 7 where long flags defined with '=' (e.g. `--abc=123`) made it
 impossible for the user to know how many non-flag command-line arguments were
-available because the value returned by `FLAGS_ARGC` was wrong. The
-`FLAGS_ARGC` value is now obsolete, but will be maintained for backwards
-compatibility. The new method of getting the non-flag arguments is by executing
-`eval set -- "${FLAGS_ARGV}"` after the `FLAGS` call. The arguments will
-then be available using the standard shell $#, $@, $*, $1, etc. variables.
+available because the value returned by `FLAGS_ARGC` was wrong. The `FLAGS_ARGC`
+value is now obsolete, but will be maintained for backwards compatibility. The
+new method of getting the non-flag arguments is by executing `eval set --
+"${FLAGS_ARGV}"` after the `FLAGS` call. The arguments will then be available
+using the standard shell $#, $@, $*, $1, etc. variables.
 
-Due to above fix for issue# 7, there is now proper support for mixing flags
-with non-flag arguments on the command-line. Previously, all non-flag arguments
-had to be at the end of the command-line.
+Due to above fix for issue# 7, there is now proper support for mixing flags with
+non-flag arguments on the command-line. Previously, all non-flag arguments had
+to be at the end of the command-line.
 
 Renamed `_flags_standardGetopt()` and `_flags_enhancedGetopt()` functions to
 `_flags_getoptStandard()` and `_flags_getoptEnhanced()`.
@@ -42,9 +40,7 @@ Added the OS version to OS release for Solaris.
 
 Fixed `flags_reset()` so it unsets the default value environment vars.
 
-
-Changes with 1.0.2
-------------------
+## Changes with 1.0.2
 
 FLAGS_PARENT no longer transforms into a constant so that it can be defined at
 run time in scripts.
@@ -64,8 +60,8 @@ Improved `assert[Warn|Error]Msg()` test helper grepping.
 Replaced shell_versions.sh with a new versions library and created
 `gen_test_results.sh` to make releases easier.
 
-Copied the coding standards from shUnit2, but haven't fully implemented them
-in shFlags yet.
+Copied the coding standards from shUnit2, but haven't fully implemented them in
+shFlags yet.
 
 Issue# 1: When a user defines their own `--help` flag, no more warning is thrown
 when `FLAGS()` is called stating that the help flag already defined.
@@ -74,9 +70,7 @@ Issue# 2: Passing the `--nohelp` option no longer gives help output.
 
 Issue# 3: Added support for screen width detection.
 
-
-Changes with 1.0.1
-------------------
+## Changes with 1.0.1
 
 Fixed bug where the help output added '[no]' to all flag names
 
@@ -93,8 +87,6 @@ execute the code in-line, but later. As such, variables that are defined in the
 library cannot be used until functions are called from the main code. This
 required the 'help' flag definition to be moved inside the FLAGS command.
 
-
-Changes with 1.0.0
-------------------
+## Changes with 1.0.0
 
 This is the first official release, so everything is new.
