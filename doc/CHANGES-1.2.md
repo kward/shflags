@@ -2,6 +2,8 @@
 
 ## Changes with 1.2.3pre
 
+Upgraded shUnit2 to 2.1.7.
+
 Fixed the examples to work again with the new code structure.
 
 Removed `gen_test_report.sh` as it isn't used anymore.
