@@ -70,8 +70,7 @@ _testHelp() {
   [ ${grepped} -ne "${FLAGS_TRUE}" ] && th_showOutput
 }
 
-mock_flags_columns()
-{
+mock_flags_columns() {
   echo 80
 }
 
