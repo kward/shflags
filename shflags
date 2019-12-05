@@ -866,7 +866,7 @@ _flags_parseGetopt() {
         ;;
 
       ${__FLAGS_TYPE_STRING})
-        eval "FLAGS_${_flags_usName_}='${_flags_arg_}'"
+        eval "FLAGS_${_flags_usName_}=\${_flags_arg_}"
         ;;
     esac
 
