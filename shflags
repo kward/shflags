@@ -259,7 +259,10 @@ for __flags_const in ${__flags_constants}; do
   fi
   case ${ZSH_VERSION} in
     [123].*) readonly "${__flags_const}" ;;
-    *) readonly -g "${__flags_const}" ;;  # Declare readonly constants globally.
+    *)
+      # Declare readonly constants globally.
+      # shellcheck disable=SC2039
+      readonly -g "${__flags_const}" ;;
   esac
 done
 unset __flags_const __flags_constants

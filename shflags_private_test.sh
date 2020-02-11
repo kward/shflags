@@ -49,18 +49,23 @@ mock_getopt_enh() { echo ' --foo --'; return 0; }
 testGenOptStr() {
   _testGenOptStr '' ''
 
+  # shellcheck disable=SC2034
   DEFINE_boolean bool false 'boolean value' b
   _testGenOptStr 'b' 'bool'
 
+  # shellcheck disable=SC2034
   DEFINE_float float 0.0 'float value' f
   _testGenOptStr 'bf:' 'bool,float:'
 
+  # shellcheck disable=SC2034
   DEFINE_integer int 0 'integer value' i
   _testGenOptStr 'bf:i:' 'bool,float:,int:'
 
+  # shellcheck disable=SC2034
   DEFINE_string str 0 'string value' s
   _testGenOptStr 'bf:i:s:' 'bool,float:,int:,str:'
 
+  # shellcheck disable=SC2034
   DEFINE_boolean help false 'show help' h
   _testGenOptStr 'bf:i:s:h' 'bool,float:,int:,str:,help'
 }
