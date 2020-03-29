@@ -1060,7 +1060,7 @@ flags_getoptInfo() {
 # Returns:
 #   bool: true if getopt is the enhanced version
 flags_getoptIsEnh() {
-  test "${__FLAGS_GETOPT_VERS}" -eq "${__FLAGS_GETOPT_VERS_ENH}"
+  test ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_ENH}
 }
 
 # Returns whether the detected getopt version is the standard version.
@@ -1070,7 +1070,7 @@ flags_getoptIsEnh() {
 # Returns:
 #   bool: true if getopt is the standard version
 flags_getoptIsStd() {
-  test "${__FLAGS_GETOPT_VERS}" -eq "${__FLAGS_GETOPT_VERS_STD}"
+  test ${__FLAGS_GETOPT_VERS} -eq ${__FLAGS_GETOPT_VERS_STD}
 }
 
 # This is effectively a 'usage()' function. It prints usage information and
