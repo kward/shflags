@@ -30,7 +30,7 @@ testHelp() {
 }
 
 _testHelp() {
-  flags_getoptIsEnh || return ${SHUNIT_TRUE}
+  flags_getoptIsEnh || return "${SHUNIT_TRUE}"
 
   flag=$1
 
@@ -71,7 +71,7 @@ _testHelp() {
   assertTrue "help strings containing apostrophes don't work" ${r3turn}
   [ ${r3turn} -ne ${FLAGS_TRUE} ] && th_showOutput
 
-  return ${SHUNIT_TRUE}
+  return "${SHUNIT_TRUE}"
 }
 
 mock_flags_columns() {
