@@ -11,10 +11,10 @@
 # $ ./debug_output.sh sing
 # $ ./debug_output.sh --debug sing
 
-# source shflags
-. ../src/shflags
+# Source shflags.
+. ../shflags
 
-# define flags
+# Define flags.
 DEFINE_boolean 'debug' false 'enable debug mode' 'd'
 FLAGS_HELP=`cat <<EOF
 commands:
@@ -22,21 +22,17 @@ commands:
   sing:   sing something
 EOF`
 
-
-debug()
-{
+debug() {
   [ ${FLAGS_debug} -eq ${FLAGS_TRUE} ] || return
   echo "DEBUG: $@" >&2
 }
 
-die() {
-  [ $# -gt 0 ] && echo "error: $@" >&2
+die() { [ $# -gt 0 ] && echo "error: $@" >&2
   flags_help
   exit 1
 }
 
-
-# parse the command-line
+# Parse the command-line.
 FLAGS "$@" || exit 1
 eval set -- "${FLAGS_ARGV}"
 

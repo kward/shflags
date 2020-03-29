@@ -1,4 +1,4 @@
-# shFlags 1.2.2 Release Notes
+# shFlags 1.2.3 Release Notes
 
 https://github.com/kward/shflags
 
@@ -9,26 +9,21 @@ shFlags.
 
 ## Release info
 
-This is a minor bug fix release.
+This is a minor bug fix and cleanup release.
+
+There were several minor changes thanks to feedback from a major code review by
+[James Youngman](https://www.linkedin.com/in/jamesyoungman/). Thank you!
 
 Please see the `CHANGES-1.2.md` file for a complete list of changes.
 
 ### Notable changes
 
-Continuous integration testing setup with [Travis CI][travis-ci]. This helps
-keep the code in a working state by executing the unit tests on every submit.
-
-[travis-ci]: https://travis-ci.org/kward/shflags
-
-All code run through [ShellCheck](http://www.shellcheck.net/). This is an
-excellent shell linter, and brings consistency to the coding patterns used.
-
-The code was restructured to be more GitHub friendly. It should make the code
-more appealing to a wider audience.
+None.
 
 ### Notable bug fixes
 
-Fixed issue #45. Empty help string causes `shflags_test_issue_28.sh` to fail.
+Fixed the examples to work again with the new code structure. These broke when
+the code was refactored for GitHub.
 
 ## General info
 

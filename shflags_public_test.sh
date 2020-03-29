@@ -59,8 +59,9 @@ _testHelp() {
   assertTrue 'setting FLAGS_HELP did not produce expected result' ${grepped}
   [ ${grepped} -ne "${FLAGS_TRUE}" ] && th_showOutput
 
-  # test that "'" chars work in help string
+  # Test that "'" chars work in help string.
   (
+    # shellcheck disable=SC2034
     DEFINE_boolean b false "help string containing a ' char" b
     FLAGS "${flag}" >"${stdoutF}" 2>"${stderrF}"
   )
@@ -70,8 +71,7 @@ _testHelp() {
   [ ${grepped} -ne "${FLAGS_TRUE}" ] && th_showOutput
 }
 
-mock_flags_columns()
-{
+mock_flags_columns() {
   echo 80
 }
 
@@ -117,13 +117,19 @@ EOF
 }
 
 testEnhancedHelpOutput() {
+
   flags_getoptIsEnh || startSkipping
 
+  # shellcheck disable=SC2034
   DEFINE_boolean test_bool false 'test boolean' b
+  # shellcheck disable=SC2034
   DEFINE_integer test_int 0 'test integer' i
+  # shellcheck disable=SC2034
   DEFINE_string test_str '' 'test string' s
+  # shellcheck disable=SC2034
   DEFINE_string long_desc 'blah' \
       'testing of a long description to force wrap of default value' D
+  # shellcheck disable=SC2034
   DEFINE_string long_default \
       'this_is_a_long_default_value_to_force_alternate_indentation' \
       'testing of long default value' F
