@@ -26,12 +26,12 @@ stderrF="${TMPDIR:-/tmp}/STDERR"
 
 testHelp() {
   _testHelp '-h'
-  flags_getoptIsEnh
-  [ $? -eq ${FLAGS_FALSE} ] && return
   _testHelp '--help'
 }
 
 _testHelp() {
+  flags_getoptIsEnh || return ${SHUNIT_TRUE}
+
   flag=$1
 
   # Test default help output.
@@ -70,6 +70,8 @@ _testHelp() {
   r3turn=$?
   assertTrue "help strings containing apostrophes don't work" ${r3turn}
   [ ${r3turn} -ne ${FLAGS_TRUE} ] && th_showOutput
+
+  return ${SHUNIT_TRUE}
 }
 
 mock_flags_columns() {
