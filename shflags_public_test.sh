@@ -117,7 +117,6 @@ EOF
 }
 
 testEnhancedHelpOutput() {
-
   flags_getoptIsEnh || startSkipping
 
   # shellcheck disable=SC2034
