@@ -13,6 +13,9 @@
 # Disable source following.
 #   shellcheck disable=SC1090,SC1091
 
+# Exit immediately if a simple command exits with a non-zero status.
+#set -e
+
 # These variables will be overridden by the test helpers.
 stdoutF="${TMPDIR:-/tmp}/STDOUT"
 stderrF="${TMPDIR:-/tmp}/STDERR"
