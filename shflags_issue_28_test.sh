@@ -57,8 +57,9 @@ _testHelp() {
   assertTrue 'setting FLAGS_HELP did not produce expected result' ${grepped}
   [ ${grepped} -ne "${FLAGS_TRUE}" ] && th_showOutput
 
-  # test that "'" chars work in help string
+  # Test that "'" chars work in help string.
   (
+    # shellcheck disable=SC2034
     DEFINE_boolean b false "help string containing a ' char" b
     FLAGS "${flag}" >"${stdoutF}" 2>"${stderrF}"
   )
@@ -73,6 +74,7 @@ mock_flags_columns() {
 }
 
 _doDefines() {
+  # shellcheck disable=SC2034
   DEFINE_boolean 'force' false '' f
 }
 
