@@ -24,3 +24,10 @@ matrix:
         # Run the source through ShellCheck (http://www.shellcheck.net).
         - shellcheck *_test.sh
         - shellcheck -s sh shflags shflags_test_helpers
+
+branches:
+  only:
+  - master
+  - 1.0.x
+  # Tags, e.g. v.1.2.3.
+  - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
