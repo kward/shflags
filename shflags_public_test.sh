@@ -3,7 +3,7 @@
 #
 # shFlags unit test for the public functions.
 #
-# Copyright 2008-2017 Kate Ward. All Rights Reserved.
+# Copyright 2008-2020 Kate Ward. All Rights Reserved.
 # Released under the Apache 2.0 license.
 #
 # Author: kate.ward@forestent.com (Kate Ward)
@@ -26,7 +26,8 @@ stderrF="${TMPDIR:-/tmp}/STDERR"
 
 testHelp() {
   _testHelp '-h'
-  flags_getoptIsEnh || return
+  flags_getoptIsEnh
+  [ $? -eq ${FLAGS_FALSE} ] && return
   _testHelp '--help'
 }
 
@@ -40,24 +41,24 @@ _testHelp() {
     echo $? >"${returnF}"
   )
   assertFalse \
-      'a call for help should return a non-zero exit code.' \
+      'short help request should have returned a false exit code.' \
       "$(th_queryReturn)"
-  grep 'show this help' "${stderrF}" >/dev/null
-  grepped=$?
+  (grep 'show this help' "${stderrF}" >/dev/null)
+  r3turn=$?
   assertTrue \
       'short request for help should have produced some help output.' \
-      ${grepped}
-  [ ${grepped} -ne "${FLAGS_TRUE}" ] && th_showOutput
+      ${r3turn}
+  [ ${r3turn} -ne ${FLAGS_TRUE} ] && th_showOutput
 
   # Test proper output when FLAGS_HELP set.
   (
     FLAGS_HELP='this is a test'
     FLAGS "${flag}" >"${stdoutF}" 2>"${stderrF}"
   )
-  grep 'this is a test' "${stderrF}" >/dev/null
-  grepped=$?
-  assertTrue 'setting FLAGS_HELP did not produce expected result' ${grepped}
-  [ ${grepped} -ne "${FLAGS_TRUE}" ] && th_showOutput
+  (grep 'this is a test' "${stderrF}" >/dev/null)
+  r3turn=$?
+  assertTrue 'setting FLAGS_HELP did not produce expected result' ${r3turn}
+  [ ${r3turn} -ne ${FLAGS_TRUE} ] && th_showOutput
 
   # Test that "'" chars work in help string.
   (
@@ -65,10 +66,10 @@ _testHelp() {
     DEFINE_boolean b false "help string containing a ' char" b
     FLAGS "${flag}" >"${stdoutF}" 2>"${stderrF}"
   )
-  grep "help string containing a ' char" "${stderrF}" >/dev/null
-  grepped=$?
-  assertTrue "help strings containing apostrophes don't work" ${grepped}
-  [ ${grepped} -ne "${FLAGS_TRUE}" ] && th_showOutput
+  (grep "help string containing a ' char" "${stderrF}" >/dev/null)
+  r3turn=$?
+  assertTrue "help strings containing apostrophes don't work" ${r3turn}
+  [ ${r3turn} -ne ${FLAGS_TRUE} ] && th_showOutput
 }
 
 mock_flags_columns() {
@@ -86,6 +87,10 @@ testStandardHelpOutput() {
   DEFINE_string long_default \
       'this_is_a_long_default_value_to_force_alternate_indentation' \
       'testing of long default value' F
+
+  # Test for https://github.com/kward/shflags/issues/28.
+  DEFINE_boolean 'force' false '' f
+
   help='USAGE: standard [flags] args'
 
   cat >"${expectedF}" <<EOF
@@ -98,6 +103,7 @@ flags:
       (default: 'blah')
   -F  testing of long default value
       (default: 'this_is_a_long_default_value_to_force_alternate_indentation')
+  -f  (default: false)
   -h  show this help (default: false)
 EOF
   (
@@ -132,6 +138,10 @@ testEnhancedHelpOutput() {
   DEFINE_string long_default \
       'this_is_a_long_default_value_to_force_alternate_indentation' \
       'testing of long default value' F
+
+  # Test for https://github.com/kward/shflags/issues/28.
+  DEFINE_boolean 'force' false '' f
+
   help='USAGE: enhanced [flags] args'
 
   cat >"${expectedF}" <<EOF
@@ -144,6 +154,7 @@ flags:
                    (default: 'blah')
   -F,--long_default:  testing of long default value
     (default: 'this_is_a_long_default_value_to_force_alternate_indentation')
+  -f,--[no]force:  (default: false)
   -h,--help:  show this help (default: false)
 EOF
   (
@@ -183,6 +194,16 @@ testLoggingLevel() {
   flags_setLoggingLevel "${FLAGS_LEVEL_INFO}"
   got=`flags_loggingLevel` want=${FLAGS_LEVEL_INFO}
   assertTrue "Unexpected configured logging level = ${got}, want ${want}" "[ ${got} -eq ${want} ]"
+}
+
+# According to https://github.com/kward/shflags/issues/28
+#
+#   DEFINE_boolean misbehaves when help-string is empty
+testIssue28() {
+  # shellcheck disable=SC2034
+  DEFINE_boolean 'force' false '' f
+
+  testHelp
 }
 
 oneTimeSetUp() {
