@@ -48,7 +48,7 @@ _testHelp() {
   assertTrue \
       'short request for help should have produced some help output.' \
       ${r3turn}
-  [ ${r3turn} -ne ${FLAGS_TRUE} ] && th_showOutput
+  [ ${r3turn} -ne "${FLAGS_TRUE}" ] && th_showOutput
 
   # Test proper output when FLAGS_HELP set.
   (
@@ -58,7 +58,7 @@ _testHelp() {
   (grep 'this is a test' "${stderrF}" >/dev/null)
   r3turn=$?
   assertTrue 'setting FLAGS_HELP did not produce expected result' ${r3turn}
-  [ ${r3turn} -ne ${FLAGS_TRUE} ] && th_showOutput
+  [ ${r3turn} -ne "${FLAGS_TRUE}" ] && th_showOutput
 
   # Test that "'" chars work in help string.
   (
@@ -69,7 +69,7 @@ _testHelp() {
   (grep "help string containing a ' char" "${stderrF}" >/dev/null)
   r3turn=$?
   assertTrue "help strings containing apostrophes don't work" ${r3turn}
-  [ ${r3turn} -ne ${FLAGS_TRUE} ] && th_showOutput
+  [ ${r3turn} -ne "${FLAGS_TRUE}" ] && th_showOutput
 
   return "${SHUNIT_TRUE}"
 }

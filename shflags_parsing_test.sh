@@ -42,7 +42,7 @@ testGetoptStandard() {
 
 testGetoptEnhanced() {
   flags_getoptIsEnh
-  [ $? -eq ${FLAGS_FALSE} ] && return
+  [ $? -eq "${FLAGS_FALSE}" ] && return
 
   _flags_getoptEnhanced '-b' >"${stdoutF}" 2>"${stderrF}"
   assertTrue "didn't parse valid flag 'b'" $?
@@ -89,7 +89,7 @@ testValidBoolsShort()
 # TODO(kate): separate into multiple functions to reflect correct usage
 testValidBoolsLong() {
   flags_getoptIsEnh
-  [ $? -eq ${FLAGS_FALSE} ] && return
+  [ $? -eq "${FLAGS_FALSE}" ] && return
 
   # Note: the default value of bool is 'false'.
 
@@ -121,7 +121,7 @@ testValidBoolsLong() {
 testValidFloats() {
   _testValidFloats '-f'
   flags_getoptIsEnh
-  [ $? -eq ${FLAGS_FALSE} ] && return
+  [ $? -eq "${FLAGS_FALSE}" ] && return
   _testValidFloats '--float'
 }
 
@@ -143,7 +143,7 @@ testInvalidFloats()
 {
   _testInvalidFloats '-f'
   flags_getoptIsEnh
-  [ $? -eq ${FLAGS_FALSE} ] && return
+  [ $? -eq "${FLAGS_FALSE}" ] && return
   _testInvalidFloats '--float'
 }
 
@@ -165,7 +165,7 @@ _testInvalidFloats()
 testValidIntegers() {
   _testValidIntegers '-i'
   flags_getoptIsEnh
-  [ $? -eq ${FLAGS_FALSE} ] && return
+  [ $? -eq "${FLAGS_FALSE}" ] && return
   _testValidIntegers '--int'
 }
 
@@ -185,7 +185,7 @@ _testValidIntegers() {
 testInvalidIntegers() {
   _testInvalidIntegers '-i'
   flags_getoptIsEnh
-  [ $? -eq ${FLAGS_FALSE} ] && return
+  [ $? -eq "${FLAGS_FALSE}" ] && return
   _testInvalidIntegers '--int'
 }
 
@@ -234,7 +234,7 @@ _testValidStrings()
 testMultipleFlags() {
   _testMultipleFlags '-b' '-i' '-f' '-s'
   flags_getoptIsEnh
-  [ $? -eq ${FLAGS_FALSE} ] && return
+  [ $? -eq "${FLAGS_FALSE}" ] && return
   _testMultipleFlags '--bool' '--int' '--float' '--str'
 }
 
@@ -285,14 +285,14 @@ testMultipleNonFlagArgs() {
 testMultipleNonFlagStringArgsWithSpaces()
 {
   flags_getoptIsEnh
-  [ $? -eq ${FLAGS_FALSE} ] && return
+  [ $? -eq "${FLAGS_FALSE}" ] && return
   _testNonFlagArgs 3 argOne 'arg two' arg3
 }
 
 testFlagsWithEquals()
 {
   flags_getoptIsEnh
-  [ $? -eq ${FLAGS_FALSE} ] && return
+  [ $? -eq "${FLAGS_FALSE}" ] && return
 
   FLAGS --str='str_flag' 'non_flag' >"${stdoutF}" 2>"${stderrF}"
   assertTrue 'FLAGS returned a non-zero result' $?
@@ -306,7 +306,7 @@ testFlagsWithEquals()
 
 testComplicatedCommandLineStandard() {
   flags_getoptIsEnh
-  [ $? -eq ${FLAGS_TRUE} ] && return
+  [ $? -eq "${FLAGS_TRUE}" ] && return
 
   # Note: standard getopt stops parsing after first non-flag argument, which
   # results in the remaining flags being treated as arguments instead.
@@ -323,7 +323,7 @@ testComplicatedCommandLineStandard() {
 
 testComplicatedCommandLineEnhanced() {
   flags_getoptIsEnh
-  [ $? -eq ${FLAGS_FALSE} ] && return
+  [ $? -eq "${FLAGS_FALSE}" ] && return
 
   FLAGS -i 1 non_flag_1 --str='two' non_flag_2 --float 3 'non flag 3' \
       >"${stdoutF}" 2>"${stderrF}"
