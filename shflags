@@ -108,18 +108,25 @@ FLAGS_LEVEL_FATAL=4
 __FLAGS_LEVEL_DEFAULT=${FLAGS_LEVEL_WARN}
 
 # Determine some reasonable command defaults.
-__FLAGS_EXPR_CMD='expr --'
-__FLAGS_UNAME_S=`uname -s`
-if [ "${__FLAGS_UNAME_S}" = 'BSD' ]; then
-  __FLAGS_EXPR_CMD='gexpr --'
-else
-  _flags_output_=`${__FLAGS_EXPR_CMD} 2>&1`
-  if [ $? -eq ${FLAGS_TRUE} -a "${_flags_output_}" = '--' ]; then
-    # We are likely running inside BusyBox.
-    __FLAGS_EXPR_CMD='expr'
+_flags_expr_cmd() {
+  if [ "$(uname -s)" = 'BSD' ]; then
+    echo 'gexpr --'
+    return 0
   fi
-  unset _flags_output_
-fi
+
+  _flags_expr_cmd_='expr --'
+  # shellcheck disable=SC2003
+  if _flags_output_=$(expr -- 2>&1); then
+    if [ "${_flags_output_}" = '--' ]; then
+      # We are likely running inside BusyBox.
+      _flags_expr_cmd_='expr'
+    fi
+  fi
+
+  echo "${_flags_expr_cmd_}"
+  unset _flags_expr_cmd_ _flags_output_
+}
+__FLAGS_EXPR_CMD=`_flags_expr_cmd`
 
 # Commands a user can override if desired.
 FLAGS_EXPR_CMD=${FLAGS_EXPR_CMD:-${__FLAGS_EXPR_CMD}}
@@ -1201,7 +1208,7 @@ flags_reset() {
   unset flags_name_ flags_type_ flags_strToEval_ flags_usName_
 }
 
-#
+#-----------------------------------------------------------------------------
 # Initialization
 #
 
