@@ -160,7 +160,9 @@ EOF
       # ${shell_bin} needs word splitting.
       #   shellcheck disable=SC2086
       ( exec ${shell_bin} "./${t}" 2>&1; )
-      test "${runner_passing_}" -eq ${RUNNER_TRUE} -a $? -eq ${RUNNER_TRUE}
+      shell_passing=$?
+      [ "${shell_passing}" -eq "${RUNNER_TRUE}" ] || echo "${shell_bin} not passing" >&2
+      test "${runner_passing_}" -eq ${RUNNER_TRUE} -a ${shell_passing} -eq ${RUNNER_TRUE}
       runner_passing_=$?
     done
   done
