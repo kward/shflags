@@ -9,6 +9,8 @@ script:
 
 os:
   - linux
+    - dist: bionic
+    - dist: xenial
   - osx
 
 addons:
