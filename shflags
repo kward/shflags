@@ -357,9 +357,7 @@ _flags_define() {
   fi
 
   # Check for existing short name definition.
-  if [ ${_flags_return_} -eq ${FLAGS_TRUE} \
-      -a "${_flags_short_}" != "${__FLAGS_NULL}" ]
-  then
+  if [ ${_flags_return_} -eq ${FLAGS_TRUE} -a "${_flags_short_}" != "${__FLAGS_NULL}" ]; then
     if _flags_itemInList "${_flags_short_}" "${__flags_shortNames}"; then
       flags_error="flag short name (${_flags_short_}) already defined"
       _flags_warn "${flags_error}"
