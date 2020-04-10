@@ -30,28 +30,28 @@ testFlagsDefine() {
   # No arguments.
   if _flags_define >"${stdoutF}" 2>"${stderrF}"
   then :; else
-    assertEquals '_flags_define() with no arguments should error' ${FLAGS_ERROR} $?
+    assertEquals '_flags_define() with no arguments should error' "${FLAGS_ERROR}" $?
   fi
   assertErrorMsg '' 'no arguments'
 
   # One argument.
   if _flags_define arg1 >"${stdoutF}" 2>"${stderrF}"
   then :; else
-    assertEquals '_flags_define() call with one argument should error' ${FLAGS_ERROR} $?
+    assertEquals '_flags_define() call with one argument should error' "${FLAGS_ERROR}" $?
   fi
   assertErrorMsg '' 'one argument'
 
   # Two arguments.
   if _flags_define arg1 arg2 >"${stdoutF}" 2>"${stderrF}"
   then :; else
-    assertEquals '_flags_define() call with two arguments should error' ${FLAGS_ERROR} $?
+    assertEquals '_flags_define() call with two arguments should error' "${FLAGS_ERROR}" $?
   fi
   assertErrorMsg '' 'two arguments'
 
   # Three arguments.
   if _flags_define arg1 arg2 arg3 >"${stdoutF}" 2>"${stderrF}"
   then :; else
-    assertEquals '_flags_define() call with three arguments should error' ${FLAGS_ERROR} $?
+    assertEquals '_flags_define() call with three arguments should error' "${FLAGS_ERROR}" $?
   fi
   assertErrorMsg '' 'three arguments'
 
@@ -61,7 +61,7 @@ testFlagsDefine() {
   fi
   if _flags_define "${__FLAGS_TYPE_BOOLEAN}" multiDefBool false 'multi def #2' m >"${stdoutF}" 2>"${stderrF}"
   then :; else
-    assertEquals '_flags_define() with existing flag name should fail' ${FLAGS_FALSE} $?
+    assertEquals '_flags_define() with existing flag name should fail' "${FLAGS_FALSE}" $?
   fi
   assertTrue '_flags_define() should not overwrite previously defined default.' "${FLAGS_multiDefBool:-}"
   assertWarnMsg '' 'existing flag'
@@ -72,7 +72,7 @@ testFlagsDefine() {
   fi
   if _flags_define "${__FLAGS_TYPE_STRING}" long_name 'bar' 'underscored name' l >"${stdoutF}" 2>"${stderrF}"
   then :; else
-    assertEquals '_flags_define() with duplicate dashed and underscored definition should fail' ${FLAGS_FALSE} $?
+    assertEquals '_flags_define() with duplicate dashed and underscored definition should fail' "${FLAGS_FALSE}" $?
   fi
   # shellcheck disable=SC2154
   assertEquals '_flags_define() should not overwrite previously defined default.' "${FLAGS_long_name}" 'foo'
@@ -83,7 +83,7 @@ testFlagsDefine() {
   # Invalid type.
   if _flags_define invalid arg2 arg3 arg4 i >"${stdoutF}" 2>"${stderrF}"
   then :; else
-    assertEquals '_flags_define() with "invalid" type should have failed.' ${FLAGS_ERROR} $?
+    assertEquals '_flags_define() with "invalid" type should have failed.' "${FLAGS_ERROR}" $?
   fi
   assertErrorMsg 'unrecognized flag type' 'invalid type'
 }
@@ -97,7 +97,7 @@ testBoolean() {
       assertEquals "${desc}: incorrect FLAGS_boolVal value" "${FLAGS_boolVal:-}" "${want}"
     else
       got=$?
-      if [ "${ok}" -eq ${FLAGS_TRUE} ]; then
+      if [ "${ok}" -eq "${FLAGS_TRUE}" ]; then
         assertEquals "${desc}: DEFINE_boolean() failed unexpectedly" "${want}" "${got}"
       else
         assertEquals "${desc}: DEFINE_boolean() expected different return value" "${want}" "${got}"
@@ -125,7 +125,7 @@ testFloat() {
       got="${FLAGS_floatVal:-}" want="${default}"
       assertEquals "${desc}: incorrect FLAGS_floatVal value" "${want}" "${got}"
     else
-      assertEquals "${desc}: DEFINE_float() failed unexpectedly." ${FLAGS_TRUE} $?
+      assertEquals "${desc}: DEFINE_float() failed unexpectedly." "${FLAGS_TRUE}" $?
     fi
   done
 
@@ -137,7 +137,7 @@ testFloat() {
     then
       fail "${desc}: expected DEFINE_float() to fail"
     else
-      assertEquals "${desc}: DEFINE_float() expected error" ${FLAGS_ERROR} $?
+      assertEquals "${desc}: DEFINE_float() expected error" "${FLAGS_ERROR}" $?
       assertErrorMsg
     fi
   done
@@ -153,7 +153,7 @@ testInteger() {
       got="${FLAGS_intVal:-}" want="${default}"
       assertEquals "${desc}: incorrect FLAGS_intVal value" "${want}" "${got}"
     else
-      assertEquals "${desc}: DEFINE_integer() failed unexpectedly." ${FLAGS_TRUE} $?
+      assertEquals "${desc}: DEFINE_integer() failed unexpectedly." "${FLAGS_TRUE}" $?
     fi
   done
 
@@ -165,7 +165,7 @@ testInteger() {
     then
       fail "${desc}: expected DEFINE_integer() to fail"
     else
-      assertEquals "${desc}: DEFINE_integer() expected error." ${FLAGS_ERROR} $?
+      assertEquals "${desc}: DEFINE_integer() expected error." "${FLAGS_ERROR}" $?
       assertErrorMsg
     fi
   done
@@ -182,7 +182,7 @@ testString() {
       got="${FLAGS_strVal:-}" want="${default}"
       assertEquals "${desc}: incorrect FLAGS_strVal value" "${want}" "${got}"
     else
-      assertEquals "${desc}: DEFINE_string() failed unexpectedly." ${FLAGS_TRUE} $?
+      assertEquals "${desc}: DEFINE_string() failed unexpectedly." "${FLAGS_TRUE}" $?
     fi
   done
 
@@ -199,7 +199,7 @@ testFlagNameIsReserved() {
   then
     fail "expected DEFINE with reserved flag name to fail"
   else
-    assertEquals "expected error from DEFINE with reserved flag" ${FLAGS_ERROR} $?
+    assertEquals "expected error from DEFINE with reserved flag" "${FLAGS_ERROR}" $?
     assertErrorMsg 'flag name (TRUE) is reserved'
   fi
 }
