@@ -41,7 +41,7 @@ for hook in \
   p4-pre-submit \
   post-index-change
 do
-  echo "- ${hook}"
+  echo "  ${hook}"
   dest="${hooksPath}/${hook}"
   ln -sf "${src}" "${dest}"
 done
