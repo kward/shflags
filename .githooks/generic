@@ -4,12 +4,12 @@
 # https://git-scm.com/docs/githooks
 
 run() {
-	hook=$1
-	file=$2
+  hook=$1
+  file=$2
 
   n=$(echo "${file}" |sed "s/^.*${hook}\.//")
-	echo "running ${n} ${hook}"
-	${file}
+  echo "running ${n} ${hook}"
+  ${file}
 }
 
 # Redirect output to stderr.
@@ -19,10 +19,11 @@ githooks='.githooks'
 basename=$(basename "$0")
 
 for f in $(cd ${githooks} && echo *); do
-	case "${f}" in
-	pre-commit.*)
-    # Called by "git commit" with no arguments.
-    [ "${basename}" = 'pre-commit' ] && run pre-commit "${githooks}/${f}"
-    ;;
+  case "${f}" in
+    pre-commit.*)
+      # Called by "git commit" with no arguments.
+      [ "${basename}" = 'pre-commit' ] && run pre-commit "${githooks}/${f}"
+      ;;
+    *) ;;
   esac
 done
