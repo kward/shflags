@@ -161,7 +161,9 @@ EOF
       #   shellcheck disable=SC2086
       ( exec ${shell_bin} "./${t}" 2>&1; )
       shell_passing=$?
-      [ "${shell_passing}" -eq "${RUNNER_TRUE}" ] || echo "${shell_bin} not passing" >&2
+      if [ "${shell_passing}" -ne "${RUNNER_TRUE}" ]; then
+        runner_warn "${shell_bin} not passing"
+      fi
       test "${runner_passing_}" -eq ${RUNNER_TRUE} -a ${shell_passing} -eq ${RUNNER_TRUE}
       runner_passing_=$?
     done
