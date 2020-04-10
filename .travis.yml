@@ -7,10 +7,6 @@ script:
   # Execute the unit tests.
   - ./test_runner
 
-os:
-  - linux
-  - osx
-
 addons:
   apt:
     packages:
@@ -25,6 +21,7 @@ matrix:
     - os: linux
       # Ubuntu Xenial 16.04
       dist: xenial
+    - os: osx
     - os: linux
       script:
         # Run the source through ShellCheck (http://www.shellcheck.net).
