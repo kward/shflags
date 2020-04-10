@@ -12,7 +12,7 @@ if ! command -v shellcheck >/dev/null; then
   return 0
 fi
 
-for f in $(git diff --name-only); do
+for f in $(git diff --cached --name-only); do
   case "${f}" in
     shflags|shflags_test_helpers) shellcheck -s sh "${f}" ;;
     *.sh) shellcheck "${f}" ;;

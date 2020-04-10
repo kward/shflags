@@ -3,13 +3,18 @@
 # Initialize the local git hooks this repository.
 # https://git-scm.com/docs/githooks
 
-topLevel=$(git rev-parse --show-toplevel) && cd "${topLevel}"
-hooksDir="${topLevel}/.githooks"
-hooksPath=$(git config core.hooksPath)
-if [ $? -ne 0 ]; then
-	hooksPath="${topLevel}/.git/hooks"
+topLevel=$(git rev-parse --show-toplevel)
+if ! cd "${topLevel}"; then
+  echo "filed to cd into topLevel directory '${topLevel}'"
+  exit 1
 fi
 
+hooksDir="${topLevel}/.githooks"
+if ! hooksPath=$(git config core.hooksPath); then
+  hooksPath="${topLevel}/.git/hooks"
+fi
+
+src="${hooksDir}/generic"
 echo "linking hooks..."
 for hook in \
   applypatch-msg \
@@ -36,11 +41,7 @@ for hook in \
   p4-pre-submit \
   post-index-change
 do
-	src="${hooksDir}/${hook}"
+  echo "- ${hook}"
   dest="${hooksPath}/${hook}"
-
-	[ -x "${src}" ] || continue
-
-	echo "- ${hook}"
-	ln -sf "${src}" "${dest}"
+  ln -sf "${src}" "${dest}"
 done
