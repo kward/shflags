@@ -9,8 +9,6 @@ script:
 
 os:
   - linux
-    - dist: bionic
-    - dist: xenial
   - osx
 
 addons:
@@ -21,6 +19,12 @@ addons:
 
 matrix:
   include:
+    - os: linux
+      # Ubuntu Bionic 18.04
+      dist: bionic
+    - os: linux
+      # Ubuntu Xenial 16.04
+      dist: xenial
     - os: linux
       script:
         # Run the source through ShellCheck (http://www.shellcheck.net).
