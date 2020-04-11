@@ -109,27 +109,29 @@ th_queryReturn() {
   return "${SHUNIT_ERROR}"
 }
 
+assertWarnMsg()  { _th_assertMsg 'WARN' "${1:-}" "${2:-}"; }
+assertErrorMsg() { _th_assertMsg 'ERROR' "${1:-}" "${2:-}"; }
+assertFatalMsg() { _th_assertMsg 'FATAL' "${1:-}" "${2:-}"; }
+
 _th_assertMsg() {
   _th_alert_type_=$1
   _th_alert_msg_=$2
   _th_msg_=$3
 
   case ${_th_alert_type_} in
-    WARN) _th_alert_str_='a warning' ;;
+    WARN)  _th_alert_str_='a warning' ;;
     ERROR) _th_alert_str_='an error' ;;
     FATAL) _th_alert_str_='a fatal' ;;
   esac
-  [ -z "${_th_alert_msg_}" ] && _th_alert_msg_='.*'
-  [ -n "${_th_msg_}" ] && _th_msg_="(${_th_msg_}) "
+  if [ -z "${_th_alert_msg_}" ]; then
+   _th_alert_msg_='.*'
+  fi
+  if [ -n "${_th_msg_}" ]; then
+    _th_msg_="(${_th_msg_}) "
+  fi
 
-  grep -- "^flags:${_th_alert_type_} ${_th_alert_msg_}" "${stderrF}" \
-      >/dev/null
-  assertTrue \
-      "FLAGS ${_th_msg_}failure did not generate ${_th_alert_str_} message" $?
+  (grep -- "^flags:${_th_alert_type_} ${_th_alert_msg_}" "${stderrF}" >/dev/null)
+  assertEquals "FLAGS ${_th_msg_}failure did not generate ${_th_alert_str_} message" "${FLAGS_TRUE}" $?
 
   unset _th_alert_type_ _th_alert_msg_ _th_alert_str_ _th_msg_
 }
-
-assertWarnMsg() { _th_assertMsg 'WARN' "${1:-}" "${2:-}"; }
-assertErrorMsg() { _th_assertMsg 'ERROR' "${1:-}" "${2:-}"; }
-assertFatalMsg() { _th_assertMsg 'FATAL' "${1:-}" "${2:-}"; }
