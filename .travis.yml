@@ -7,18 +7,22 @@ script:
   # Execute the unit tests.
   - ./test_runner
 
-os:
-  - linux
-  - osx
-
 addons:
   apt:
     packages:
       - ksh
+      - mksh
       - zsh
 
 matrix:
   include:
+    - os: linux
+      # Ubuntu Bionic 18.04
+      dist: bionic
+    - os: linux
+      # Ubuntu Xenial 16.04
+      dist: xenial
+    - os: osx
     - os: linux
       script:
         # Run the source through ShellCheck (http://www.shellcheck.net).

@@ -16,7 +16,7 @@ doSomething() {
 }
 ```
 
-One-line functions are allowed if they can fit within the 80 char line limit.
+One-line functions are allowed if they are for a single command.
 
 ```sh
 doSomething() { echo 'done!'; }
@@ -118,10 +118,11 @@ if [ -z 'some string' ]; then
 fi
 ```
 
-Lines of code should be no longer than 80 characters unless absolutely
-necessary. When lines are wrapped using the backslash character '\', subsequent
-lines should be indented with four (4) spaces so as to differentiate from the
-standard spacing of two characters, and tabs may not be used.
+Lines of code have no line limit, although the general preference is to wrap
+lines at reasonable boundaries (e.g., between if/then/else clauses). When long
+lines are wrapped using the backslash character '\', subsequent lines should be
+indented with four (4) spaces so as to differentiate from the standard spacing
+of two characters, and tabs may not be used.
 
 ```sh
 for x in some set of very long set of arguments that make for a very long \

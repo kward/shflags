@@ -91,7 +91,7 @@
 #   shellcheck disable=SC2166
 
 # Return if FLAGS already loaded.
-[ -n "${FLAGS_VERSION:-}" ] && return 0
+if [ -n "${FLAGS_VERSION:-}" ]; then return 0; fi
 FLAGS_VERSION='1.2.4pre'
 
 # Return values that scripts can use.
@@ -99,27 +99,38 @@ FLAGS_TRUE=0
 FLAGS_FALSE=1
 FLAGS_ERROR=2
 
-# Logging levels.
-FLAGS_LEVEL_DEBUG=0
-FLAGS_LEVEL_INFO=1
-FLAGS_LEVEL_WARN=2
-FLAGS_LEVEL_ERROR=3
-FLAGS_LEVEL_FATAL=4
-__FLAGS_LEVEL_DEFAULT=${FLAGS_LEVEL_WARN}
-
-# Determine some reasonable command defaults.
-__FLAGS_EXPR_CMD='expr --'
-__FLAGS_UNAME_S=`uname -s`
-if [ "${__FLAGS_UNAME_S}" = 'BSD' ]; then
-  __FLAGS_EXPR_CMD='gexpr --'
-else
-  _flags_output_=`${__FLAGS_EXPR_CMD} 2>&1`
-  if [ $? -eq ${FLAGS_TRUE} -a "${_flags_output_}" = '--' ]; then
-    # We are likely running inside BusyBox.
-    __FLAGS_EXPR_CMD='expr'
+# shlib_expr_cmd determines a reasonable default `expr` command.
+# https://github.com/kward/shlib
+#
+# Use like:
+#   EXPR_CMD=$(shlib_expr_cmd)
+#   ${EXPR_CMD} 1 + 1
+#
+# Args:
+#   none
+# Output:
+#   string: expr command
+# Return
+#   int: 0 upon success
+shlib_expr_cmd() {
+  if [ "$(uname -s)" = 'BSD' ]; then
+    echo 'gexpr --'
+    return 0
   fi
-  unset _flags_output_
-fi
+
+  _shlib_expr_cmd_='expr --'
+  # shellcheck disable=SC2003
+  if _shlib_output_=$(${_shlib_expr_cmd_} 2>&1); then
+    if [ "${_shlib_output_}" = '--' ]; then
+      # We are likely running inside BusyBox.
+      _shlib_expr_cmd_='expr'
+    fi
+  fi
+
+  echo "${_shlib_expr_cmd_}"
+  unset _shlib_expr_cmd_ _shlib_output_
+}
+__FLAGS_EXPR_CMD=`shlib_expr_cmd`
 
 # Commands a user can override if desired.
 FLAGS_EXPR_CMD=${FLAGS_EXPR_CMD:-${__FLAGS_EXPR_CMD}}
@@ -129,26 +140,28 @@ FLAGS_GETOPT_CMD=${FLAGS_GETOPT_CMD:-getopt}
 # Logging functions.
 #
 
-__flags_level=0 # Default logging level.
+# Logging levels.
+FLAGS_LEVEL_DEBUG=0
+FLAGS_LEVEL_INFO=1
+FLAGS_LEVEL_WARN=2
+FLAGS_LEVEL_ERROR=3
+FLAGS_LEVEL_FATAL=4
+__FLAGS_LEVEL_DEFAULT=${FLAGS_LEVEL_WARN}
+__flags_level=${__FLAGS_LEVEL_DEFAULT} # Current logging level.
 
 _flags_debug() {
-  [ ${__flags_level} -le ${FLAGS_LEVEL_DEBUG} ] || return
-  echo "flags:DEBUG $*" >&2
+  if [ ${__flags_level} -le ${FLAGS_LEVEL_DEBUG} ]; then echo "flags:DEBUG $*" >&2; fi
 }
 _flags_info() {
-  [ ${__flags_level} -le ${FLAGS_LEVEL_INFO} ] || return
-  echo "flags:INFO $*" >&2
+  if [ ${__flags_level} -le ${FLAGS_LEVEL_INFO} ]; then echo "flags:INFO $*" >&2; fi
 }
 _flags_warn() {
-  [ ${__flags_level} -le ${FLAGS_LEVEL_WARN} ] || return
-  echo "flags:WARN $*" >&2
+  if [ ${__flags_level} -le ${FLAGS_LEVEL_WARN} ]; then echo "flags:WARN $*" >&2; fi
 }
 _flags_error() {
-  [ ${__flags_level} -le ${FLAGS_LEVEL_ERROR} ] || return
-  echo "flags:ERROR $*" >&2
+  if [ ${__flags_level} -le ${FLAGS_LEVEL_ERROR} ]; then echo "flags:ERROR $*" >&2; fi
 }
 _flags_fatal() {
-  [ ${__flags_level} -le ${FLAGS_LEVEL_FATAL} ] || return
   echo "flags:FATAL $*" >&2
   exit ${FLAGS_ERROR}
 }
@@ -156,7 +169,7 @@ _flags_fatal() {
 # Get the logging level.
 flags_loggingLevel() { echo ${__flags_level}; }
 
-# Set the logging level.
+# Set the logging level by overriding the `__flags_level` variable.
 #
 # Args:
 #   _flags_level_: integer: new logging level
@@ -165,9 +178,9 @@ flags_loggingLevel() { echo ${__flags_level}; }
 flags_setLoggingLevel() {
   [ $# -ne 1 ] && _flags_fatal "flags_setLevel(): logging level missing"
   _flags_level_=$1
-  [ "${_flags_level_}" -ge "${FLAGS_LEVEL_DEBUG}" \
-    -a "${_flags_level_}" -le "${FLAGS_LEVEL_FATAL}" ] \
-      || _flags_fatal "Invalid logging level '${_flags_level_}' specified."
+  if ! [ "${_flags_level_}" -ge "${FLAGS_LEVEL_DEBUG}" -a "${_flags_level_}" -le "${FLAGS_LEVEL_FATAL}" ]; then
+    _flags_fatal "Invalid logging level '${_flags_level_}' specified."
+  fi
   __flags_level=$1
   unset _flags_level_
 }
@@ -320,8 +333,7 @@ _flags_define() {
   _flags_usName_="`_flags_underscoreName "${_flags_name_}"`"
 
   # Check whether the flag name is reserved.
-  _flags_itemInList "${_flags_usName_}" "${__FLAGS_RESERVED_LIST}"
-  if [ $? -eq ${FLAGS_TRUE} ]; then
+  if _flags_itemInList "${_flags_usName_}" "${__FLAGS_RESERVED_LIST}"; then
     flags_error="flag name (${_flags_name_}) is reserved"
     _flags_return_=${FLAGS_ERROR}
   fi
@@ -345,9 +357,7 @@ _flags_define() {
   fi
 
   # Check for existing short name definition.
-  if [ ${_flags_return_} -eq ${FLAGS_TRUE} \
-      -a "${_flags_short_}" != "${__FLAGS_NULL}" ]
-  then
+  if [ ${_flags_return_} -eq ${FLAGS_TRUE} -a "${_flags_short_}" != "${__FLAGS_NULL}" ]; then
     if _flags_itemInList "${_flags_short_}" "${__flags_shortNames}"; then
       flags_error="flag short name (${_flags_short_}) already defined"
       _flags_warn "${flags_error}"
@@ -1201,7 +1211,7 @@ flags_reset() {
   unset flags_name_ flags_type_ flags_strToEval_ flags_usName_
 }
 
-#
+#-----------------------------------------------------------------------------
 # Initialization
 #
 
