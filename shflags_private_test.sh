@@ -107,7 +107,7 @@ testItemInList() {
   list='this is a test'
   # shellcheck disable=SC2162
   while read desc item want; do
-    if [ ${want} -eq ${FLAGS_TRUE} ]; then
+    if [ "${want}" -eq "${FLAGS_TRUE}" ]; then
       continue
     fi
     got=${FLAGS_TRUE}
