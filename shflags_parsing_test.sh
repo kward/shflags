@@ -3,7 +3,7 @@
 #
 # shFlags unit test for the flag definition methods
 #
-# Copyright 2008-2017 Kate Ward. All Rights Reserved.
+# Copyright 2008-2020 Kate Ward. All Rights Reserved.
 # Released under the Apache 2.0 license.
 #
 # Author: kate.ward@forestent.com (Kate Ward)
@@ -16,12 +16,6 @@
 # TODO(kward): assert on FLAGS errors
 # TODO(kward): testNonStandardIFS()
 
-# Exit immediately if a pipeline or subshell exits with a non-zero status.
-#set -e
-
-# Treat unset variables as an error.
-set -u
-
 # These variables will be overridden by the test helpers.
 returnF="${TMPDIR:-/tmp}/return"
 stdoutF="${TMPDIR:-/tmp}/STDOUT"
@@ -31,13 +25,15 @@ stderrF="${TMPDIR:-/tmp}/STDERR"
 . ./shflags_test_helpers
 
 testGetoptStandard() {
-  _flags_getoptStandard '-b' >"${stdoutF}" 2>"${stderrF}"
-  rslt=$?
-  assertTrue "didn't parse valid flag 'b'" ${rslt}
-  th_showOutput ${rslt} "${stdoutF}" "${stderrF}"
+  if ! _flags_getoptStandard '-b' >"${stdoutF}" 2>"${stderrF}"; then
+    fail "didn't parse valid flag 'b'"
+    _showTestOutput
+  fi
 
-  _flags_getoptStandard '-x' >"${stdoutF}" 2>"${stderrF}"
-  assertFalse "parsed invalid flag 'x'" $?
+  if _flags_getoptStandard '-x' >"${stdoutF}" 2>"${stderrF}"; then
+    fail "parsed invalid flag 'x'"
+    _showTestOutput
+  fi
 }
 
 testGetoptEnhanced() {
@@ -358,6 +354,9 @@ setUp() {
 tearDown() {
   flags_reset
 }
+
+# showTestOutput for the most recently run test.
+_showTestOutput() { th_showOutput "${SHUNIT_FALSE}" "${stdoutF}" "${stderrF}"; }
 
 # Load and run shUnit2.
 # shellcheck disable=SC2034
