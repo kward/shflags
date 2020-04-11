@@ -27,11 +27,12 @@ stderrF="${TMPDIR:-/tmp}/STDERR"
 testGetoptStandard() {
   if ! _flags_getoptStandard '-b' >"${stdoutF}" 2>"${stderrF}"; then
     fail "didn't parse valid flag 'b'"
-    th_showOutput ${rslt} "${stdoutF}" "${stderrF}"
+    _showTestOutput
   fi
 
   if _flags_getoptStandard '-x' >"${stdoutF}" 2>"${stderrF}"; then
     fail "parsed invalid flag 'x'"
+    _showTestOutput
   fi
 }
 
@@ -353,6 +354,9 @@ setUp() {
 tearDown() {
   flags_reset
 }
+
+# showTestOutput for the most recently run test.
+_showTestOutput() { th_showOutput "${SHUNIT_FALSE}" "${stdoutF}" "${stderrF}"; }
 
 # Load and run shUnit2.
 # shellcheck disable=SC2034
