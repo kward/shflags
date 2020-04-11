@@ -70,22 +70,26 @@ th_oneTimeSetUp() {
 }
 
 th_showOutput() {
-  _th_rtrn="${1:-${returnF}}"
+  if isSkipping; then
+    return
+  fi
+
+  _th_return="${1:-${returnF}}"
   _th_stdout="${2:-${stdoutF}}"
   _th_stderr="${3:-${stderrF}}"
 
-  isSkipping
-  if [ $? -eq "${SHUNIT_FALSE}" -a "${_th_rtrn}" != "${FLAGS_TRUE}" ]; then
+  if [ "${_th_return}" != "${FLAGS_TRUE}" ]; then
+    # shellcheck disable=SC2166
     if [ -n "${_th_stdout}" -a -s "${_th_stdout}" ]; then
       echo '>>> STDOUT' >&2
       cat "${_th_stdout}" >&2
+      echo '<<< STDOUT' >&2
     fi
+    # shellcheck disable=SC2166
     if [ -n "${_th_stderr}" -a -s "${_th_stderr}" ]; then
       echo '>>> STDERR' >&2
       cat "${_th_stderr}" >&2
-    fi
-    if [ -n "${_th_stdout}" -o -n "${_th_stderr}" ]; then
-      echo '<<< end output' >&2
+      echo '<<< STDERR' >&2
     fi
   fi
 
