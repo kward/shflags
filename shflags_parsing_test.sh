@@ -17,7 +17,6 @@
 # TODO(kward): testNonStandardIFS()
 
 # These variables will be overridden by the test helpers.
-returnF="${TMPDIR:-/tmp}/return"
 stdoutF="${TMPDIR:-/tmp}/STDOUT"
 stderrF="${TMPDIR:-/tmp}/STDERR"
 
