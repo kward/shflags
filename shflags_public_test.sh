@@ -30,7 +30,9 @@ testHelp() {
 }
 
 _testHelp() {
-  flags_getoptIsEnh || return "${SHUNIT_TRUE}"
+  if ! flags_getoptIsEnh; then
+    return
+  fi
 
   flag=$1
 
@@ -79,7 +81,9 @@ mock_flags_columns() {
 }
 
 testStandardHelpOutput() {
-  flags_getoptIsStd || startSkipping
+  if ! flags_getoptIsStd; then
+   startSkipping
+ fi
 
   DEFINE_boolean test_bool false 'test boolean' b
   DEFINE_integer test_int 0 'test integer' i
@@ -111,21 +115,26 @@ EOF
   (
     _flags_columns() { mock_flags_columns; }
     FLAGS_HELP=${help};
-    FLAGS -h >"${stdoutF}" 2>"${stderrF}"
-    echo $? >"${returnF}"
+    # Wrap FLAGS call in if/then/else so 'set -e' works properly.
+    if FLAGS -h >"${stdoutF}" 2>"${stderrF}"; then
+      rtrn=$?
+    else
+      rtrn=$?
+    fi
+    echo "${rtrn}" >"${returnF}"
   )
-  assertFalse \
-      'a call for help should return a non-zero exit code.' \
-      "$(th_queryReturn)"
+  assertFalse 'a call for help should return a non-zero exit code.' "$(th_queryReturn)"
 
-  diff "${expectedF}" "${stderrF}" >/dev/null
-  r3turn=$?
-  assertTrue 'unexpected help output' ${r3turn}
-  th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
+  if ! diff "${expectedF}" "${stderrF}" >/dev/null; then
+    fail 'unexpected help output'
+    th_showOutput
+  fi
 }
 
 testEnhancedHelpOutput() {
-  flags_getoptIsEnh || startSkipping
+  if ! flags_getoptIsEnh; then
+    startSkipping
+  fi
 
   # shellcheck disable=SC2034
   DEFINE_boolean test_bool false 'test boolean' b
@@ -162,22 +171,27 @@ EOF
   (
     _flags_columns() { mock_flags_columns; }
     # shellcheck disable=SC2034
-    FLAGS_HELP=${help};
-    FLAGS -h >"${stdoutF}" 2>"${stderrF}"
-    echo $? >"${returnF}"
+    FLAGS_HELP=${help}
+    # Wrap FLAGS call in if/then/else so 'set -e' works properly.
+    if FLAGS -h >"${stdoutF}" 2>"${stderrF}"; then
+      rtrn=$?
+    else
+      rtrn=$?
+    fi
+    echo "${rtrn}" >"${returnF}"
   )
-  assertFalse \
-      'a call for help should return a non-zero exit code.' \
-      "$(th_queryReturn)"
+  assertFalse 'a call for help should return a non-zero exit code.' "$(th_queryReturn)"
 
-  diff "${expectedF}" "${stderrF}" >/dev/null
-  differed=$?
-  assertTrue 'unexpected help output' ${differed}
-  th_showOutput ${differed} "${stdoutF}" "${stderrF}"
+  if ! diff "${expectedF}" "${stderrF}" >/dev/null; then
+    fail 'unexpected help output'
+    th_showOutput
+  fi
 }
 
 testNoHelp() {
-  flags_getoptIsEnh || startSkipping
+  if ! flags_getoptIsEnh; then
+    startSkipping
+  fi
 
   ( FLAGS --nohelp >"${stdoutF}" 2>"${stderrF}" )
   r3turn=$?
@@ -205,7 +219,7 @@ testIssue28() {
   # shellcheck disable=SC2034
   DEFINE_boolean 'force' false '' f
 
-  testHelp
+  testHelp && return
 }
 
 oneTimeSetUp() {
