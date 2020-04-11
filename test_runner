@@ -12,6 +12,20 @@
 # This script runs all the unit tests that can be found, and generates a nice
 # report of the tests.
 #
+### Sample usage:
+#
+# Run all tests for all shells.
+# $ ./test_runner
+#
+# Run all tests for single shell.
+# $ ./test_runner -s /bin/bash
+#
+# Run single test for all shells.
+# $ ./test_runner -t shunit_asserts_test.sh
+#
+# Run single test for single shell.
+# $ ./test_runner -s /bin/bash -t shunit_asserts_test.sh
+#
 ### ShellCheck (http://www.shellcheck.net/)
 # Disable source following.
 #   shellcheck disable=SC1090,SC1091
@@ -160,7 +174,11 @@ EOF
       # ${shell_bin} needs word splitting.
       #   shellcheck disable=SC2086
       ( exec ${shell_bin} "./${t}" 2>&1; )
-      test "${runner_passing_}" -eq ${RUNNER_TRUE} -a $? -eq ${RUNNER_TRUE}
+      shell_passing=$?
+      if [ "${shell_passing}" -ne "${RUNNER_TRUE}" ]; then
+        runner_warn "${shell_bin} not passing"
+      fi
+      test "${runner_passing_}" -eq ${RUNNER_TRUE} -a ${shell_passing} -eq ${RUNNER_TRUE}
       runner_passing_=$?
     done
   done
@@ -168,4 +186,6 @@ EOF
 }
 
 # Execute main() if this is run in standalone mode (i.e. not from a unit test).
-[ -z "${SHUNIT_VERSION}" ] && main "$@"
+if [ -z "${SHUNIT_VERSION}" ]; then
+  main "$@"
+fi
