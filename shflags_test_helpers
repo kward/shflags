@@ -34,10 +34,6 @@ th_warn() { echo "test:WARN $*" >&2; }
 th_error() { echo "test:ERROR $*" >&2; }
 th_fatal() { echo "test:FATAL $*" >&2; exit 1; }
 
-# My name.
-TH_MY_NAME=`basename "$0"` || th_fatal 'Error executing basename.'
-export TH_MY_NAME
-
 # Path to shFlags library. Can be overridden by setting SHFLAGS_INC.
 TH_SHFLAGS=${SHFLAGS_INC:-./shflags}; export TH_SHFLAGS
 
