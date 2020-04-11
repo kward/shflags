@@ -1002,8 +1002,9 @@ DEFINE_string()  { _flags_define ${__FLAGS_TYPE_STRING} "$@"; }
 #   integer: success of operation, or error
 FLAGS() {
   # Define a standard 'help' flag if one isn't already defined.
-  [ -z "${__flags_help_type:-}" ] && \
-      DEFINE_boolean 'help' false 'show this help' 'h'
+  if [ -z "${__flags_help_type:-}" ]; then
+    DEFINE_boolean 'help' false 'show this help' 'h'
+  fi
 
   # Parse options.
   if [ $# -gt 0 ]; then
@@ -1024,7 +1025,9 @@ FLAGS() {
     flags_return=$?
   fi
 
-  [ ${flags_return} -eq ${FLAGS_ERROR} ] && _flags_fatal "${flags_error}"
+  if [ ${flags_return} -eq ${FLAGS_ERROR} ]; then
+    _flags_fatal "${flags_error}"
+  fi
   return ${flags_return}
 }
 

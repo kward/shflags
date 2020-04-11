@@ -26,60 +26,65 @@ stderrF="${TMPDIR:-/tmp}/STDERR"
 
 testGetoptStandard() {
   if ! _flags_getoptStandard '-b' >"${stdoutF}" 2>"${stderrF}"; then
-    fail "didn't parse valid flag 'b'"
+    fail "error parsing -b flag"
     _showTestOutput
   fi
 
   if _flags_getoptStandard '-x' >"${stdoutF}" 2>"${stderrF}"; then
-    fail "parsed invalid flag 'x'"
+    fail "expected error parsing invalid -x flag"
     _showTestOutput
   fi
 }
 
 testGetoptEnhanced() {
-  flags_getoptIsEnh
-  [ $? -eq "${FLAGS_FALSE}" ] && return
+  if ! flags_getoptIsEnh; then
+    return
+  fi
 
-  _flags_getoptEnhanced '-b' >"${stdoutF}" 2>"${stderrF}"
-  assertTrue "didn't parse valid flag 'b'" $?
-  _flags_getoptEnhanced '--bool' >"${stdoutF}" 2>"${stderrF}"
-  assertTrue "didn't parse valid flag 'bool'" $?
+  if ! _flags_getoptEnhanced '-b' >"${stdoutF}" 2>"${stderrF}"; then
+    fail "error parsing -b flag"
+    _showTestOutput
+  fi
+  if ! _flags_getoptEnhanced '--bool' >"${stdoutF}" 2>"${stderrF}"; then
+    fail "error parsing --bool flag"
+    _showTestOutput
+  fi
 
-  _flags_getoptEnhanced '-x' >"${stdoutF}" 2>"${stderrF}"
-  assertFalse "parsed invalid flag 'x'" $?
-  _flags_getoptEnhanced '--xyz' >"${stdoutF}" 2>"${stderrF}"
-  assertFalse "parsed invalid flag 'xyz'" $?
+  if _flags_getoptEnhanced '-x' >"${stdoutF}" 2>"${stderrF}"; then
+    fail "expected error parsing invalid -x flag"
+    _showTestOutput
+  fi
+  if _flags_getoptEnhanced '--xyz' >"${stdoutF}" 2>"${stderrF}"; then
+    fail "expected error parsing invalid --xyz flag"
+    _showTestOutput
+  fi
 }
 
-testValidBoolsShort()
-{
-  FLAGS -b >"${stdoutF}" 2>"${stderrF}"
-  r3turn=$?
-  assertTrue "-b) FLAGS returned a non-zero result (${r3turn})" ${r3turn}
-  value=${FLAGS_bool:-}
-  assertTrue "-b) boolean was not true (${value})." "${value}"
-  assertFalse '-b) expected no output to STDERR' "[ -s '${stderrF}' ]"
-  test ${r3turn} -eq "${FLAGS_TRUE}" -a ! -s "${stderrF}"
-  th_showOutput $? "${stdoutF}" "${stderrF}"
+testValidBoolsShort() {
+  desc='bool_true_arg'
+  if FLAGS -b >"${stdoutF}" 2>"${stderrF}"; then
+    assertTrue "${desc}: expected true value" "${FLAGS_bool:-}"
+  else
+    fail "${desc}: FLAGS returned a non-zero result ($?)"
+  fi
+  th_showOutput
 
+  desc='bool2_defined'
   DEFINE_boolean bool2 true '2nd boolean' B
-  FLAGS >"${stdoutF}" 2>"${stderrF}"
-  r3turn=$?
-  assertTrue "-B) FLAGS returned a non-zero result (${r3turn})" ${r3turn}
-  value=${FLAGS_bool2:-}
-  assertTrue "-B) boolean was not true (${value})" "${value}"
-  assertFalse '-B) expected no output to STDERR' "[ -s '${stderrF}' ]"
-  test ${r3turn} -eq "${FLAGS_TRUE}" -a ! -s "${stderrF}"
-  th_showOutput $? "${stdoutF}" "${stderrF}"
+  if FLAGS >"${stdoutF}" 2>"${stderrF}"; then
+    assertTrue "${desc}: expected true value" "${FLAGS_bool2:-}"
+  else
+    fail "${desc}: FLAGS returned a non-zero result ($?)"
+  fi
+  th_showOutput
 
-  FLAGS -B >"${stdoutF}" 2>"${stderrF}"
-  r3turn=$?
-  assertTrue "-B) FLAGS returned a non-zero result (${r3turn})" ${r3turn}
-  value=${FLAGS_bool2:-}
-  assertFalse "-B) boolean was not false (${value})" "${value}"
-  assertFalse '-B) expected no output to STDERR' "[ -s '${stderrF}' ]"
-  test ${r3turn} -eq "${FLAGS_TRUE}" -a ! -s "${stderrF}"
-  th_showOutput $? "${stdoutF}" "${stderrF}"
+  desc='bool_false_arg'
+  if FLAGS -B >"${stdoutF}" 2>"${stderrF}"; then
+    assertFalse "${desc}: expected false value" "${FLAGS_bool2:-}"
+  else
+    fail "${desc}: FLAGS returned a non-zero result ($?)"
+  fi
+  th_showOutput
 }
 
 # TODO(kate): separate into multiple functions to reflect correct usage
@@ -114,117 +119,90 @@ testValidBoolsLong() {
   th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
 }
 
-testValidFloats() {
-  _testValidFloats '-f'
-  flags_getoptIsEnh
-  [ $? -eq "${FLAGS_FALSE}" ] && return
-  _testValidFloats '--float'
-}
-
-_testValidFloats() {
-  flag=$1
-  for value in ${TH_FLOAT_VALID}; do
-    FLAGS "${flag}" "${value}" >"${stdoutF}" 2>"${stderrF}"
-    r3turn=$?
-    assertTrue "FLAGS ${flag} ${value} returned non-zero result (${r3turn})" \
-        ${r3turn}
-    # shellcheck disable=SC2154
-    assertEquals "float (${flag} ${value}) test failed." "${value}" "${FLAGS_float}"
-    assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
-    th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
-  done
-}
-
-testInvalidFloats()
-{
-  _testInvalidFloats '-f'
-  flags_getoptIsEnh
-  [ $? -eq "${FLAGS_FALSE}" ] && return
-  _testInvalidFloats '--float'
-}
-
-_testInvalidFloats()
-{
-  flag=$1
-  for value in ${TH_FLOAT_INVALID}; do
-    th_clearReturn
-    (
-      FLAGS "${flag}" "${value}" >"${stdoutF}" 2>"${stderrF}"
-      echo $? >"${returnF}"
-    )
-    assertFalse "FLAGS (${value}) returned a zero result" "$(th_queryReturn)"
-    assertFalse 'expected no output to STDOUT' "[ -s '${stdoutF}' ]"
-    assertTrue 'expected output to STDERR' "[ -s '${stderrF}' ]"
-  done
-}
-
-testValidIntegers() {
-  _testValidIntegers '-i'
-  flags_getoptIsEnh
-  [ $? -eq "${FLAGS_FALSE}" ] && return
-  _testValidIntegers '--int'
-}
-
-_testValidIntegers() {
-  flag=$1
-  for value in ${TH_INT_VALID}; do
-    FLAGS "${flag}" "${value}" >"${stdoutF}" 2>"${stderrF}"
-    r3turn=$?
-    assertTrue "FLAGS (${value}) returned a non-zero result (${r3turn})" ${r3turn}
-    # shellcheck disable=SC2154
-    assertEquals "integer (${value}) test failed." "${value}" "${FLAGS_int}"
-    assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
-    th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
-  done
-}
-
-testInvalidIntegers() {
-  _testInvalidIntegers '-i'
-  flags_getoptIsEnh
-  [ $? -eq "${FLAGS_FALSE}" ] && return
-  _testInvalidIntegers '--int'
-}
-
-_testInvalidIntegers() {
-  flag=$1
-  for value in ${TH_INT_INVALID}; do
-    th_clearReturn
-    (
-      FLAGS "${flag}" "${value}" >"${stdoutF}" 2>"${stderrF}"
-      echo $? >"${returnF}"
-    )
-    assertFalse "invalid integer (${value}) test returned success." "$(th_queryReturn)"
-    assertFalse 'expected no output to STDOUT' "[ -s '${stdoutF}' ]"
-    assertTrue 'expected output to STDERR' "[ -s '${stderrF}' ]"
-  done
-}
-
-testValidStrings() {
-  _testValidStrings -s single_word
+testFloats() {
+  _testFloats '-f'
   if flags_getoptIsEnh; then
-    _testValidStrings --str single_word
-    _testValidStrings --str 'string with spaces'
+    _testFloats '--float'
   fi
 }
 
-_testValidStrings()
-{
+_testFloats() {
   flag=$1
-  value=$2
 
-  FLAGS "${flag}" "${value}" >"${stdoutF}" 2>"${stderrF}"
-  r3turn=$?
-  assertTrue "'FLAGS ${flag} ${value}' returned a non-zero result (${r3turn})" \
-      ${r3turn}
-  # shellcheck disable=SC2154
-  assertEquals "string (${value}) test failed." "${value}" "${FLAGS_str}"
-  if [ ${r3turn} -eq "${FLAGS_TRUE}" ]; then
-    assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
+  for value in ${TH_FLOAT_VALID}; do
+    if FLAGS "${flag}" "${value}" >"${stdoutF}" 2>"${stderrF}"; then
+      # shellcheck disable=SC2154
+      assertEquals "${flag}: incorrect value" "${value}" "${FLAGS_float}"
+    else
+      fail "${flag}: unexpected non-zero result ($?)"
+      th_showOutput
+    fi
+  done
+
+  for value in ${TH_FLOAT_INVALID}; do
+    # Wrap FLAGS in () to catch errors.
+    if (FLAGS "${flag}" "${value}" >"${stdoutF}" 2>"${stderrF}"); then
+      fail "${flag}: expected a non-zero result"
+      th_showOutput
+    else
+      assertEquals "${flag}: expected an error" $? "${FLAGS_ERROR}"
+    fi
+  done
+}
+
+testIntegers() {
+  _testIntegers '-i'
+  if flags_getoptIsEnh; then
+    _testIntegers '--int'
+  fi
+}
+
+_testIntegers() {
+  flag=$1
+
+  for value in ${TH_INT_VALID}; do
+    if FLAGS "${flag}" "${value}" >"${stdoutF}" 2>"${stderrF}"; then
+      # shellcheck disable=SC2154
+      assertEquals "${flag}: incorrect value" "${value}" "${FLAGS_int}"
+    else
+      fail "${flag}: unexpected non-zero result ($?)"
+      th_showOutput
+    fi
+  done
+
+  for value in ${TH_INT_INVALID}; do
+    # Wrap FLAGS in () to catch errors.
+    if (FLAGS "${flag}" "${value}" >"${stdoutF}" 2>"${stderrF}"); then
+      fail "${flag}: expected a non-zero result"
+      th_showOutput
+    else
+      assertEquals "${flag}: expected an error" $? "${FLAGS_ERROR}"
+    fi
+  done
+}
+
+testStrings() {
+  _testStrings 'std_single_word' -s single_word
+  if flags_getoptIsEnh; then
+    _testStrings 'enh_single_word' --str single_word
+    _testStrings 'enh_multi_word'  --str 'string with spaces'
+  fi
+}
+
+_testStrings() {
+  desc=$1
+  flag=$2
+  value=$3
+
+  if FLAGS "${flag}" "${value}" >"${stdoutF}" 2>"${stderrF}"; then
+    # shellcheck disable=SC2154
+    assertEquals "${desc}: incorrect value" "${value}" "${FLAGS_str}"
   else
+    fail "${desc}: unexpected non-zero result ($?)"
     # Validate that an error is thrown for unsupported getopt uses.
     assertFatalMsg '.* spaces in options'
+    th_showOutput
   fi
-  th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
 }
 
 testMultipleFlags() {
@@ -270,25 +248,19 @@ _testNonFlagArgs() {
   assertEquals 'wrong count of argc arguments returned.' 0 "${FLAGS_ARGC}"
 }
 
-testSingleNonFlagArg() {
-  _testNonFlagArgs 1 argOne
+testSingleNonFlagArg()    { _testNonFlagArgs 1 argOne; }
+testMultipleNonFlagArgs() { _testNonFlagArgs 3 argOne argTwo arg3; }
+
+testMultipleNonFlagStringArgsWithSpaces() {
+  if flags_getoptIsEnh; then
+    _testNonFlagArgs 3 argOne 'arg two' arg3
+  fi
 }
 
-testMultipleNonFlagArgs() {
-  _testNonFlagArgs 3 argOne argTwo arg3
-}
-
-testMultipleNonFlagStringArgsWithSpaces()
-{
-  flags_getoptIsEnh
-  [ $? -eq "${FLAGS_FALSE}" ] && return
-  _testNonFlagArgs 3 argOne 'arg two' arg3
-}
-
-testFlagsWithEquals()
-{
-  flags_getoptIsEnh
-  [ $? -eq "${FLAGS_FALSE}" ] && return
+testFlagsWithEquals() {
+  if ! flags_getoptIsEnh; then
+    return
+  fi
 
   FLAGS --str='str_flag' 'non_flag' >"${stdoutF}" 2>"${stderrF}"
   assertTrue 'FLAGS returned a non-zero result' $?
