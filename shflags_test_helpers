@@ -20,7 +20,10 @@
 # Disagree with [ p ] && [ q ] vs [ p -a -q ] recommendation.
 #   shellcheck disable=SC2166
 
-# Treat unset variables as an error.
+# Exit immediately if a simple command exits with a non-zero status.
+set -e
+
+# Treat unset variables as an error when performing parameter expansion.
 set -u
 
 # Set shwordsplit for zsh.
