@@ -1,10 +1,8 @@
 # Coding Standards
 
-shFlags is more than just a simple 20 line shell script. It is a pretty
-significant library of shell code that at first glance is not that easy to
-understand. To improve code readability and usability, some guidelines have been
-set down to make the code more understandable for anyone who wants to read or
-modify it.
+shFlags is more than just a simple 20 line shell script. It is a significant library of shell code that at first glance might not seam easy to understand. To improve code readability and usability, these guidelines are followed to help make the code more understandable for anyone who wants to read or modify it.
+
+[TOC]
 
 ## Function declaration
 
@@ -28,23 +26,18 @@ Each function should be preceded by a header that provides the following:
 
 1.  A one-sentence summary of what the function does.
 
-1.  (optional) A longer description of what the function does, and perhaps some
-    special information that helps convey its usage better.
-
+1.  (optional) A longer description of what the function does, and perhaps some special information that helps convey its usage better.
+    
 1.  Args: a one-line summary of each argument of the form:
 
     `name: type: description`
 
-1.  Output: a one-line summary of the output provided. Only output to STDOUT
-    must be documented, unless the output to STDERR is of significance (i.e. not
-    just an error message). The output should be of the form:
-
+1.  Output: a one-line summary of the output provided. Only output to STDOUT must be documented, unless the output to STDERR is of significance (i.e. not just an error message). The output should be of the form:
+    
     `type: description`
 
-1.  Returns: a one-line summary of the value returned. Returns in shell are
-    always integers, but if the output is a true/false for success (i.e. a
-    boolean), it should be noted. The output should be of the form:
-
+1.  Returns: a one-line summary of the value returned. Returns in shell are always integers, but if the output is a true/false for success (i.e. a boolean), it should be noted. The output should be of the form:
+    
     `type: description`
 
 Here is a sample header:
@@ -65,18 +58,11 @@ Here is a sample header:
 
 ## Variable and function names
 
-All shFlags specific constants, variables, and functions will be prefixed
-appropriately with 'flags'. This is to distinguish usage in the shFlags code
-from users own scripts so that the shell name space remains predictable to
-users. The exceptions here are the standard `assertEquals`, etc. functions.
+All shFlags specific constants, variables, and functions will be prefixed appropriately with `flags`. This is to distinguish usage in the shFlags code from users own scripts so that the shell name space remains predictable to users. The exceptions here are the standard `assertEquals`, etc., functions.
 
-All non built-in constants and variables will be surrounded with squiggle
-brackets, e.g. `${flags_someVariable}` to improve code readability.
+All non built-in constants and variables will be surrounded with squiggle brackets, e.g. `${flags_someVariable}` to improve code readability.
 
-Due to some shells not supporting local variables in functions, care in the
-naming and use of variables, both public and private, is very important.
-Accidental overriding of the variables can occur easily if care is not taken as
-all variables are technically global variables in some shells.
+Due to some shells not supporting local variables in functions, care in the naming and use of variables, both public and private, is very important. Accidental overriding of the variables can occur easily if care is not taken as all variables are technically global variables in some shells.
 
 Type                             | Sample
 -------------------------------- | ---------------------
@@ -90,13 +76,9 @@ public function, local variable  | `flags_variable_`
 private function                 | `_flags_function`
 private function, local variable | `_flags_variable_`
 
-Where it makes sense to improve readability, variables can have the first letter
-of the second and later words capitalized. For example, the local variable name
-for the help string length is `flags_helpStrLen_`.
+Where it makes sense to improve readability, variables can have the first letter of the second and later words capitalized. For example, the local variable name for the help string length is `flags_helpStrLen_`.
 
-There are three special-case global public variables used. They are used due to
-overcome the limitations of shell scoping or to prevent forking. The three
-variables are:
+There are three special-case global public variables used. They are used due to overcome the limitations of shell scoping or to prevent forking. The three variables are:
 
 -   `flags_error`
 -   `flags_output`
@@ -104,9 +86,7 @@ variables are:
 
 ## Local variable cleanup
 
-As many shells do not support local variables, no support for cleanup of
-variables is present either. As such, all variables local to a function must be
-cleared up with the `unset` built-in command at the end of each function.
+As many shells do not support local variables, no support for cleanup of variables is present either. As such, all variables local to a function must be cleared up with the `unset` built-in command at the end of each function.
 
 ## Indentation
 
@@ -118,11 +98,7 @@ if [ -z 'some string' ]; then
 fi
 ```
 
-Lines of code have no line limit, although the general preference is to wrap
-lines at reasonable boundaries (e.g., between if/then/else clauses). When long
-lines are wrapped using the backslash character '\', subsequent lines should be
-indented with four (4) spaces so as to differentiate from the standard spacing
-of two characters, and tabs may not be used.
+Lines of code have no line limit, although the general preference is to wrap lines at reasonable boundaries (e.g., between if/then/else clauses). When long lines are wrapped using the backslash character '\', subsequent lines should be indented with four (4) spaces so as to differentiate from the standard spacing of two characters, and tabs may not be used.
 
 ```sh
 for x in some set of very long set of arguments that make for a very long \
@@ -132,9 +108,7 @@ do
 done
 ```
 
-When a conditional expression is written using the built-in [ command, and that
-line must be wrapped, place the control || or && operators on the same line as
-the expression where possible, with the list to be executed on its own line.
+When a conditional expression is written using the built-in `[` command, and that line must be wrapped, place the control `||` or `&&` operators on the same line as the expression where possible, with the list to be executed on its own line.
 
 ```sh
 [ -n 'some really long expression' -a -n 'some other long expr' ] && \
