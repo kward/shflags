@@ -244,7 +244,6 @@ _testNonFlagArgs() {
 
   eval set -- "${FLAGS_ARGV}"
   assertEquals 'wrong count of argv arguments returned.' "${argc}" $#
-  assertEquals 'wrong count of argc arguments returned.' 0 "${FLAGS_ARGC}"
 }
 
 testSingleNonFlagArg()    { _testNonFlagArgs 1 argOne; }
@@ -268,7 +267,6 @@ testFlagsWithEquals() {
 
   eval set -- "${FLAGS_ARGV}"
   assertEquals 'wrong count of argv arguments returned.' 1 $#
-  assertEquals 'wrong count of argc arguments returned.' 1 "${FLAGS_ARGC}"
 }
 
 testComplicatedCommandLineStandard() {
