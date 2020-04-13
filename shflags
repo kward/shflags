@@ -92,7 +92,7 @@
 
 # Return if FLAGS already loaded.
 if [ -n "${FLAGS_VERSION:-}" ]; then return 0; fi
-FLAGS_VERSION='1.2.4pre'
+FLAGS_VERSION='1.4.0pre'
 
 # Return values that scripts can use.
 FLAGS_TRUE=0
@@ -770,7 +770,6 @@ _flags_parseGetopt() {
   # arguments. Its usage was replaced by FLAGS_ARGV, and it is being kept only
   # for backwards compatibility reasons.
   FLAGS_ARGC=`_flags_math "$# - 1 - ${_flags_argc_}"`
-  export FLAGS_ARGC
 
   # Handle options. note options with values must do an additional shift.
   while true; do
