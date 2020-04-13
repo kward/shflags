@@ -213,7 +213,7 @@ fi
 #
 
 # Reserved flag names.
-__FLAGS_RESERVED_LIST=' ARGC ARGV ERROR FALSE GETOPT_CMD HELP PARENT TRUE '
+__FLAGS_RESERVED_LIST=' ARGV ERROR FALSE GETOPT_CMD HELP PARENT TRUE '
 __FLAGS_RESERVED_LIST="${__FLAGS_RESERVED_LIST} VERSION "
 
 # Determined getopt version (standard or enhanced).
@@ -749,14 +749,10 @@ _flags_getoptEnhanced() {
 # dynamic to support any number of flags.
 #
 # Args:
-#   argc: int: original command-line argument count
 #   @: varies: output from getopt parsing
 # Returns:
 #   integer: a FLAGS success condition
 _flags_parseGetopt() {
-  _flags_argc_=$1
-  shift
-
   flags_return=${FLAGS_TRUE}
 
   if [ "${__FLAGS_GETOPT_VERS}" -ne "${__FLAGS_GETOPT_VERS_ENH}" ]; then
@@ -764,16 +760,9 @@ _flags_parseGetopt() {
     #   shellcheck disable=SC2068
     set -- $@
   else
-    # Note the quotes around the `$@' -- they are essential!
+    # Note the quotes around the `$@` -- they are essential!
     eval set -- "$@"
   fi
-
-  # Provide user with the number of arguments to shift by later.
-  # NOTE: the FLAGS_ARGC variable is obsolete as of 1.0.3 because it does not
-  # properly give user access to non-flag arguments mixed in between flag
-  # arguments. Its usage was replaced by FLAGS_ARGV, and it is being kept only
-  # for backwards compatibility reasons.
-  FLAGS_ARGC=`_flags_math "$# - 1 - ${_flags_argc_}"`
 
   # Handle options. note options with values must do an additional shift.
   while true; do
@@ -1024,7 +1013,7 @@ FLAGS() {
   fi
 
   if [ ${flags_return} -eq ${FLAGS_TRUE} ]; then
-    _flags_parseGetopt $# "${__flags_opts}"
+    _flags_parseGetopt "${__flags_opts}"
     flags_return=$?
   fi
 
