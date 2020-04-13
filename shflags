@@ -466,7 +466,9 @@ _flags_genOptStr() {
   for _flags_name_ in ${__flags_longNames}; do
     _flags_usName_="`_flags_underscoreName "${_flags_name_}"`"
     _flags_type_="`_flags_getFlagInfo "${_flags_usName_}" "${__FLAGS_INFO_TYPE}"`"
-    [ $? -eq ${FLAGS_TRUE} ] || _flags_fatal 'call to _flags_type_ failed'
+    if [ $? -ne ${FLAGS_TRUE} ]; then
+      _flags_fatal 'call to _flags_type_ failed'
+    fi
     case ${_flags_optStrType_} in
       ${__FLAGS_OPTSTR_SHORT})
         _flags_shortName_="`_flags_getFlagInfo \
@@ -625,7 +627,9 @@ _flags_validBool() {
 #   bool: true if the value is a valid integer
 _flags_validFloat() {
   flags_return=${FLAGS_FALSE}
-  [ -n "$1" ] || return ${flags_return}
+  if [ -z "$1" ]; then
+    return ${flags_return}
+  fi
   _flags_float_=$1
 
   if _flags_validInt "${_flags_float_}"; then
