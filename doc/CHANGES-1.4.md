@@ -1,5 +1,15 @@
 # Changes in shFlags
 
+## Changes with 1.4.0pre
+
+A new series was started due to the major changes required for 'set -e' support.
+
+Upgraded shUnit2 to 2.1.9pre, which includes 'set -e' support.
+
+Fixed #9. shFlags now works properly with 'set -e' enabled.
+
+Fixed #50. The `FLAGS_ARGC` variable is no longer is no longer exported. The variable was marked obsolete in 1.0.3, and it is finally being removed.
+
 ## Changes with 1.2.3
 
 Upgraded shUnit2 to 2.1.7.
