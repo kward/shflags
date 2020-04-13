@@ -17,11 +17,11 @@ addons:
 matrix:
   include:
     - os: linux
-      # Ubuntu Bionic 18.04
-      dist: bionic
+      dist: bionic  # Ubuntu Bionic 18.04 (EoL Apr 2028).
     - os: linux
-      # Ubuntu Xenial 16.04
-      dist: xenial
+      dist: xenial  # Ubuntu Xenial 16.04 (EoL Apr 2024).
+    - os: linux
+      dist: trusty  # Ubuntu Trusty 14.04 (EoL Apr 2022).
     - os: osx
     - os: linux
       script:
