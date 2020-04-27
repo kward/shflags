@@ -871,7 +871,7 @@ _flags_parseGetopt() {
         ;;
 
       ${__FLAGS_TYPE_STRING})
-        eval "FLAGS_${_flags_usName_}='${_flags_arg_}'"
+        eval "FLAGS_${_flags_usName_}=\${_flags_arg_}"
         ;;
     esac
 
@@ -894,13 +894,20 @@ _flags_parseGetopt() {
   # Give user back non-flag arguments.
   FLAGS_ARGV=''
   while [ $# -gt 0 ]; do
-    FLAGS_ARGV="${FLAGS_ARGV:+${FLAGS_ARGV} }'$1'"
+    FLAGS_ARGV="${FLAGS_ARGV:+${FLAGS_ARGV} } `_flags_escape "$1"`"
     shift
   done
 
   unset _flags_arg_ _flags_len_ _flags_name_ _flags_opt_ _flags_pos_ \
       _flags_strToEval_ _flags_type_ _flags_usName_ _flags_val_
   return ${flags_return}
+}
+
+_flags_escape() {
+    [ -n "${BASH_VERSION:-}" ] && printf "%q\n" "$1" && return 0
+    [ -n "${ZSH_VERSION:-}" ]&& printf "%q\n" "$1" && return 0
+    [ -n "${KSH_VERSION:-}" ]&& printf "%q\n" "$1" && return 0
+    printf "%s\n" "$1" | sed -e "s/'/'\"'\"'/g" -e "1s/^/'/" -e "\$s/\$/'/"
 }
 
 # Perform some path using built-ins.
