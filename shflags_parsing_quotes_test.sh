@@ -30,54 +30,67 @@ stderrF="${TMPDIR:-/tmp}/STDERR"
 # Load test helpers.
 . ./shflags_test_helpers
 
-
-testStringsWithQuotes() {
-    _testValidStrings -s "Single Quote Flag's Test"
-    _testValidStrings -s "Double Quote \"Flag\" Test"
-    _testValidStrings -s "Mixed Quote's \"Flag\" Test"
-    _testValidStrings -s 'Mixed Quote'\''s "Flag" Test'
+testOptionStringsWithQuotes() {
+    _testValidOptionStrings -s "Single Quote Flag's Test"
+    _testValidOptionStrings -s "Double Quote \"Flag\" Test"
+    _testValidOptionStrings -s "Mixed Quote's \"Flag\" Test"
+    _testValidOptionStrings -s 'Mixed Quote'\''s "Flag" Test'
 }
 
-_testValidStrings()
-{
-  flag=$1
-  value=$2
-
-  FLAGS "${flag}" "${value}" >"${stdoutF}" 2>"${stderrF}"
-  r3turn=$?
-  assertTrue "'FLAGS ${flag} ${value}' returned a non-zero result (${r3turn})" \
-      ${r3turn}
-  # shellcheck disable=SC2154
-  assertEquals "string (${value}) test failed." "${value}" "${FLAGS_str}"
-  if [ ${r3turn} -eq "${FLAGS_TRUE}" ]; then
-    assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
-  else
-    # Validate that an error is thrown for unsupported getopt uses.
-    assertFatalMsg '.* spaces in options'
-  fi
-  th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
+testArgumentStringsWithQuotes() {
+    _testValidArgumentStrings "Single Quote Flag's Test"
+    _testValidArgumentStrings "Double Quote \"Flag\" Test"
+    _testValidArgumentStrings "Mixed Quote's \"Flag\" Test"
 }
 
+_testValidOptionStrings() {
+    flag=$1
+    value=$2
+
+    FLAGS "${flag}" "${value}" >"${stdoutF}" 2>"${stderrF}"
+    r3turn=$?
+    assertTrue "'FLAGS ${flag} ${value}' returned a non-zero result (${r3turn})" \
+        ${r3turn}
+    # shellcheck disable=SC2154
+    assertEquals "string (${value}) test failed." "${value}" "${FLAGS_str}"
+    if [ ${r3turn} -eq "${FLAGS_TRUE}" ]; then
+        assertFalse 'expected no output to STDERR' "[ -s '${stderrF}' ]"
+    else
+        # Validate that an error is thrown for unsupported getopt uses.
+        assertFatalMsg '.* spaces in options'
+    fi
+    th_showOutput ${r3turn} "${stdoutF}" "${stderrF}"
+}
+
+_testValidArgumentStrings() {
+    quoted_string="$1"
+    FLAGS "$quoted_string" >"${stdoutF}" 2>"${stderrF}"
+    r3turn=$?
+    assertTrue "'FLAGS $quoted_string' returned a non-zero result (${r3turn})" \
+        ${r3turn}
+    eval set -- "${FLAGS_ARGV}"
+    assertEquals "$quoted_string" "$1"
+}
 
 oneTimeSetUp() {
-  th_oneTimeSetUp
+    th_oneTimeSetUp
 
-  if flags_getoptIsStd; then
-    th_warn 'Standard version of getopt found. Enhanced tests will be skipped.'
-  else
-    th_warn 'Enhanced version of getopt found. Standard tests will be skipped.'
-  fi
+    if flags_getoptIsStd; then
+        th_warn 'Standard version of getopt found. Enhanced tests will be skipped.'
+    else
+        th_warn 'Enhanced version of getopt found. Standard tests will be skipped.'
+    fi
 }
 
 setUp() {
-  DEFINE_boolean bool false 'boolean test' 'b'
-  DEFINE_float float 0.0 'float test' 'f'
-  DEFINE_integer int 0 'integer test' 'i'
-  DEFINE_string str '' 'string test' 's'
+    DEFINE_boolean bool false 'boolean test' 'b'
+    DEFINE_float float 0.0 'float test' 'f'
+    DEFINE_integer int 0 'integer test' 'i'
+    DEFINE_string str '' 'string test' 's'
 }
 
 tearDown() {
-  flags_reset
+    flags_reset
 }
 
 # Load and run shUnit2.
