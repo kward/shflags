@@ -903,11 +903,21 @@ _flags_parseGetopt() {
   return ${flags_return}
 }
 
+# Escape quotes in a string to pass on the command line
+#
+# Optimize escaping using the printf builtin '%q' when available
+#
+# Args:
+#   $1: string: string to escape
+# Output:
+#   string: the escaped string
+# Returns:
+#   bool: success of string escaping
 _flags_escape() {
-    [ -n "${BASH_VERSION:-}" ] && printf "%q\n" "$1" && return 0
-    [ -n "${ZSH_VERSION:-}" ]&& printf "%q\n" "$1" && return 0
-    [ -n "${KSH_VERSION:-}" ]&& printf "%q\n" "$1" && return 0
-    printf "%s\n" "$1" | sed -e "s/'/'\"'\"'/g" -e "1s/^/'/" -e "\$s/\$/'/"
+  [ -n "${BASH_VERSION:-}" ] && printf "%q\n" "$1" && return 0
+  [ -n "${ZSH_VERSION:-}" ] && printf "%q\n" "$1" && return 0
+  [ -n "${KSH_VERSION:-}" ] && printf "%q\n" "$1" && return 0
+  printf "%s\n" "$1" | sed -e "s/'/'\"'\"'/g" -e "1s/^/'/" -e "\$s/\$/'/"
 }
 
 # Perform some path using built-ins.
