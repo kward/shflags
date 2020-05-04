@@ -880,7 +880,9 @@ _flags_parseGetopt() {
       # shellcheck disable=SC2154
       if [ "${FLAGS_help}" -eq ${FLAGS_TRUE} ]; then
       	flags_help
-        flags_return=$?
+	if [ $? -eq ${FLAGS_FALSE} ]; then
+	  flags_return = ${FLAGS_FALSE}
+	fi
       fi
     fi
 
