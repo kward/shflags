@@ -879,10 +879,8 @@ _flags_parseGetopt() {
     if [ "${_flags_usName_}" = 'help' ]; then
       # shellcheck disable=SC2154
       if [ "${FLAGS_help}" -eq ${FLAGS_TRUE} ]; then
-        flags_help
-        flags_error='help requested'
-        flags_return=${FLAGS_FALSE}
-        break
+      	flags_help
+        flags_return=$?
       fi
     fi
 
@@ -1166,10 +1164,7 @@ flags_help() {
     done
   fi
 
-  unset flags_boolStr_ flags_default_ flags_defaultStr_ flags_emptyStr_ \
-      flags_flagStr_ flags_help_ flags_helpStr flags_helpStrLen flags_name_ \
-      flags_columns_ flags_short_ flags_type_ flags_usName_
-  return ${FLAGS_TRUE}
+  return ${FLAGS_FALSE}
 }
 
 # Reset shflags back to an uninitialized state.
