@@ -879,12 +879,12 @@ _flags_parseGetopt() {
     if [ "${_flags_usName_}" = 'help' ]; then
       # shellcheck disable=SC2154
       if [ "${FLAGS_help}" -eq ${FLAGS_TRUE} ]; then
-      	flags_help
-	if [ $? -eq ${FLAGS_TRUE} ]; then
-	  flags_error='help requested'
-	  flags_return = ${FLAGS_FALSE}
-	  break
-	fi
+        flags_help
+        if [ $? -eq ${FLAGS_TRUE} ]; then
+          flags_error='help requested'
+          flags_return = ${FLAGS_FALSE}
+          break
+        fi
       fi
     fi
 
