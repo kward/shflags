@@ -882,7 +882,7 @@ _flags_parseGetopt() {
         flags_help
         if [ $? -eq ${FLAGS_TRUE} ]; then
           flags_error='help requested'
-          flags_return = ${FLAGS_FALSE}
+          flags_return=${FLAGS_FALSE}
           break
         fi
       fi
