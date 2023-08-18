@@ -26,6 +26,7 @@ stderrF="${TMPDIR:-/tmp}/STDERR"
 
 # Test proper functionality with 'set -o pipefail' enabled.
 testIssue57() {
+  # shellcheck disable=SC3040
   set -o pipefail
 
   th_clearReturn
@@ -42,9 +43,7 @@ testIssue57() {
   assertTrue \
       'short request for help should have produced some help output.' \
       ${r3turn}
-  [ ${r3turn} -ne "${FLAGS_TRUE}" ] && th_showOutput
-
-  return ${SHUNIT_TRUE}
+  [ ${r3turn} -eq "${FLAGS_TRUE}" ] || th_showOutput
 }
 
 oneTimeSetUp() {
