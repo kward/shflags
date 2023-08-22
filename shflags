@@ -92,7 +92,7 @@
 
 # Return if FLAGS already loaded.
 if [ -n "${FLAGS_VERSION:-}" ]; then return 0; fi
-FLAGS_VERSION='1.4.0pre'
+FLAGS_VERSION='1.3.0'
 
 # Return values that scripts can use.
 FLAGS_TRUE=0
